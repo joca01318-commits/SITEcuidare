@@ -656,20 +656,22 @@
     var hero = $('.hero');
     if (!canvas || lowPower || !window.WebGLRenderingContext) return;
     function load() {
+      if (window.CuidareOrb) { start(); return; }
       var s = document.createElement('script');
       s.src = 'assets/js/orb.js';
       s.async = true;
-      s.onload = function () {
-        if (!window.CuidareOrb) return;
-        window.CuidareOrb.init(canvas, {
-          reduce: reduce,
-          mobile: !finePointer || window.innerWidth < 760,
-          onReady: function () { hero.classList.add('is-webgl'); },
-          onFail: function () { hero.classList.remove('is-webgl'); }
-        });
-        update();
-      };
+      s.onload = start;
       document.head.appendChild(s);
+    }
+    function start() {
+      if (!window.CuidareOrb) return;
+      window.CuidareOrb.init(canvas, {
+        reduce: reduce,
+        mobile: !finePointer || window.innerWidth < 760,
+        onReady: function () { hero.classList.add('is-webgl'); },
+        onFail: function () { hero.classList.remove('is-webgl'); }
+      });
+      update();
     }
     if ('requestIdleCallback' in window) requestIdleCallback(load, { timeout: 900 });
     else setTimeout(load, 250);
