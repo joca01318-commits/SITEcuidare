@@ -50,6 +50,7 @@
   var floatCta = $('[data-float-cta]');
   var ctaSection = $('#contato');
   var parallaxEls = (!reduce && !lowPower) ? $$('[data-speed]') : [];
+  var darkSurfaces = $$('[data-dark-surface]');
   var ticking = false;
 
   function onScroll() {
@@ -64,7 +65,12 @@
     var headerH = header.offsetHeight;
 
     header.classList.toggle('is-scrolled', y > 8);
-    header.setAttribute('data-mode', y + headerH < heroH - 24 ? 'dark' : 'light');
+    var probe = headerH * 0.5, overDark = false;
+    for (var k = 0; k < darkSurfaces.length; k++) {
+      var dr = darkSurfaces[k].getBoundingClientRect();
+      if (dr.top < probe && dr.bottom > probe) { overDark = true; break; }
+    }
+    header.setAttribute('data-mode', overDark ? 'dark' : 'light');
 
     var p = clamp(y / (heroH * 0.9), 0, 1);
     if (!reduce && heroFrame) heroFrame.style.setProperty('--p', p.toFixed(4));
@@ -385,6 +391,7 @@
     var startX = 0, startPos = 0, moved = false, down = false, pid = null;
     track.addEventListener('pointerdown', function (e) {
       if (e.button !== 0) return;
+      if (e.pointerType === 'mouse') e.preventDefault(); // evita foco (e salto do card) antes de arrastar
       down = true; moved = false; startX = e.clientX; startPos = pos; pid = e.pointerId;
     });
     track.addEventListener('pointermove', function (e) {
@@ -437,6 +444,56 @@
 
     metrics();
     render();
+  })();
+
+  /* ------------------------------------------------------------------
+     Depoimentos: carrossel com rolagem nativa (snap)
+     ------------------------------------------------------------------ */
+  (function () {
+    var root = $('[data-tst]');
+    if (!root) return;
+    var track = $('[data-tst-track]', root);
+    var cards = $$('.tst-card', track);
+    var prev = $('[data-tst-prev]', root);
+    var next = $('[data-tst-next]', root);
+    var dotsWrap = $('[data-tst-dots]', root);
+    var controls = $('.tst__controls', root);
+    var dots = [], stepW = 1, pages = 1, raf = 0;
+
+    function measure() {
+      var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      stepW = cards[0].getBoundingClientRect().width + gap;
+      var perView = Math.max(1, Math.round((track.clientWidth + gap) / stepW));
+      pages = Math.max(1, cards.length - perView + 1);
+      controls.hidden = pages <= 1;
+      dotsWrap.textContent = '';
+      dots = [];
+      for (var i = 0; i < pages; i++) { var d = document.createElement('span'); dotsWrap.appendChild(d); dots.push(d); }
+      sync();
+    }
+    function index() { return clamp(Math.round(track.scrollLeft / stepW), 0, pages - 1); }
+    function sync() {
+      raf = 0;
+      var i = index();
+      dots.forEach(function (d, k) { d.classList.toggle('is-on', k === i); });
+      prev.disabled = track.scrollLeft <= 2;
+      next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 2;
+    }
+    function go(dir) {
+      track.scrollTo({ left: (index() + dir) * stepW, behavior: reduce ? 'auto' : 'smooth' });
+    }
+    prev.addEventListener('click', function () { go(-1); });
+    next.addEventListener('click', function () { go(1); });
+    track.addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(sync); }, { passive: true });
+    track.addEventListener('keydown', function (e) {
+      if (e.target !== track) return;
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+    });
+    var rt;
+    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(measure, 120); }, { passive: true });
+    measure();
+    fontsReady.then(measure);
   })();
 
   /* ------------------------------------------------------------------
@@ -631,12 +688,14 @@
         clearTimeout(leaveTimer);
         var show = items.filter(function (it) { return cat === 'all' || it.getAttribute('data-cat') === cat; });
         var hide = items.filter(function (it) { return show.indexOf(it) === -1; });
+        show.forEach(function (it) { it.classList.remove('is-leaving'); });
         hide.forEach(function (it) { setOpen(it, false); if (!it.hidden) it.classList.add('is-leaving'); });
         leaveTimer = setTimeout(function () {
           hide.forEach(function (it) { it.hidden = true; it.classList.remove('is-leaving'); });
           show.forEach(function (it, k) {
             var wasHidden = it.hidden;
             it.hidden = false;
+            it.classList.remove('is-leaving');
             if (wasHidden && !reduce) {
               it.style.setProperty('--d', String(Math.min(k, 6)));
               it.classList.remove('is-in'); void it.offsetWidth; it.classList.add('is-in');

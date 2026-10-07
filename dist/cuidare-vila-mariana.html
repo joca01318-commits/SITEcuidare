@@ -766,6 +766,89 @@ html.no-js .arc__controls { display: none; }
 .care-tile__label { font-size: 1.15rem; font-weight: 500; letter-spacing: -0.01em; color: var(--navy-900); line-height: 1.3; }
 
 /* --------------------------------------------------------------------------
+   Depoimentos
+   -------------------------------------------------------------------------- */
+.testimonials { padding-block: clamp(16px, 2.5vw, 32px); }
+.testimonials__panel {
+  position: relative; overflow: hidden; overflow: clip; isolation: isolate;
+  margin-inline: clamp(8px, 1.6vw, 24px);
+  padding-block: clamp(80px, 9vw, 128px);
+  border-radius: clamp(28px, 3.4vw, 48px);
+  color: var(--white);
+  background:
+    radial-gradient(70% 60% at 85% 0%, rgba(44, 143, 184, 0.32), transparent 60%),
+    radial-gradient(60% 60% at 0% 100%, rgba(13, 66, 105, 0.9), transparent 70%),
+    linear-gradient(180deg, var(--navy-900), var(--navy-950));
+}
+.testimonials__glow {
+  position: absolute; z-index: -1; width: min(80vw, 900px); aspect-ratio: 1; left: 50%; top: 40%; margin-left: max(-40vw, -450px);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(44, 143, 184, 0.28), transparent);
+  pointer-events: none;
+}
+.section-title--light { color: var(--white); }
+.testimonials .section-head--center .section-title { max-width: 18ch; }
+.testimonials__sub { max-width: 46ch; font-size: clamp(1rem, 1.4vw, 1.15rem); font-weight: 300; color: rgba(255, 255, 255, 0.78); }
+
+.tst { position: relative; }
+.tst__track {
+  --per: 3; --gap: clamp(14px, 1.6vw, 22px);
+  display: flex; gap: var(--gap);
+  overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 4px;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding: 14px 4px 26px;
+  margin: -14px -4px 0;
+  border-radius: var(--radius-lg);
+}
+.tst__track::-webkit-scrollbar { display: none; }
+@media (prefers-reduced-motion: reduce) { .tst__track { scroll-behavior: auto; } }
+
+.tst-card {
+  flex: 0 0 calc((100% - (var(--per) - 1) * var(--gap)) / var(--per));
+  scroll-snap-align: start;
+  position: relative; overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: transform .7s var(--ease-out), border-color .4s, box-shadow .6s var(--ease-out), background-color .4s;
+}
+.tst-card:hover { transform: translateY(-6px); border-color: rgba(134, 212, 236, 0.45); box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.7); }
+.tst-card figure { margin: 0; height: 100%; display: flex; flex-direction: column; gap: 20px; padding: clamp(26px, 3vw, 36px); }
+.tst-card figure::before {
+  content: "“"; position: absolute; right: 22px; top: 2px;
+  font-size: 7rem; line-height: 1; font-weight: 600; color: rgba(90, 193, 225, 0.12);
+  transition: transform .8s var(--ease-out), color .4s;
+}
+.tst-card:hover figure::before { transform: translateY(6px); color: rgba(90, 193, 225, 0.22); }
+.tst-card__stars { display: flex; gap: 4px; color: var(--cyan-400); }
+.tst-card__stars svg { width: 17px; height: 17px; }
+.tst-card blockquote { margin: 0; flex: 1; }
+.tst-card blockquote p { font-size: clamp(1rem, 1.25vw, 1.08rem); font-weight: 300; line-height: 1.7; color: rgba(255, 255, 255, 0.9); }
+.tst-card figcaption {
+  display: flex; align-items: center; gap: 12px;
+  padding-top: 18px; border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 500; color: var(--white);
+}
+.tst-card figcaption::before { content: ""; width: 18px; height: 2px; border-radius: 2px; background: var(--cyan-400); }
+
+.tst__controls { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 12px; }
+.tst__controls[hidden] { display: none; }
+.tst__dots { display: flex; gap: 8px; }
+.tst__dots span { width: 7px; height: 7px; border-radius: 99px; background: rgba(255, 255, 255, 0.25); transition: width .5s var(--ease-out), background-color .4s; }
+.tst__dots span.is-on { width: 24px; background: var(--cyan-400); }
+
+.icon-btn--glass { background: rgba(255, 255, 255, 0.06); color: var(--white); border-color: rgba(255, 255, 255, 0.18); box-shadow: none; }
+.icon-btn--glass:hover { background: var(--white); color: var(--navy-900); }
+.icon-btn:disabled { opacity: .35; pointer-events: none; }
+
+.testimonials__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: clamp(36px, 5vw, 56px); }
+
+/* --------------------------------------------------------------------------
    Planos
    -------------------------------------------------------------------------- */
 .plans__bar { display: flex; justify-content: center; margin-bottom: clamp(36px, 5vw, 56px); position: relative; z-index: 5; }
@@ -1026,6 +1109,7 @@ html.no-js .acc-panel__inner > * { opacity: 1; transform: none; }
    Responsivo
    -------------------------------------------------------------------------- */
 @media (max-width: 1100px) {
+  .tst__track { --per: 2; }
   .site-nav a { padding: 8px 10px; }
   .stats { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .stat { grid-column: span 2; }
@@ -1077,6 +1161,9 @@ html.no-js .acc-panel__inner > * { opacity: 1; transform: none; }
 }
 
 @media (max-width: 760px) {
+  .tst__track { --per: 1; }
+  .tst-card { flex-basis: 88%; scroll-snap-align: center; }
+  .testimonials__actions .btn { flex: 1 1 100%; white-space: normal; text-align: center; line-height: 1.3; padding-block: 12px; }
   .hero__frame { padding-top: calc(var(--header-h) + 36px); }
   .hero__orb-fallback { width: 120vw; right: -55vw; top: 2%; opacity: .55; }
   .hero__actions .btn { flex: 1 1 100%; }
@@ -1139,6 +1226,7 @@ html.no-js .acc-panel__inner > * { opacity: 1; transform: none; }
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
   .text-accent, .hero__accent { animation: none; }
 }
+main:focus { outline: none; }
 
 </style>
 
@@ -1387,11 +1475,11 @@ html.no-js .acc-panel__inner > * { opacity: 1; transform: none; }
     </div>
   </div>
 
-  <main id="conteudo">
+  <main id="conteudo" tabindex="-1">
 
     <!-- ============ HERO ============ -->
     <section class="hero" id="topo" data-ambient="dark" aria-labelledby="hero-title">
-      <div class="hero__frame" data-hero-frame>
+      <div class="hero__frame" data-hero-frame data-dark-surface>
         <div class="hero__bg" aria-hidden="true">
           <div class="hero__orb-fallback"></div>
           <canvas class="hero__canvas" data-orb></canvas>
@@ -1600,6 +1688,74 @@ html.no-js .acc-panel__inner > * { opacity: 1; transform: none; }
               <span class="care-tile__label">Viagens e passeios</span>
             </li>
           </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DEPOIMENTOS ============ -->
+    <section class="section testimonials" id="depoimentos" data-ambient="dark" aria-labelledby="tst-title">
+      <div class="testimonials__panel" data-dark-surface>
+        <span class="testimonials__glow" aria-hidden="true" data-speed="-0.05"></span>
+        <div class="container">
+          <header class="section-head section-head--center">
+            <p class="pill pill--glow" data-reveal>Depoimentos</p>
+            <h2 class="section-title section-title--light" id="tst-title" data-reveal style="--d:1">A confiança de quem já cuidou de <span class="hero__accent">quem ama</span></h2>
+            <p class="testimonials__sub" data-reveal style="--d:2">Mais do que cuidar, queremos que sua família tenha tranquilidade para confiar.</p>
+          </header>
+
+          <div class="tst" data-tst>
+            <ul class="tst__track" data-tst-track role="list" tabindex="0" aria-label="Depoimentos de famílias (role para ver mais)">
+            <li class="tst-card" data-reveal style="--d:2" data-spotlight>
+              <figure>
+                <span class="tst-card__stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>
+                <blockquote><p>“Além de serem ótimos profissionais, são muito humanos e estão cuidando do meu pai com muito carinho.”</p></blockquote>
+                <figcaption>Gabi Petkovic</figcaption>
+              </figure>
+            </li>
+            <li class="tst-card" data-reveal style="--d:3" data-spotlight>
+              <figure>
+                <span class="tst-card__stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>
+                <blockquote><p>“Cuida com carinho, dedicação, responsabilidade e atenção daqueles que amamos. Por isso, entregamos os cuidados de minha mãe e estamos bastante satisfeitos com a qualidade dos serviços.”</p></blockquote>
+                <figcaption>Ricardo Ferreira</figcaption>
+              </figure>
+            </li>
+            <li class="tst-card" data-reveal style="--d:4" data-spotlight>
+              <figure>
+                <span class="tst-card__stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>
+                <blockquote><p>“Há mais de um ano cuidando com muito profissionalismo da nossa mamãe de 90 anos. Comprometimento e respeito são as palavras que podem definir o trabalho de vocês.”</p></blockquote>
+                <figcaption>Triuze Yano Barone</figcaption>
+              </figure>
+            </li>
+            <li class="tst-card" data-reveal style="--d:5" data-spotlight>
+              <figure>
+                <span class="tst-card__stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>
+                <blockquote><p>“Destaco o atendimento, carinho, cuidado e dedicação. Meu pai merece esse cuidado e recomendo a Cuidare.”</p></blockquote>
+                <figcaption>Camila Domingues</figcaption>
+              </figure>
+            </li>
+            <li class="tst-card" data-reveal style="--d:5" data-spotlight>
+              <figure>
+                <span class="tst-card__stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>
+                <blockquote><p>“A Cuidare ofereceu assistência à minha mãe com cuidado, profissionalismo e carinho.”</p></blockquote>
+                <figcaption>Felipe Carvalho</figcaption>
+              </figure>
+            </li>
+            </ul>
+            <div class="tst__controls" data-reveal style="--d:4">
+              <button class="icon-btn icon-btn--glass" type="button" data-tst-prev aria-label="Depoimento anterior"><svg aria-hidden="true" style="transform:scaleX(-1)"><use href="#i-arrow"/></svg></button>
+              <div class="tst__dots" data-tst-dots aria-hidden="true"></div>
+              <button class="icon-btn icon-btn--glass" type="button" data-tst-next aria-label="Próximo depoimento"><svg aria-hidden="true"><use href="#i-arrow"/></svg></button>
+            </div>
+          </div>
+
+          <div class="testimonials__actions" data-reveal style="--d:5">
+            <a class="btn btn--primary btn--lg" data-magnetic data-wa href="https://wa.me/5511916349800" target="_blank" rel="noopener">
+              <svg class="btn__icon" aria-hidden="true"><use href="#i-whatsapp"/></svg><span>Quero conhecer a Cuidare Vila Mariana</span>
+            </a>
+            <a class="btn btn--ghost btn--lg" data-magnetic data-reviews href="https://www.google.com/maps/search/?api=1&amp;query=Cuidare%20Vila%20Mariana" target="_blank" rel="noopener">
+              <svg class="btn__icon" aria-hidden="true"><use href="#i-star"/></svg><span>Ver todas as avaliações</span>
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -1902,7 +2058,7 @@ html.no-js .acc-panel__inner > * { opacity: 1; transform: none; }
   </footer>
 
   <!-- CTA flutuante (mobile) -->
-  <a class="float-cta" data-float-cta data-wa href="https://wa.me/5511916349800" target="_blank" rel="noopener" aria-label="Falar no WhatsApp" tabindex="-1">
+  <a class="float-cta" data-float-cta data-wa href="https://wa.me/5511916349800" target="_blank" rel="noopener" aria-label="Falar no WhatsApp" tabindex="-1" aria-hidden="true">
     <svg aria-hidden="true"><use href="#i-whatsapp"/></svg><span>Avaliação gratuita</span>
   </a>
   <script>
@@ -2355,6 +2511,7 @@ html.no-js .acc-panel__inner > * { opacity: 1; transform: none; }
   var floatCta = $('[data-float-cta]');
   var ctaSection = $('#contato');
   var parallaxEls = (!reduce && !lowPower) ? $$('[data-speed]') : [];
+  var darkSurfaces = $$('[data-dark-surface]');
   var ticking = false;
 
   function onScroll() {
@@ -2369,7 +2526,12 @@ html.no-js .acc-panel__inner > * { opacity: 1; transform: none; }
     var headerH = header.offsetHeight;
 
     header.classList.toggle('is-scrolled', y > 8);
-    header.setAttribute('data-mode', y + headerH < heroH - 24 ? 'dark' : 'light');
+    var probe = headerH * 0.5, overDark = false;
+    for (var k = 0; k < darkSurfaces.length; k++) {
+      var dr = darkSurfaces[k].getBoundingClientRect();
+      if (dr.top < probe && dr.bottom > probe) { overDark = true; break; }
+    }
+    header.setAttribute('data-mode', overDark ? 'dark' : 'light');
 
     var p = clamp(y / (heroH * 0.9), 0, 1);
     if (!reduce && heroFrame) heroFrame.style.setProperty('--p', p.toFixed(4));
@@ -2690,6 +2852,7 @@ html.no-js .acc-panel__inner > * { opacity: 1; transform: none; }
     var startX = 0, startPos = 0, moved = false, down = false, pid = null;
     track.addEventListener('pointerdown', function (e) {
       if (e.button !== 0) return;
+      if (e.pointerType === 'mouse') e.preventDefault(); // evita foco (e salto do card) antes de arrastar
       down = true; moved = false; startX = e.clientX; startPos = pos; pid = e.pointerId;
     });
     track.addEventListener('pointermove', function (e) {
@@ -2742,6 +2905,56 @@ html.no-js .acc-panel__inner > * { opacity: 1; transform: none; }
 
     metrics();
     render();
+  })();
+
+  /* ------------------------------------------------------------------
+     Depoimentos: carrossel com rolagem nativa (snap)
+     ------------------------------------------------------------------ */
+  (function () {
+    var root = $('[data-tst]');
+    if (!root) return;
+    var track = $('[data-tst-track]', root);
+    var cards = $$('.tst-card', track);
+    var prev = $('[data-tst-prev]', root);
+    var next = $('[data-tst-next]', root);
+    var dotsWrap = $('[data-tst-dots]', root);
+    var controls = $('.tst__controls', root);
+    var dots = [], stepW = 1, pages = 1, raf = 0;
+
+    function measure() {
+      var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      stepW = cards[0].getBoundingClientRect().width + gap;
+      var perView = Math.max(1, Math.round((track.clientWidth + gap) / stepW));
+      pages = Math.max(1, cards.length - perView + 1);
+      controls.hidden = pages <= 1;
+      dotsWrap.textContent = '';
+      dots = [];
+      for (var i = 0; i < pages; i++) { var d = document.createElement('span'); dotsWrap.appendChild(d); dots.push(d); }
+      sync();
+    }
+    function index() { return clamp(Math.round(track.scrollLeft / stepW), 0, pages - 1); }
+    function sync() {
+      raf = 0;
+      var i = index();
+      dots.forEach(function (d, k) { d.classList.toggle('is-on', k === i); });
+      prev.disabled = track.scrollLeft <= 2;
+      next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 2;
+    }
+    function go(dir) {
+      track.scrollTo({ left: (index() + dir) * stepW, behavior: reduce ? 'auto' : 'smooth' });
+    }
+    prev.addEventListener('click', function () { go(-1); });
+    next.addEventListener('click', function () { go(1); });
+    track.addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(sync); }, { passive: true });
+    track.addEventListener('keydown', function (e) {
+      if (e.target !== track) return;
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+    });
+    var rt;
+    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(measure, 120); }, { passive: true });
+    measure();
+    fontsReady.then(measure);
   })();
 
   /* ------------------------------------------------------------------
@@ -2936,12 +3149,14 @@ html.no-js .acc-panel__inner > * { opacity: 1; transform: none; }
         clearTimeout(leaveTimer);
         var show = items.filter(function (it) { return cat === 'all' || it.getAttribute('data-cat') === cat; });
         var hide = items.filter(function (it) { return show.indexOf(it) === -1; });
+        show.forEach(function (it) { it.classList.remove('is-leaving'); });
         hide.forEach(function (it) { setOpen(it, false); if (!it.hidden) it.classList.add('is-leaving'); });
         leaveTimer = setTimeout(function () {
           hide.forEach(function (it) { it.hidden = true; it.classList.remove('is-leaving'); });
           show.forEach(function (it, k) {
             var wasHidden = it.hidden;
             it.hidden = false;
+            it.classList.remove('is-leaving');
             if (wasHidden && !reduce) {
               it.style.setProperty('--d', String(Math.min(k, 6)));
               it.classList.remove('is-in'); void it.offsetWidth; it.classList.add('is-in');

@@ -272,11 +272,11 @@
     </div>
   </div>
 
-  <main id="conteudo">
+  <main id="conteudo" tabindex="-1">
 
     <!-- ============ HERO ============ -->
     <section class="hero" id="topo" data-ambient="dark" aria-labelledby="hero-title">
-      <div class="hero__frame" data-hero-frame>
+      <div class="hero__frame" data-hero-frame data-dark-surface>
         <div class="hero__bg" aria-hidden="true">
           <div class="hero__orb-fallback"></div>
           <canvas class="hero__canvas" data-orb></canvas>
@@ -485,6 +485,74 @@
               <span class="care-tile__label">Viagens e passeios</span>
             </li>
           </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DEPOIMENTOS ============ -->
+    <section class="section testimonials" id="depoimentos" data-ambient="dark" aria-labelledby="tst-title">
+      <div class="testimonials__panel" data-dark-surface>
+        <span class="testimonials__glow" aria-hidden="true" data-speed="-0.05"></span>
+        <div class="container">
+          <header class="section-head section-head--center">
+            <p class="pill pill--glow" data-reveal>Depoimentos</p>
+            <h2 class="section-title section-title--light" id="tst-title" data-reveal style="--d:1">A confiança de quem já cuidou de <span class="hero__accent">quem ama</span></h2>
+            <p class="testimonials__sub" data-reveal style="--d:2">Mais do que cuidar, queremos que sua família tenha tranquilidade para confiar.</p>
+          </header>
+
+          <div class="tst" data-tst>
+            <ul class="tst__track" data-tst-track role="list" tabindex="0" aria-label="Depoimentos de famílias (role para ver mais)">
+            <li class="tst-card" data-reveal style="--d:2" data-spotlight>
+              <figure>
+                <span class="tst-card__stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>
+                <blockquote><p>“Além de serem ótimos profissionais, são muito humanos e estão cuidando do meu pai com muito carinho.”</p></blockquote>
+                <figcaption>Gabi Petkovic</figcaption>
+              </figure>
+            </li>
+            <li class="tst-card" data-reveal style="--d:3" data-spotlight>
+              <figure>
+                <span class="tst-card__stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>
+                <blockquote><p>“Cuida com carinho, dedicação, responsabilidade e atenção daqueles que amamos. Por isso, entregamos os cuidados de minha mãe e estamos bastante satisfeitos com a qualidade dos serviços.”</p></blockquote>
+                <figcaption>Ricardo Ferreira</figcaption>
+              </figure>
+            </li>
+            <li class="tst-card" data-reveal style="--d:4" data-spotlight>
+              <figure>
+                <span class="tst-card__stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>
+                <blockquote><p>“Há mais de um ano cuidando com muito profissionalismo da nossa mamãe de 90 anos. Comprometimento e respeito são as palavras que podem definir o trabalho de vocês.”</p></blockquote>
+                <figcaption>Triuze Yano Barone</figcaption>
+              </figure>
+            </li>
+            <li class="tst-card" data-reveal style="--d:5" data-spotlight>
+              <figure>
+                <span class="tst-card__stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>
+                <blockquote><p>“Destaco o atendimento, carinho, cuidado e dedicação. Meu pai merece esse cuidado e recomendo a Cuidare.”</p></blockquote>
+                <figcaption>Camila Domingues</figcaption>
+              </figure>
+            </li>
+            <li class="tst-card" data-reveal style="--d:5" data-spotlight>
+              <figure>
+                <span class="tst-card__stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>
+                <blockquote><p>“A Cuidare ofereceu assistência à minha mãe com cuidado, profissionalismo e carinho.”</p></blockquote>
+                <figcaption>Felipe Carvalho</figcaption>
+              </figure>
+            </li>
+            </ul>
+            <div class="tst__controls" data-reveal style="--d:4">
+              <button class="icon-btn icon-btn--glass" type="button" data-tst-prev aria-label="Depoimento anterior"><svg aria-hidden="true" style="transform:scaleX(-1)"><use href="#i-arrow"/></svg></button>
+              <div class="tst__dots" data-tst-dots aria-hidden="true"></div>
+              <button class="icon-btn icon-btn--glass" type="button" data-tst-next aria-label="Próximo depoimento"><svg aria-hidden="true"><use href="#i-arrow"/></svg></button>
+            </div>
+          </div>
+
+          <div class="testimonials__actions" data-reveal style="--d:5">
+            <a class="btn btn--primary btn--lg" data-magnetic data-wa href="https://wa.me/5511916349800" target="_blank" rel="noopener">
+              <svg class="btn__icon" aria-hidden="true"><use href="#i-whatsapp"/></svg><span>Quero conhecer a Cuidare Vila Mariana</span>
+            </a>
+            <a class="btn btn--ghost btn--lg" data-magnetic data-reviews href="https://www.google.com/maps/search/?api=1&amp;query=Cuidare%20Vila%20Mariana" target="_blank" rel="noopener">
+              <svg class="btn__icon" aria-hidden="true"><use href="#i-star"/></svg><span>Ver todas as avaliações</span>
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -788,7 +856,7 @@
   </footer>
 
   <!-- CTA flutuante (mobile) -->
-  <a class="float-cta" data-float-cta data-wa href="https://wa.me/5511916349800" target="_blank" rel="noopener" aria-label="Falar no WhatsApp" tabindex="-1">
+  <a class="float-cta" data-float-cta data-wa href="https://wa.me/5511916349800" target="_blank" rel="noopener" aria-label="Falar no WhatsApp" tabindex="-1" aria-hidden="true">
     <svg aria-hidden="true"><use href="#i-whatsapp"/></svg><span>Avaliação gratuita</span>
   </a>
 </body>
