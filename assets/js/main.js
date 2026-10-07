@@ -54,7 +54,10 @@
   var ctaSection = $('#contato');
   var parallaxEls = (!reduce && !lowPower) ? $$('[data-speed]') : [];
   var darkSurfaces = $$('[data-dark-surface]');
+  var ownCta = $$('[data-own-cta]');
+  var plansBar = $('[data-plans-bar]');
   var ticking = false;
+  var lastY = window.scrollY || 0, scrollingDown = false, idleTimer = 0;
 
   function onScroll() {
     if (!ticking) { ticking = true; requestAnimationFrame(update); }
@@ -63,6 +66,13 @@
   function update() {
     ticking = false;
     var y = window.scrollY || window.pageYOffset;
+    var dy = y - lastY;
+    lastY = y;
+    if (Math.abs(dy) > 4) {
+      scrollingDown = dy > 0;
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(function () { scrollingDown = false; onScroll(); }, 900);
+    }
     var vh = window.innerHeight;
     var heroH = heroFrame ? heroFrame.offsetHeight : vh;
     var headerH = header.offsetHeight;
@@ -90,9 +100,19 @@
       });
     }
 
+    if (plansBar) {
+      var pb = plansBar.getBoundingClientRect();
+      plansBar.classList.toggle('is-stuck', mqMobile.matches && pb.top <= headerH + 1 && pb.bottom > headerH);
+    }
+
     if (floatCta) {
       var nearEnd = ctaSection ? ctaSection.getBoundingClientRect().top < vh * 0.85 : false;
-      var show = y > heroH * 0.75 && !nearEnd && !document.body.classList.contains('menu-open');
+      // some onde a seção já tem seus próprios botões (planos, depoimentos)
+      var overOwn = ownCta.some(function (el) {
+        var r = el.getBoundingClientRect();
+        return r.top < vh * 0.85 && r.bottom > vh * 0.25;
+      });
+      var show = y > heroH * 0.75 && !nearEnd && !overOwn && !scrollingDown && !document.body.classList.contains('menu-open');
       if (show !== floatCta.classList.contains('is-visible')) {
         floatCta.classList.toggle('is-visible', show);
         floatCta.setAttribute('tabindex', show ? '0' : '-1');

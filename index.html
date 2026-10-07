@@ -491,7 +491,7 @@
 
     <!-- ============ DEPOIMENTOS ============ -->
     <section class="section testimonials" id="depoimentos" data-ambient="dark" aria-labelledby="tst-title">
-      <div class="testimonials__panel" data-dark-surface>
+      <div class="testimonials__panel" data-dark-surface data-own-cta>
         <span class="testimonials__glow" aria-hidden="true" data-speed="-0.05"></span>
         <div class="container">
           <header class="section-head section-head--center">
@@ -558,14 +558,14 @@
     </section>
 
     <!-- ============ PLANOS ============ -->
-    <section class="section plans" id="planos" data-ambient="ice" aria-labelledby="plans-title">
+    <section class="section plans" id="planos" data-ambient="ice" aria-labelledby="plans-title" data-own-cta>
       <div class="container">
         <header class="section-head section-head--center">
           <p class="pill" data-reveal>Planos</p>
           <h2 class="section-title" id="plans-title" data-reveal style="--d:1">Por dia ou por mês, <span class="text-accent">conforme a necessidade</span> da sua família.</h2>
         </header>
 
-        <div class="plans__bar" data-reveal style="--d:2">
+        <div class="plans__bar" data-plans-bar data-reveal style="--d:2">
           <div class="segmented" role="tablist" aria-label="Modalidade" data-segmented>
             <span class="segmented__pill" aria-hidden="true"></span>
             <button type="button" role="tab" aria-selected="true" aria-controls="plans-panel" id="tab-segseg" data-mode="segseg">Seg a seg</button>
@@ -811,7 +811,7 @@
       <div class="container">
         <div class="cta__card" data-reveal data-spotlight>
           <span class="cta__orb" aria-hidden="true" data-speed="-0.06"></span>
-          <p class="pill pill--glow">Contratar este plano</p>
+          <a class="pill pill--glow" data-wa data-wa-msg="contratar" href="https://wa.me/5511916349800" target="_blank" rel="noopener">Contratar este plano</a>
           <h2 class="cta__title" id="cta-title">Cuidado humanizado para <span class="hero__accent">quem você mais ama.</span></h2>
           <p class="cta__text">A visita e a avaliação são gratuitas, com horário agendado.</p>
           <div class="cta__actions">
@@ -827,7 +827,7 @@
     </section>
   </main>
 
-  <footer class="site-footer">
+  <footer class="site-footer" data-dark-surface>
     <div class="container site-footer__inner">
       <div class="site-footer__brand">
         <picture>

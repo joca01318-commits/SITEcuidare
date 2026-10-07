@@ -147,6 +147,8 @@ body[data-amb="ice"] .ambient__b { transform: translate(15vmax, -10vmax); }
   background: var(--cyan-100);
   border: 1px solid rgba(90, 193, 225, 0.45);
 }
+a.pill { transition: transform .4s var(--ease-out), box-shadow .4s var(--ease-out), background-color .3s; }
+a.pill:hover { transform: translateY(-2px); background: #74cce8; }
 .pill--glow {
   color: var(--navy-950);
   background: var(--cyan-400);
@@ -276,7 +278,7 @@ body[data-amb="ice"] .ambient__b { transform: translate(15vmax, -10vmax); }
 }
 .site-header::before {
   content: ""; position: absolute; inset: 0; z-index: -1;
-  background: rgba(5, 33, 58, 0.55);
+  background: rgba(5, 33, 58, 0.78);
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -285,7 +287,7 @@ body[data-amb="ice"] .ambient__b { transform: translate(15vmax, -10vmax); }
 }
 .site-header.is-scrolled::before { opacity: 1; }
 .site-header[data-mode="light"] { color: var(--navy-900); }
-.site-header[data-mode="light"]::before { background: rgba(245, 252, 255, 0.78); border-bottom-color: var(--line); }
+.site-header[data-mode="light"]::before { background: rgba(245, 252, 255, 0.94); border-bottom-color: var(--line); }
 
 .site-header__inner { height: 100%; display: flex; align-items: center; gap: 32px; }
 
@@ -575,9 +577,8 @@ html.motion .section-title[data-reveal].is-in { animation-name: rise-blur; anima
     linear-gradient(160deg, var(--navy-800), var(--navy-950));
 }
 .compare-card__glow {
-  position: absolute; width: 60%; aspect-ratio: 1; right: -15%; bottom: -30%; border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(90, 193, 225, 0.4), transparent);
-  animation: float 12s var(--ease-io) infinite;
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(55% 60% at 95% 100%, rgba(90, 193, 225, 0.32), transparent 70%);
 }
 .compare-card__title { font-size: clamp(1.25rem, 2vw, 1.6rem); font-weight: 600; letter-spacing: -0.02em; }
 .compare-card--cuidare .compare-card__title { color: var(--cyan-400); }
@@ -924,10 +925,8 @@ html.no-js .arc__controls { display: none; }
 @property --ang { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
 @keyframes spin { to { --ang: 360deg; } }
 .plan__aura {
-  position: absolute; z-index: -1; width: 140%; aspect-ratio: 1; left: -20%; top: 40%;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(44, 143, 184, 0.45), transparent);
-  animation: float 10s var(--ease-io) infinite;
+  position: absolute; z-index: -1; inset: 0; border-radius: inherit;
+  background: radial-gradient(80% 50% at 50% 85%, rgba(44, 143, 184, 0.42), transparent 70%);
   pointer-events: none;
 }
 .plan--featured .plan__name { color: var(--cyan-400); }
@@ -1162,7 +1161,16 @@ html.no-js .acc-panel__inner > * { opacity: 1; transform: none; }
   .care-tile__label { font-size: 1rem; }
 
   /* Planos: seletor fixo + cards deslizáveis */
-  .plans__bar { position: sticky; top: calc(var(--header-h) + 10px); margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); }
+  .plans__bar { position: sticky; top: var(--header-h); margin-inline: calc(var(--gutter) * -1); padding: 10px var(--gutter); margin-bottom: 26px; }
+  .plans__bar::before {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background: rgba(234, 248, 253, 0.96);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border-bottom: 1px solid var(--line);
+    opacity: 0; transition: opacity .3s var(--ease-out);
+  }
+  .plans__bar.is-stuck::before { opacity: 1; }
   .segmented { width: 100%; justify-content: space-between; box-shadow: 0 12px 30px -16px rgba(9, 52, 87, 0.45); }
   .segmented button { flex: 1; padding: 11px 6px; font-size: 0.86rem; }
   .plans__grid {
@@ -1191,6 +1199,13 @@ html.no-js .acc-panel__inner > * { opacity: 1; transform: none; }
 @media (max-width: 380px) {
   .segmented button { font-size: 0.8rem; }
   .hero__title { font-size: 2.3rem; }
+  .compare__switch button { padding: 9px 9px; font-size: 0.74rem; white-space: nowrap; }
+  .hero__eyebrow { font-size: 0.68rem; letter-spacing: 0.08em; padding-inline: 12px; }
+  .arc { --card-h: 410px; }
+  .arc-card__art { height: 140px; }
+  .plan { padding-inline: 18px; }
+  .plan__cta { padding-inline: 14px; font-size: 0.9rem; gap: 6px; }
+  .float-cta { padding: 12px 18px; font-size: 0.88rem; }
 }
 
 /* Dispositivos sem hover: sem tilt nem spotlight */
