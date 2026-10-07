@@ -29,7 +29,10 @@
   var WA_NUMBER = '5511916349800';
   var WA_DEFAULT = 'Olá! Gostaria de agendar uma avaliação gratuita com a Cuidare Vila Mariana.';
   function waLink(msg) { return 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg); }
-  $$('[data-wa]').forEach(function (a) { a.href = waLink(WA_DEFAULT); });
+  var WA_CONTRATAR = 'Olá! Gostaria de contratar um plano da Cuidare Vila Mariana.';
+  $$('[data-wa]').forEach(function (a) {
+    a.href = waLink(a.getAttribute('data-wa-msg') === 'contratar' ? WA_CONTRATAR : WA_DEFAULT);
+  });
 
   /* ------------------------------------------------------------------
      Entrada cinematográfica
