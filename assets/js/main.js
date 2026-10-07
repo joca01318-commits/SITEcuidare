@@ -528,10 +528,10 @@
       label: 'Seg a seg',
       note: 'Seg a sex = 22 dias • Seg a sáb = 26 dias • Seg a seg = 30 dias • Orçamento válido por 5 dias.',
       plans: {
-        '24h': { pre: '', price: 13497, meta: 'Seg a seg • 30 dias', extras: ['Seg a sex: R$ 9.997', 'Seg a sáb: R$ 11.997'] },
-        '12h': { pre: '', price: 6900, meta: 'Diurno • Seg a seg • 30 dias', extras: ['Seg a sex: R$ 5.697', 'Seg a sáb: R$ 6.297', 'Noturno: R$ 5.997 / 6.597 / 6.997'] },
-        '8h': { pre: '', price: 5897, meta: 'Seg a seg • 30 dias', extras: ['Seg a sex: R$ 4.697', 'Seg a sáb: R$ 5.197'] },
-        '6h': { pre: '', price: 4997, meta: 'Seg a seg • 30 dias', extras: ['Seg a sex: R$ 3.997', 'Seg a sáb: R$ 4.497'] }
+        '24h': { pre: '', price: 13997, meta: 'Seg a seg • 30 dias', extras: ['Seg a sex: R$ 9.997', 'Seg a sáb: R$ 11.997'] },
+        '12h': { pre: '', price: 6997, meta: 'Seg a seg • 30 dias', extras: ['Seg a sex: R$ 5.697', 'Seg a sáb: R$ 6.297'] },
+        '8h': { pre: '', price: 6197, meta: 'Seg a seg • 30 dias', extras: ['Seg a sex: R$ 4.697', 'Seg a sáb: R$ 5.197'] },
+        '6h': { pre: '', price: 5197, meta: 'Seg a seg • 30 dias', extras: ['Seg a sex: R$ 3.997', 'Seg a sáb: R$ 4.497'] }
       }
     },
     segsab: {
@@ -539,7 +539,7 @@
       note: 'Orçamento válido por 5 dias.',
       plans: {
         '24h': { pre: 'Mensal por', price: 11997, meta: '26 dias', extras: [] },
-        '12h': { pre: 'Diurno, mensal por', price: 6297, meta: '26 dias • Noturno: R$ 6.597', extras: [] },
+        '12h': { pre: 'Mensal por', price: 6297, meta: '26 dias', extras: [] },
         '8h': { pre: 'Mensal por', price: 5197, meta: '26 dias', extras: [] },
         '6h': { pre: 'Mensal por', price: 4497, meta: '26 dias', extras: [] }
       }
@@ -549,7 +549,7 @@
       note: 'Orçamento válido por 5 dias.',
       plans: {
         '24h': { pre: 'Mensal por', price: 9997, meta: '22 dias', extras: [] },
-        '12h': { pre: 'Diurno, mensal por', price: 5697, meta: '22 dias • Noturno: R$ 5.997', extras: [] },
+        '12h': { pre: 'Mensal por', price: 5697, meta: '22 dias', extras: [] },
         '8h': { pre: 'Mensal por', price: 4697, meta: '22 dias', extras: [] },
         '6h': { pre: 'Mensal por', price: 3997, meta: '22 dias', extras: [] }
       }
@@ -558,10 +558,10 @@
       label: 'Diária',
       note: 'Orçamento válido por 5 dias.',
       plans: {
-        '24h': { pre: 'Diária por', price: 530, meta: '', extras: ['Fds/feriado: R$ 550'] },
-        '12h': { pre: 'Diurno, diária por', price: 280, meta: '', extras: ['Fds/feriado: R$ 290', 'Noturno: R$ 290 (fds R$ 300)'] },
-        '8h': { pre: 'Diária por', price: 250, meta: '', extras: ['Fds/feriado: R$ 260'] },
-        '6h': { pre: 'Diária por', price: 227, meta: '', extras: ['Fds/feriado: R$ 237'] }
+        '24h': { pre: 'Diária por', price: 579, meta: '', extras: [] },
+        '12h': { pre: 'Diurno, diária por', price: 319, meta: '', extras: ['Noturno: R$ 349'] },
+        '8h': { pre: 'Diária por', price: 259, meta: '', extras: [] },
+        '6h': { pre: 'Diária por', price: 219, meta: '', extras: [] }
       }
     }
   };
