@@ -587,8 +587,8 @@
       cards.forEach(function (card) {
         var name = PLAN_NAMES[card.getAttribute('data-plan')];
         var a = $('[data-plan-cta]', card);
-        a.href = waLink('Olá! Gostaria de agendar uma avaliação gratuita. Tenho interesse no plano ' + name + ' (' + data.label + ').');
-        a.setAttribute('aria-label', 'Avaliação gratuita — ' + name + ', ' + data.label + ' (abre o WhatsApp)');
+        a.href = waLink('Olá! Gostaria de contratar o plano ' + name + ' (' + data.label + ') com a Cuidare Vila Mariana.');
+        a.setAttribute('aria-label', 'Contratar este plano — ' + name + ', ' + data.label + ' (abre o WhatsApp)');
       });
     }
 

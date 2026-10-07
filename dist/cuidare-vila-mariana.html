@@ -1790,7 +1790,7 @@ main:focus { outline: none; }
                 <p class="plan__meta" data-f="meta">Seg a seg • 30 dias</p>
               </div>
               <ul class="plan__extras" data-f="extras"><li>Seg a sex: R$ 9.997</li><li>Seg a sáb: R$ 11.997</li></ul>
-              <a class="btn btn--light btn--block plan__cta" data-magnetic data-plan-cta href="https://wa.me/5511916349800" target="_blank" rel="noopener"><span>Avaliação gratuita</span><svg class="btn__icon btn__icon--end" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+              <a class="btn btn--light btn--block plan__cta" data-magnetic data-plan-cta href="https://wa.me/5511916349800" target="_blank" rel="noopener"><span>Contratar este plano</span><svg class="btn__icon btn__icon--end" aria-hidden="true"><use href="#i-arrow"/></svg></a>
             </li>
             <li class="plan" data-plan="12h" data-reveal style="--d:4" data-tilt="3" data-spotlight>
               <h3 class="plan__name">+Cuidado 12H</h3>
@@ -1801,7 +1801,7 @@ main:focus { outline: none; }
                 <p class="plan__meta" data-f="meta">Diurno • Seg a seg • 30 dias</p>
               </div>
               <ul class="plan__extras" data-f="extras"><li>Seg a sex: R$ 5.697</li><li>Seg a sáb: R$ 6.297</li><li>Noturno: R$ 5.997 / 6.597 / 6.997</li></ul>
-              <a class="btn btn--primary btn--block plan__cta" data-magnetic data-plan-cta href="https://wa.me/5511916349800" target="_blank" rel="noopener"><span>Avaliação gratuita</span><svg class="btn__icon btn__icon--end" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+              <a class="btn btn--primary btn--block plan__cta" data-magnetic data-plan-cta href="https://wa.me/5511916349800" target="_blank" rel="noopener"><span>Contratar este plano</span><svg class="btn__icon btn__icon--end" aria-hidden="true"><use href="#i-arrow"/></svg></a>
             </li>
             <li class="plan" data-plan="8h" data-reveal style="--d:5" data-tilt="3" data-spotlight>
               <h3 class="plan__name">+Cuidado 8H</h3>
@@ -1812,7 +1812,7 @@ main:focus { outline: none; }
                 <p class="plan__meta" data-f="meta">Seg a seg • 30 dias</p>
               </div>
               <ul class="plan__extras" data-f="extras"><li>Seg a sex: R$ 4.697</li><li>Seg a sáb: R$ 5.197</li></ul>
-              <a class="btn btn--primary btn--block plan__cta" data-magnetic data-plan-cta href="https://wa.me/5511916349800" target="_blank" rel="noopener"><span>Avaliação gratuita</span><svg class="btn__icon btn__icon--end" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+              <a class="btn btn--primary btn--block plan__cta" data-magnetic data-plan-cta href="https://wa.me/5511916349800" target="_blank" rel="noopener"><span>Contratar este plano</span><svg class="btn__icon btn__icon--end" aria-hidden="true"><use href="#i-arrow"/></svg></a>
             </li>
             <li class="plan" data-plan="6h" data-reveal style="--d:6" data-tilt="3" data-spotlight>
               <h3 class="plan__name">+Cuidado 6H</h3>
@@ -1823,7 +1823,7 @@ main:focus { outline: none; }
                 <p class="plan__meta" data-f="meta">Seg a seg • 30 dias</p>
               </div>
               <ul class="plan__extras" data-f="extras"><li>Seg a sex: R$ 3.997</li><li>Seg a sáb: R$ 4.497</li></ul>
-              <a class="btn btn--primary btn--block plan__cta" data-magnetic data-plan-cta href="https://wa.me/5511916349800" target="_blank" rel="noopener"><span>Avaliação gratuita</span><svg class="btn__icon btn__icon--end" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+              <a class="btn btn--primary btn--block plan__cta" data-magnetic data-plan-cta href="https://wa.me/5511916349800" target="_blank" rel="noopener"><span>Contratar este plano</span><svg class="btn__icon btn__icon--end" aria-hidden="true"><use href="#i-arrow"/></svg></a>
             </li>
           </ul>
           <div class="plans__dots" data-plans-dots aria-hidden="true"><span></span><span></span><span></span><span></span></div>
@@ -3048,8 +3048,8 @@ main:focus { outline: none; }
       cards.forEach(function (card) {
         var name = PLAN_NAMES[card.getAttribute('data-plan')];
         var a = $('[data-plan-cta]', card);
-        a.href = waLink('Olá! Gostaria de agendar uma avaliação gratuita. Tenho interesse no plano ' + name + ' (' + data.label + ').');
-        a.setAttribute('aria-label', 'Avaliação gratuita — ' + name + ', ' + data.label + ' (abre o WhatsApp)');
+        a.href = waLink('Olá! Gostaria de contratar o plano ' + name + ' (' + data.label + ') com a Cuidare Vila Mariana.');
+        a.setAttribute('aria-label', 'Contratar este plano — ' + name + ', ' + data.label + ' (abre o WhatsApp)');
       });
     }
 
