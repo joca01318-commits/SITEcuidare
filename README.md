@@ -1,45 +1,45 @@
 # Cuidare Vila Mariana — site
 
-Site institucional da Cuidare Vila Mariana, construído a partir do portfólio "Planos — Apresentação"
-(conteúdo, números, FAQ e tabela de preços preservados sem alteração).
+Experiência digital da Cuidare Vila Mariana em três páginas:
+
+| Rota | Função |
+| --- | --- |
+| `/` | Home institucional: hero, indicadores, diferenciais, tipos de atendimento, depoimentos, como funciona, chamada final |
+| `/experiencia/` | Jornada interativa em 7 etapas, com perguntas condicionais, resumo ao vivo e escultura 3D que responde às escolhas |
+| `/avaliacao/` | Resumo editável, solicitação de avaliação (Netlify Forms), continuação pelo WhatsApp e confirmação |
+
+Não há tabela pública de preços. As propostas são personalizadas pela equipe comercial.
 
 ## Estrutura
 
 ```
-index.html              página única (semântica, SEO, JSON-LD LocalBusiness + FAQPage)
-assets/css/styles.css   sistema visual (tokens, componentes, animações, responsivo)
-assets/js/main.js       interações (sem dependências)
-assets/js/orb.js        esfera 3D do hero em WebGL puro (carregada sob demanda)
-assets/fonts/           Lexend variável, hospedada localmente (SIL OFL)
-assets/img/             logos (extraídos do portfólio), favicon, imagem de compartilhamento
+index.html, experiencia/, avaliacao/, 404.html
+assets/css/site.css        sistema visual (mobile first)
+assets/js/config.js        configuração pública (WhatsApp, formulários, análise, fotos)
+assets/js/core.js          base comum: links, origem da visita, consentimento, privacidade, 3D
+assets/js/jornada.js       perguntas, regras condicionais, prioridade e resumo
+assets/js/experiencia.js   motor da experiência
+assets/js/avaliacao.js     resumo, validação e envio
+assets/js/orb.js           escultura em WebGL (sem bibliotecas), com versão leve em CSS
+assets/fonts/              Instrument Serif + Manrope (SIL OFL), hospedadas localmente
+netlify/functions/         referência de precificação no servidor (desativada por padrão)
+_headers, _redirects, netlify.toml, robots.txt, sitemap.xml
+docs/INTEGRACOES.md        integrações, pendências e checklist de publicação
 ```
 
-Não há etapa de build: basta publicar a pasta inteira (ex.: arrastar para o Netlify Drop).
+Sem etapa de build e sem dependências de terceiros no navegador.
 
-## Experiência
+## Visualizar localmente
 
-| Seção | Interação |
-| --- | --- |
-| Hero | entrada cinematográfica, esfera orgânica 3D que reage ao mouse e ao scroll, moldura que se recolhe ao rolar |
-| Números | contadores animados (valor final idêntico ao original), cards com tilt e iluminação |
-| Comparativo | alternância "Contratando diretamente" × "Com a Cuidare" |
-| Diferenciais | carrossel em arco (arrastar, setas, teclado, trackpad) |
-| Atendimento | tiles com profundidade e microinterações |
-| Planos | seletor Seg a seg / Seg a sáb / Seg a sex / Diária com transição dos valores; +Cuidado 24H em destaque |
-| FAQ | filtros por tema + accordion com abertura suave |
-| CTA | WhatsApp (11) 91634-9800 com mensagem pré-preenchida por plano |
+```
+python3 -m http.server 8000
+# abra http://localhost:8000
+```
 
-## Performance e acessibilidade
+O envio do formulário só funciona publicado no Netlify, com o Forms ativo. Fora dele, o site mostra
+erro e oferece o WhatsApp, sem simular sucesso.
 
-- Sem bibliotecas externas; ~220 KB no total (fonte + logos + CSS + JS).
-- WebGL pausa fora da tela, reduz a resolução em aparelhos lentos e cai para um fallback em CSS
-  quando o dispositivo é fraco, está em modo economia de dados ou não suporta WebGL.
-- `prefers-reduced-motion`: animações decorativas desligadas e esfera renderizada como quadro estático.
-- Tilt, botões magnéticos e spotlight só em dispositivos com mouse.
-- Navegação por teclado (setas no carrossel e no seletor), foco visível, `aria-*` nos componentes,
-  conteúdo legível sem JavaScript.
+## Publicar
 
-## Preços
-
-Os valores ficam em `PLAN_DATA` (`assets/js/main.js`) e o estado inicial (Seg a seg) também está
-no HTML. Ao alterar um preço, atualize os dois lugares.
+Arraste a pasta do site (sem `docs/`) em *Netlify → Add new project → Deploy manually*, ou conecte o
+repositório. Antes de trocar o domínio, siga `docs/INTEGRACOES.md`.

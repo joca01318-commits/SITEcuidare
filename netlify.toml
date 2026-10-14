@@ -1,0 +1,5 @@
+# Usado em publicações via Git ou Netlify CLI.
+# (Publicações por "arrastar e soltar" ignoram as funções de servidor.)
+[build]
+  publish = "."
+  functions = "netlify/functions"

@@ -1,0 +1,5 @@
+# Documentação e código de servidor não são páginas públicas
+/docs/*        /404.html  404
+/netlify/*     /404.html  404
+/README.md     /404.html  404
+/netlify.toml  /404.html  404

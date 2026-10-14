@@ -1,2 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /avaliacao/
+
+Sitemap: https://cuidare-vila-marianaportifolio03.netlify.app/sitemap.xml

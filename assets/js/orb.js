@@ -1,6 +1,7 @@
-/* Cuidare — esfera orgânica em WebGL (sem bibliotecas).
-   Pausa fora da tela, reduz resolução em aparelhos lentos e
-   renderiza um quadro estático com prefers-reduced-motion. */
+/* Cuidare — escultura orgânica em WebGL (sem bibliotecas).
+   Cada instância: init(canvas, opts) -> { setScroll, setSatellites, pulse, destroy }.
+   Pausa fora da tela, reduz a resolução em aparelhos lentos e desenha um quadro
+   estático com prefers-reduced-motion. */
 (function () {
   'use strict';
 
@@ -45,11 +46,8 @@
     '  vec3 t=normalize(cross(p,abs(p.y)<0.99?vec3(0.0,1.0,0.0):vec3(1.0,0.0,0.0)));',
     '  vec3 b=normalize(cross(p,t));',
     '  float e=0.012;',
-    '  vec3 d0=displace(p);',
-    '  vec3 d1=displace(normalize(p+t*e));',
-    '  vec3 d2=displace(normalize(p+b*e));',
-    '  vec3 n=normalize(cross(d1-d0,d2-d0));',
-    '  if(dot(n,p)<0.0) n=-n;',
+    '  vec3 d0=displace(p); vec3 d1=displace(normalize(p+t*e)); vec3 d2=displace(normalize(p+b*e));',
+    '  vec3 n=normalize(cross(d1-d0,d2-d0)); if(dot(n,p)<0.0) n=-n;',
     '  vec4 w=uModel*vec4(d0,1.0);',
     '  vW=w.xyz; vN=normalize((uModel*vec4(n,0.0)).xyz); vD=length(d0)-1.0;',
     '  gl_Position=uProj*uView*w;',
@@ -60,20 +58,21 @@
     'precision mediump float;',
     'varying vec3 vN; varying vec3 vW; varying float vD;',
     'uniform vec3 uCam; uniform vec3 uLight; uniform float uAlpha; uniform float uPhase; uniform float uGlow;',
+    'uniform vec3 uDeep; uniform vec3 uMid; uniform vec3 uRim; uniform vec3 uSpec;',
     'void main(){',
     '  vec3 N=normalize(vN); vec3 V=normalize(uCam-vW); vec3 L=normalize(uLight-vW);',
     '  float ndl=max(dot(N,L),0.0); float ndv=max(dot(N,V),0.0);',
-    '  float fres=pow(1.0-ndv,2.3);',
-    '  vec3 H=normalize(L+V); float spec=pow(max(dot(N,H),0.0),36.0);',
-    '  vec3 deep=vec3(0.035,0.19,0.33); vec3 mid=vec3(0.11,0.45,0.61);',
-    '  vec3 cyan=vec3(0.353,0.757,0.882); vec3 ice=vec3(0.88,0.96,0.99);',
-    '  vec3 col=mix(deep,mid,smoothstep(0.0,1.0,ndl));',
-    '  col=mix(col,cyan,fres*0.85);',
-    '  col+=cyan*clamp(vD*1.4,-0.04,0.16);',
-    '  float ph=fres*6.0+uPhase*0.25;',
-    '  col+=0.05*vec3(sin(ph),sin(ph+2.1),sin(ph+4.2))*fres;',
-    '  col+=ice*spec*0.32+cyan*uGlow*fres*0.4;',
-    '  float a=uAlpha*mix(0.94,1.0,fres);',
+    '  float fres=pow(1.0-ndv,2.2);',
+    '  vec3 H=normalize(L+V); float spec=pow(max(dot(N,H),0.0),40.0);',
+    '  float wrap=ndl*0.75+0.25;',
+    '  vec3 col=mix(uDeep,uMid,smoothstep(0.0,1.0,wrap));',
+    '  col*=mix(0.82,1.04,smoothstep(0.0,0.9,ndl));',
+    '  col=mix(col,uRim,fres*0.62);',
+    '  col+=uMid*clamp(vD*1.2,-0.04,0.14);',
+    '  float ph=fres*5.0+uPhase*0.22;',
+    '  col+=0.035*vec3(sin(ph),sin(ph+2.1),sin(ph+4.2))*fres;',
+    '  col+=uSpec*spec*0.5+uRim*uGlow*fres*0.35;',
+    '  float a=uAlpha;',
     '  gl_FragColor=vec4(col*a,a);',
     '}'
   ].join('\n');
@@ -94,15 +93,14 @@
 
   var PT_FS = [
     'precision mediump float;',
-    'varying float vA; uniform float uAlpha;',
+    'varying float vA; uniform float uAlpha; uniform vec3 uColor;',
     'void main(){',
     '  float d=length(gl_PointCoord-0.5);',
-    '  float a=smoothstep(0.5,0.05,d)*vA*uAlpha*0.75;',
-    '  gl_FragColor=vec4(vec3(0.62,0.88,0.96)*a,a);',
+    '  float a=smoothstep(0.5,0.08,d)*vA*uAlpha*0.55;',
+    '  gl_FragColor=vec4(uColor*a,a);',
     '}'
   ].join('\n');
 
-  /* ---------------- matemática ---------------- */
   function mul(a, b) {
     var o = new Float32Array(16);
     for (var c = 0; c < 4; c++) for (var r = 0; r < 4; r++) {
@@ -122,12 +120,11 @@
     var S = new Float32Array([s, 0, 0, 0, 0, s, 0, 0, 0, 0, s, 0, 0, 0, 0, 1]);
     return mul(T, mul(RY, mul(RX, S)));
   }
-
   function icosphere(level) {
     var t = (1 + Math.sqrt(5)) / 2;
+    function nrm(v) { var l = Math.hypot(v[0], v[1], v[2]); return [v[0] / l, v[1] / l, v[2] / l]; }
     var verts = [[-1, t, 0], [1, t, 0], [-1, -t, 0], [1, -t, 0], [0, -1, t], [0, 1, t], [0, -1, -t], [0, 1, -t], [t, 0, -1], [t, 0, 1], [-t, 0, -1], [-t, 0, 1]].map(nrm);
     var faces = [[0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11], [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8], [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9], [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1]];
-    function nrm(v) { var l = Math.hypot(v[0], v[1], v[2]); return [v[0] / l, v[1] / l, v[2] / l]; }
     for (var lv = 0; lv < level; lv++) {
       var cache = {};
       var mid = function (a, b) {
@@ -151,8 +148,6 @@
     faces.forEach(function (f, i) { idx[i * 3] = f[0]; idx[i * 3 + 1] = f[1]; idx[i * 3 + 2] = f[2]; });
     return { pos: pos, idx: idx };
   }
-
-  /* ---------------- WebGL ---------------- */
   function program(gl, vs, fs) {
     function sh(type, src) {
       var s = gl.createShader(type);
@@ -169,40 +164,32 @@
     for (var i = 0; i < n; i++) { var info = gl.getActiveUniform(p, i); u[info.name] = gl.getUniformLocation(p, info.name); }
     return { p: p, u: u };
   }
+  function hex(h) { var n = parseInt(h.replace('#', ''), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
 
-  var api = { setScroll: function () {} };
+  var DEFAULT_PALETTE = { deep: '#1f4537', mid: '#7fa392', rim: '#f4efe4', spec: '#ffffff', particle: '#2b5a49' };
+  var MAX_SAT = 7;
 
-  api.init = function (canvas, opts) {
+  function init(canvas, opts) {
     opts = opts || {};
     var gl;
-    try {
-      gl = canvas.getContext('webgl', { antialias: true, alpha: true, premultipliedAlpha: true, powerPreference: 'high-performance' });
-    } catch (e) { gl = null; }
-    if (!gl) { if (opts.onFail) opts.onFail(); return false; }
+    try { gl = canvas.getContext('webgl', { antialias: true, alpha: true, premultipliedAlpha: true }); } catch (e) { gl = null; }
+    if (!gl) { if (opts.onFail) opts.onFail(); return null; }
 
-    var mobile = !!opts.mobile;
-    var reduce = !!opts.reduce;
+    var mobile = !!opts.mobile, reduce = !!opts.reduce;
+    var pal = {}; var P = Object.assign({}, DEFAULT_PALETTE, opts.palette || {});
+    Object.keys(P).forEach(function (k) { pal[k] = hex(P[k]); });
+
     var orbP, ptP;
-    try {
-      orbP = program(gl, ORB_VS, ORB_FS);
-      ptP = program(gl, PT_VS, PT_FS);
-    } catch (err) {
-      api.lastError = String(err && err.message || err);
-      if (opts.onFail) opts.onFail();
-      return false;
-    }
+    try { orbP = program(gl, ORB_VS, ORB_FS); ptP = program(gl, PT_VS, PT_FS); }
+    catch (err) { init.lastError = String(err && err.message || err); if (opts.onFail) opts.onFail(); return null; }
 
     var mesh = icosphere(mobile ? 4 : 5);
-    var vbo = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-    gl.bufferData(gl.ARRAY_BUFFER, mesh.pos, gl.STATIC_DRAW);
-    var ibo = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, mesh.idx, gl.STATIC_DRAW);
+    var vbo = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, vbo); gl.bufferData(gl.ARRAY_BUFFER, mesh.pos, gl.STATIC_DRAW);
+    var ibo = gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, mesh.idx, gl.STATIC_DRAW);
     var orbPos = gl.getAttribLocation(orbP.p, 'aPos');
 
-    var COUNT = mobile ? 70 : 160;
-    var pts = new Float32Array(COUNT * 4);
+    var COUNT = opts.particles !== undefined ? opts.particles : (mobile ? 50 : 120);
+    var pts = new Float32Array(Math.max(COUNT, 1) * 4);
     for (var i = 0; i < COUNT; i++) {
       var th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1), r = 1.3 + Math.random() * 1.1;
       pts[i * 4] = r * Math.sin(ph) * Math.cos(th);
@@ -210,61 +197,46 @@
       pts[i * 4 + 2] = r * Math.sin(ph) * Math.sin(th);
       pts[i * 4 + 3] = Math.random();
     }
-    var pbo = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, pbo);
-    gl.bufferData(gl.ARRAY_BUFFER, pts, gl.STATIC_DRAW);
-    var ptPos = gl.getAttribLocation(ptP.p, 'aPos');
-    var ptSeed = gl.getAttribLocation(ptP.p, 'aSeed');
+    var pbo = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, pbo); gl.bufferData(gl.ARRAY_BUFFER, pts, gl.STATIC_DRAW);
+    var ptPos = gl.getAttribLocation(ptP.p, 'aPos'), ptSeed = gl.getAttribLocation(ptP.p, 'aSeed');
 
     gl.enable(gl.DEPTH_TEST);
-    gl.enable(gl.CULL_FACE);
-    gl.cullFace(gl.BACK);
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    gl.enable(gl.CULL_FACE); gl.cullFace(gl.BACK);
+    gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     gl.clearColor(0, 0, 0, 0);
 
     var FOV = 35 * Math.PI / 180, CAMZ = 6;
     var view = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -CAMZ, 1]);
     var proj, layout = { x: 0, y: 0, s: 1, a: 1 };
-    var dprCap = mobile ? 1.5 : 1.75;
-    var dpr = Math.min(window.devicePixelRatio || 1, dprCap);
+    var dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 1.75);
+
+    var layoutFn = opts.layout || function (aspect, hw, hh) { return { x: 0, y: 0, s: Math.min(hh, hw) * 0.62, a: 1 }; };
 
     function resize() {
       var w = canvas.clientWidth, h = canvas.clientHeight;
       if (!w || !h) return;
-      canvas.width = Math.round(w * dpr);
-      canvas.height = Math.round(h * dpr);
+      canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
       gl.viewport(0, 0, canvas.width, canvas.height);
       var aspect = w / h;
       proj = perspective(FOV, aspect, 0.1, 50);
       var halfH = Math.tan(FOV / 2) * CAMZ, halfW = halfH * aspect;
-      if (aspect > 1.15) {
-        layout = { x: halfW * 0.47, y: halfH * 0.06, s: Math.min(halfH * 0.58, halfW * 0.32), a: 1 };
-      } else if (aspect > 0.8) {
-        layout = { x: halfW * 0.5, y: halfH * 0.38, s: halfW * 0.42, a: 0.75 };
-      } else {
-        layout = { x: halfW * 0.62, y: halfH * 0.56, s: halfW * 0.66, a: 0.62 };
-      }
+      layout = Object.assign({ x: 0, y: 0, s: 1, a: 1 }, layoutFn(aspect, halfW, halfH));
     }
 
-    // estado interativo (suavizado)
     var mouse = { x: 0, y: 0, tx: 0, ty: 0, v: 0 };
-    var scroll = 0, scrollT = 0;
-    api.setScroll = function (p) { scrollT = p; if (reduce) { scroll = p; draw(lastT); } };
+    var scroll = 0, scrollT = 0, pulseV = 0;
+    var satT = Math.min(MAX_SAT, opts.satellites || 0);
+    var sat = []; for (var k = 0; k < MAX_SAT; k++) sat.push(k < satT ? 1 : 0);
 
-    if (!reduce && !mobile) {
-      var lastMX = 0, lastMY = 0;
-      window.addEventListener('pointermove', function (e) {
-        var nx = (e.clientX / window.innerWidth) * 2 - 1;
-        var ny = (e.clientY / window.innerHeight) * 2 - 1;
-        mouse.v = Math.min(1, mouse.v + Math.hypot(nx - lastMX, ny - lastMY) * 2.5);
-        lastMX = nx; lastMY = ny;
-        mouse.tx = nx; mouse.ty = ny;
-      }, { passive: true });
+    function onMove(e) {
+      var nx = (e.clientX / window.innerWidth) * 2 - 1, ny = (e.clientY / window.innerHeight) * 2 - 1;
+      mouse.v = Math.min(1, mouse.v + Math.hypot(nx - mouse.tx, ny - mouse.ty) * 2.5);
+      mouse.tx = nx; mouse.ty = ny;
     }
+    if (!reduce && !mobile && opts.mouse !== false) window.addEventListener('pointermove', onMove, { passive: true });
 
-    var start = performance.now(), lastT = 0;
-    var intro = reduce ? 1 : 0;
+    var start = performance.now(), lastT = 4, intro = reduce ? 1 : 0;
+    function easeOut(x) { return 1 - Math.pow(1 - x, 3); }
 
     function drawOrb(m, amp, freq, alpha, glow, t) {
       gl.useProgram(orbP.p);
@@ -275,14 +247,13 @@
       gl.uniformMatrix4fv(orbP.u.uProj, false, proj);
       gl.uniformMatrix4fv(orbP.u.uView, false, view);
       gl.uniformMatrix4fv(orbP.u.uModel, false, m);
-      gl.uniform1f(orbP.u.uTime, t);
-      gl.uniform1f(orbP.u.uPhase, t);
-      gl.uniform1f(orbP.u.uAmp, amp);
-      gl.uniform1f(orbP.u.uFreq, freq);
+      gl.uniform1f(orbP.u.uTime, t); gl.uniform1f(orbP.u.uPhase, t);
+      gl.uniform1f(orbP.u.uAmp, amp); gl.uniform1f(orbP.u.uFreq, freq);
       gl.uniform3f(orbP.u.uCam, 0, 0, CAMZ);
-      gl.uniform3f(orbP.u.uLight, mouse.x * 4 - 1.5, -mouse.y * 3 + 3, 5);
-      gl.uniform1f(orbP.u.uAlpha, alpha);
-      gl.uniform1f(orbP.u.uGlow, glow);
+      gl.uniform3f(orbP.u.uLight, mouse.x * 4 - 2, -mouse.y * 3 + 3.5, 5);
+      gl.uniform1f(orbP.u.uAlpha, alpha); gl.uniform1f(orbP.u.uGlow, glow);
+      gl.uniform3fv(orbP.u.uDeep, pal.deep); gl.uniform3fv(orbP.u.uMid, pal.mid);
+      gl.uniform3fv(orbP.u.uRim, pal.rim); gl.uniform3fv(orbP.u.uSpec, pal.spec);
       gl.drawElements(gl.TRIANGLES, mesh.idx.length, gl.UNSIGNED_SHORT, 0);
       gl.disableVertexAttribArray(orbPos);
     }
@@ -290,105 +261,95 @@
     function draw(t) {
       if (!proj) return;
       var e = easeOut(intro);
-      var a = layout.a * e * (1 - scroll * 0.55);
-      var s = layout.s * (0.82 + 0.18 * e) * (1 + scroll * 0.12);
-      var cx = layout.x + mouse.x * 0.12;
-      var cy = layout.y + scroll * layout.s * 0.9 - mouse.y * 0.08;
-      var rx = mouse.y * 0.35 + t * 0.03 + scroll * 0.8;
-      var ry = mouse.x * 0.5 + t * 0.06;
-      var amp = 0.1 + 0.025 * Math.sin(t * 0.45) + mouse.v * 0.06;
+      var a = layout.a * e * (1 - scroll * 0.5);
+      var s = layout.s * (0.84 + 0.16 * e) * (1 + scroll * 0.1) * (1 + pulseV * 0.06);
+      var cx = layout.x + mouse.x * 0.1, cy = layout.y + scroll * layout.s * 0.6 - mouse.y * 0.06;
+      var rx = mouse.y * 0.3 + t * 0.03 + scroll * 0.6, ry = mouse.x * 0.45 + t * 0.06;
+      var amp = 0.1 + 0.02 * Math.sin(t * 0.45) + mouse.v * 0.05 + pulseV * 0.09;
 
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       gl.depthMask(true);
+      drawOrb(model(cx, cy, 0, rx, ry, s), amp, 0.85, a, mouse.v + pulseV, t);
 
-      drawOrb(model(cx, cy, 0, rx, ry, s), amp, 0.85, a, mouse.v, t);
+      for (var i = 0; i < MAX_SAT; i++) {
+        if (sat[i] < 0.01) continue;
+        var o = t * (0.16 + i * 0.025) * (i % 2 ? -1 : 1) + i * 0.9;
+        var rad = s * (1.35 + (i % 3) * 0.16);
+        var tilt = 0.32 + (i % 4) * 0.08;
+        var sz = s * (0.075 + (i % 3) * 0.025) * easeOut(sat[i]);
+        drawOrb(model(cx + Math.cos(o) * rad, cy + Math.sin(o) * rad * tilt + s * (0.2 - (i % 3) * 0.2), Math.sin(o) * rad * 0.7,
+          rx * 1.3, ry * 1.3 + i, sz), 0.05, 1.2, a, 0.25, t + 10 + i * 3);
+      }
 
-      // satélites
-      var o1 = t * 0.22 + 0.6, o2 = -t * 0.17 + 2.6;
-      drawOrb(model(cx + Math.cos(o1) * s * 1.55, cy + Math.sin(o1) * s * 0.45 + s * 0.35, Math.sin(o1) * s * 0.9,
-        rx * 1.4, ry * 1.4, s * 0.15), 0.05, 1.2, a, 0.3, t + 10);
-      drawOrb(model(cx + Math.cos(o2) * s * 1.35, cy - s * 0.75 + Math.sin(o2) * s * 0.3, Math.sin(o2) * s * 0.8,
-        rx, -ry, s * 0.075), 0.05, 1.2, a * 0.9, 0.3, t + 20);
-
-      // partículas
-      gl.depthMask(false);
-      gl.useProgram(ptP.p);
-      gl.bindBuffer(gl.ARRAY_BUFFER, pbo);
-      gl.enableVertexAttribArray(ptPos);
-      gl.enableVertexAttribArray(ptSeed);
-      gl.vertexAttribPointer(ptPos, 3, gl.FLOAT, false, 16, 0);
-      gl.vertexAttribPointer(ptSeed, 1, gl.FLOAT, false, 16, 12);
-      gl.uniformMatrix4fv(ptP.u.uProj, false, proj);
-      gl.uniformMatrix4fv(ptP.u.uView, false, view);
-      gl.uniformMatrix4fv(ptP.u.uModel, false, model(cx, cy, 0, rx * 0.4, -t * 0.025 + mouse.x * 0.25, s));
-      gl.uniform1f(ptP.u.uTime, t);
-      gl.uniform1f(ptP.u.uSize, (mobile ? 16 : 20) * dpr);
-      gl.uniform1f(ptP.u.uAlpha, a);
-      gl.drawArrays(gl.POINTS, 0, COUNT);
-      gl.disableVertexAttribArray(ptPos);
-      gl.disableVertexAttribArray(ptSeed);
+      if (COUNT > 0) {
+        gl.depthMask(false);
+        gl.useProgram(ptP.p);
+        gl.bindBuffer(gl.ARRAY_BUFFER, pbo);
+        gl.enableVertexAttribArray(ptPos); gl.enableVertexAttribArray(ptSeed);
+        gl.vertexAttribPointer(ptPos, 3, gl.FLOAT, false, 16, 0);
+        gl.vertexAttribPointer(ptSeed, 1, gl.FLOAT, false, 16, 12);
+        gl.uniformMatrix4fv(ptP.u.uProj, false, proj);
+        gl.uniformMatrix4fv(ptP.u.uView, false, view);
+        gl.uniformMatrix4fv(ptP.u.uModel, false, model(cx, cy, 0, rx * 0.4, -t * 0.025 + mouse.x * 0.25, s));
+        gl.uniform1f(ptP.u.uTime, t);
+        gl.uniform1f(ptP.u.uSize, (mobile ? 14 : 18) * dpr);
+        gl.uniform1f(ptP.u.uAlpha, a);
+        gl.uniform3fv(ptP.u.uColor, pal.particle);
+        gl.drawArrays(gl.POINTS, 0, COUNT);
+        gl.disableVertexAttribArray(ptPos); gl.disableVertexAttribArray(ptSeed);
+      }
     }
 
-    function easeOut(x) { return 1 - Math.pow(1 - x, 3); }
-
-    // qualidade adaptativa
-    var frames = 0, acc = 0, prev = 0, degraded = false, running = false, visible = true, raf = 0, ready = false;
+    var frames = 0, acc = 0, prev = 0, degraded = false, running = false, visible = true, raf = 0, ready = false, dead = false;
 
     function frame(now) {
       raf = 0;
-      if (!running) return;
+      if (!running || dead) return;
       var t = (now - start) / 1000;
-      var dt = prev ? now - prev : 16; prev = now;
+      var dt = prev ? Math.min(now - prev, 100) : 16; prev = now;
       intro = Math.min(1, intro + dt / 1800);
-      mouse.x += (mouse.tx - mouse.x) * 0.045;
-      mouse.y += (mouse.ty - mouse.y) * 0.045;
-      mouse.v *= 0.96;
+      mouse.x += (mouse.tx - mouse.x) * 0.045; mouse.y += (mouse.ty - mouse.y) * 0.045;
+      mouse.v *= 0.96; pulseV *= 0.94;
       scroll += (scrollT - scroll) * 0.12;
+      for (var i = 0; i < MAX_SAT; i++) { var target = i < satT ? 1 : 0; sat[i] += (target - sat[i]) * 0.06; }
       lastT = t;
       draw(t);
       if (!ready) { ready = true; if (opts.onReady) opts.onReady(); }
-
       frames++;
       if (frames > 40 && frames <= 160) acc += dt;
       if (frames === 160) {
         var avg = acc / 120;
-        if (avg > 26 && !degraded && dpr > 1) {
-          degraded = true; dpr = 1; resize(); frames = 0; acc = 0;
-        } else if (avg > 34) {
-          stop(); gl.clear(gl.COLOR_BUFFER_BIT); if (opts.onFail) opts.onFail(); return;
-        }
+        if (avg > 26 && !degraded && dpr > 1) { degraded = true; dpr = 1; resize(); frames = 0; acc = 0; }
+        else if (avg > 34) { stop(); gl.clear(gl.COLOR_BUFFER_BIT); if (opts.onFail) opts.onFail(); return; }
       }
       raf = requestAnimationFrame(frame);
     }
-    function play() { if (!running && visible && !document.hidden) { running = true; prev = 0; raf = requestAnimationFrame(frame); } }
+    function play() { if (!dead && !running && visible && !document.hidden) { running = true; prev = 0; raf = requestAnimationFrame(frame); } }
     function stop() { running = false; if (raf) cancelAnimationFrame(raf); raf = 0; }
+    function still() { for (var i = 0; i < MAX_SAT; i++) sat[i] = i < satT ? 1 : 0; draw(lastT); }
 
     resize();
     var rt;
-    window.addEventListener('resize', function () {
-      clearTimeout(rt);
-      rt = setTimeout(function () { resize(); if (reduce || !running) draw(lastT); }, 100);
-    }, { passive: true });
-
+    function onResize() { clearTimeout(rt); rt = setTimeout(function () { resize(); if (reduce || !running) draw(lastT); }, 100); }
+    window.addEventListener('resize', onResize, { passive: true });
     canvas.addEventListener('webglcontextlost', function (e) { e.preventDefault(); stop(); if (opts.onFail) opts.onFail(); });
 
-    if (reduce) {
-      draw(4);
-      lastT = 4;
-      if (opts.onReady) opts.onReady();
-      return true;
-    }
+    var inst = {
+      setScroll: function (p) { scrollT = p; if (reduce) { scroll = p; draw(lastT); } },
+      setSatellites: function (n) { satT = Math.max(0, Math.min(MAX_SAT, n | 0)); if (reduce) still(); },
+      pulse: function () { pulseV = 1; if (reduce) draw(lastT); },
+      destroy: function () { dead = true; stop(); window.removeEventListener('resize', onResize); window.removeEventListener('pointermove', onMove); }
+    };
+
+    if (reduce) { still(); if (opts.onReady) opts.onReady(); return inst; }
 
     if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function (entries) {
-        visible = entries[0].isIntersecting;
-        if (visible) play(); else stop();
-      }).observe(canvas);
+      new IntersectionObserver(function (entries) { visible = entries[0].isIntersecting; if (visible) play(); else stop(); }).observe(canvas);
     }
     document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else play(); });
     play();
-    return true;
-  };
+    return inst;
+  }
 
-  window.CuidareOrb = api;
+  window.CuidareOrb = { init: init };
 })();
