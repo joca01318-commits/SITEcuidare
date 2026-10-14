@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Cuidare Vila Mariana — Cuidadores de pessoas em São Paulo</title>
   <meta name="description" content="Cuidadores de pessoas para sua família, em domicílio, hospital, consultas e exames. Profissionais selecionados, acompanhamento contínuo e proposta personalizada. Cuidare Vila Mariana, parte da Cuidare Brasil.">
-  <meta name="theme-color" content="#f6f2ea">
+  <meta name="theme-color" content="#082B59">
   <link rel="canonical" href="https://cuidare-vila-marianaportifolio03.netlify.app/">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">
@@ -19,7 +19,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="assets/img/favicon.png" type="image/png" sizes="64x64">
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
-  <link rel="preload" as="font" href="assets/fonts/instrument-serif-400.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="assets/fonts/newsreader-wght.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="font" href="assets/fonts/manrope-wght.woff2" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/site.css">
   <script src="assets/js/config.js" defer></script>
@@ -34,7 +34,7 @@
     "url": "https://cuidare-vila-marianaportifolio03.netlify.app/",
     "telephone": "+55-11-91634-9800",
     "image": "https://cuidare-vila-marianaportifolio03.netlify.app/assets/img/og-cover.jpg",
-    "logo": "https://cuidare-vila-marianaportifolio03.netlify.app/assets/img/logo-ink.png",
+    "logo": "https://cuidare-vila-marianaportifolio03.netlify.app/assets/img/logo-white.png",
     "areaServed": { "@type": "City", "name": "São Paulo" },
     "parentOrganization": { "@type": "Organization", "name": "Cuidare Brasil" }
   }
@@ -47,13 +47,15 @@
       <symbol id="i-arrow" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6"/></symbol>
       <symbol id="i-star" viewBox="0 0 24 24"><path fill="currentColor" d="m12 2.8 2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9L12 2.8Z"/></symbol>
       <symbol id="i-ext" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M8 16 16 8m-7 0h7v7"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+      <symbol id="i-dash" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" d="M6 12h12"/></symbol>
     </defs>
   </svg>
 
   <header class="hdr" data-hdr>
     <div class="wrap hdr__in">
       <a class="brand" href="./" aria-label="Cuidare Vila Mariana — início">
-        <picture><source srcset="assets/img/logo-ink-320.webp" type="image/webp"><img src="assets/img/logo-ink-320.png" alt="Cuidare — Cuidadores de Pessoas, Vila Mariana/SP" width="320" height="87"></picture>
+        <picture><source srcset="assets/img/logo-white-320.webp" type="image/webp"><img src="assets/img/logo-white-320.png" alt="Cuidare — Cuidadores de Pessoas, Vila Mariana/SP" width="320" height="87"></picture>
       </a>
       <nav class="nav" aria-label="Principal">
         <ul>
@@ -63,88 +65,100 @@
         </ul>
       </nav>
       <div class="hdr__cta">
-        <a class="btn btn--primary" href="experiencia/" data-track="header"><span class="short">Começar</span><span class="full">Encontrar o cuidado ideal</span></a>
+        <a class="btn btn--vivid" href="experiencia/" data-track="header"><span class="short">Começar</span><span class="full">Encontrar o cuidado ideal</span></a>
       </div>
     </div>
   </header>
 
   <main id="conteudo">
-    <!-- 1. Hero -->
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="wrap hero__grid">
-        <div>
-          <p class="eyebrow" data-intro style="--d:0">Cuidare Vila Mariana · Cuidadores de pessoas</p>
-          <h1 class="display hero__title" id="hero-title">
+    <!-- 1. Hero + indicadores -->
+    <section class="stage" aria-labelledby="hero-title">
+      <div class="stage__bg" aria-hidden="true"><span class="stage__lines"></span><span class="stage__glow"></span></div>
+      <div class="wrap stage__layout">
+        <div class="stage__copy">
+          <p class="eyebrow eyebrow--light" data-intro style="--d:0">Cuidare Vila Mariana<span class="hide-sm"> · Cuidadores de pessoas</span></p>
+          <h1 class="display stage__title" id="hero-title">
             <span class="ln"><span data-intro style="--d:1">Quem você ama</span></span>
             <span class="ln"><span data-intro style="--d:2">merece um cuidado</span></span>
-            <span class="ln"><span data-intro style="--d:3"><em>extraordinário.</em></span></span>
+            <span class="ln"><span data-intro style="--d:3"><em class="swash">extraordinário.<svg viewBox="0 0 300 18" preserveAspectRatio="none" aria-hidden="true"><path d="M3 13C60 5 150 3 297 8"/></svg></em></span></span>
           </h1>
-          <p class="lead" data-intro style="--d:4">Encontramos o cuidado certo para sua família, com profissionais selecionados, acompanhamento e atenção às necessidades de cada pessoa.</p>
-          <div class="hero__actions" data-intro style="--d:5">
-            <a class="btn btn--primary" href="experiencia/" data-track="hero"><span>Encontrar o cuidado ideal</span><svg class="arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-            <a class="link" href="#cuidare">Conhecer a Cuidare <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <p class="stage__lead" data-intro style="--d:4">Encontramos o cuidado certo para sua família, com profissionais selecionados, acompanhamento e atenção às necessidades de cada pessoa.</p>
+          <div class="stage__actions" data-intro style="--d:5">
+            <a class="btn btn--vivid btn--lg" href="experiencia/" data-track="hero"><span>Encontrar o cuidado ideal</span><svg class="arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            <a class="link link--light" href="#cuidare">Conhecer a Cuidare <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
           </div>
-          <p class="hero__micro" data-intro style="--d:6">Algumas perguntas rápidas · Proposta personalizada para a sua família</p>
         </div>
-
-        <div class="arch" data-intro style="--d:2" data-hero-arch>
-          <div class="arch__frame photo" data-photo="hero" data-photo-eager data-photo-alt="Cuidadora da Cuidare acompanhando uma senhora em casa">
-            <span class="arch__pearl" aria-hidden="true"></span>
-            <canvas aria-hidden="true" data-orb></canvas>
-          </div>
-          <div class="badge">
-            <span class="badge__score">4,8</span>
-            <span>
-              <span class="badge__stars" aria-hidden="true"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></span>
-              <small>avaliação dos clientes<br>99+ avaliações públicas</small>
-            </span>
-          </div>
+        <div class="sculpture photo" data-intro style="--d:2" data-hero-sculpture data-photo="hero" data-photo-eager data-photo-alt="Cuidadora da Cuidare acompanhando uma senhora em casa">
+          <span class="sculpture__ring" aria-hidden="true"></span>
+          <span class="pearl" aria-hidden="true"></span>
+          <canvas aria-hidden="true" data-orb></canvas>
         </div>
       </div>
-    </section>
 
-    <!-- 2. Indicadores -->
-    <section class="stats" aria-label="Experiência e confiança">
       <div class="wrap">
-        <ul class="stats__grid" role="list">
-          <li class="stat" data-reveal><p class="stat__n"><span data-count="7">7</span><small>+</small></p><p class="stat__l">anos de experiência</p></li>
-          <li class="stat" data-reveal style="--d:1"><p class="stat__n"><span data-count="2000">2.000</span><small>+</small></p><p class="stat__l">famílias atendidas</p></li>
-          <li class="stat" data-reveal style="--d:2"><p class="stat__n"><span data-count="4.8" data-decimals="1">4,8</span><small>/5</small></p><p class="stat__l">avaliação dos clientes</p></li>
-          <li class="stat" data-reveal style="--d:3"><p class="stat__n"><span data-count="99">99</span><small>+</small></p><p class="stat__l">avaliações públicas</p></li>
+        <ul class="kpis" role="list" aria-label="Experiência e confiança">
+          <li class="kpi" data-intro style="--d:6"><p class="kpi__n"><span data-count="7">7</span><small>+</small></p><p class="kpi__l">anos de experiência</p></li>
+          <li class="kpi" data-intro style="--d:7"><p class="kpi__n"><span data-count="2000">2.000</span><small>+</small></p><p class="kpi__l">famílias atendidas</p></li>
+          <li class="kpi" data-intro style="--d:8">
+            <p class="kpi__n"><span data-count="4.8" data-decimals="1">4,8</span><small>/5</small></p>
+            <p class="kpi__l">avaliação dos clientes <span class="kpi__stars" aria-hidden="true"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></span></p>
+          </li>
+          <li class="kpi" data-intro style="--d:9"><p class="kpi__n"><span data-count="99">99</span><small>+</small></p><p class="kpi__l">avaliações públicas</p></li>
         </ul>
-        <p class="stats__note" data-reveal>Cuidare Vila Mariana faz parte da Cuidare Brasil, com mais de 10 anos e presença em todo o país. Atendemos os principais bairros de São Paulo.</p>
+        <p class="stage__note" data-intro style="--d:10">Cuidare Vila Mariana faz parte da Cuidare Brasil, com mais de 10 anos e presença em todo o país. Atendemos os principais bairros de São Paulo.</p>
       </div>
     </section>
 
-    <!-- 3. Diferenciais -->
-    <section class="sec" id="cuidare" aria-labelledby="diff-title">
-      <div class="wrap diff__grid">
-        <div class="diff__intro">
-          <p class="sec-label" data-reveal><b>01</b> A Cuidare</p>
-          <h2 class="display h2" id="diff-title" data-reveal style="--d:1">Uma operação organizada em torno de <em>quem você ama.</em></h2>
-          <p class="lead" data-reveal style="--d:2">Uma empresa especializada seleciona, organiza e acompanha o atendimento, com mais segurança, praticidade e continuidade no cuidado.</p>
-          <p class="diff__compare" data-reveal style="--d:3"><strong>Contratando diretamente,</strong> a família assume a responsabilidade pela seleção, escala, pagamentos, faltas e substituições.</p>
-        </div>
-        <ol class="diff__list">
-          <li class="diff__item" data-reveal><span class="diff__num">01</span><h3>Seleção de profissionais</h3><p>Cuidadores(as) ou técnicos(as) de enfermagem, todos verificados: documentos, cursos, referências e entrevista presencial.</p></li>
-          <li class="diff__item" data-reveal><span class="diff__num">02</span><h3>Compatibilidade com a família</h3><p>A seleção busca o perfil compatível com as necessidades de cada atendimento.</p></li>
-          <li class="diff__item" data-reveal><span class="diff__num">03</span><h3>Acompanhamento contínuo</h3><p>Visita mensal da supervisão, relatórios do suporte ou grupo com a equipe.</p></li>
-          <li class="diff__item" data-reveal><span class="diff__num">04</span><h3>Gestão de faltas e trocas</h3><p>Se o cuidador faltar, a Cuidare organiza o envio de outro profissional. Se não houver adaptação, a família pode solicitar a troca.</p></li>
-          <li class="diff__item" data-reveal><span class="diff__num">05</span><h3>Sem vínculo trabalhista para a família</h3><p>A Cuidare é responsável pela contratação dos profissionais.</p></li>
-        </ol>
-      </div>
-    </section>
-
-    <!-- 4. Tipos de atendimento -->
-    <section class="sec" id="atendimento" aria-labelledby="care-title" style="padding-top:0">
+    <!-- 2. A Cuidare: comparativo + diferenciais -->
+    <section class="sec" id="cuidare" aria-labelledby="cuidare-title">
       <div class="wrap">
-        <div class="care__head">
+        <header class="head">
+          <p class="eyebrow" data-reveal>A Cuidare</p>
+          <h2 class="display h2" id="cuidare-title" data-reveal style="--d:1">Uma operação organizada em torno de <em>quem você ama.</em></h2>
+          <p class="lead" data-reveal style="--d:2">Qual a diferença entre contratar um cuidador diretamente e contratar a Cuidare?</p>
+        </header>
+
+        <div class="versus">
+          <article class="versus__card" data-reveal>
+            <h3>Contratando diretamente</h3>
+            <p>A família assume a responsabilidade pela seleção, escala, pagamentos, faltas e substituições.</p>
+            <ul class="chips" aria-label="Responsabilidades da família">
+              <li><svg aria-hidden="true"><use href="#i-dash"/></svg>Seleção</li><li><svg aria-hidden="true"><use href="#i-dash"/></svg>Escala</li><li><svg aria-hidden="true"><use href="#i-dash"/></svg>Pagamentos</li><li><svg aria-hidden="true"><use href="#i-dash"/></svg>Faltas</li><li><svg aria-hidden="true"><use href="#i-dash"/></svg>Substituições</li>
+            </ul>
+          </article>
+          <article class="versus__card versus__card--us" data-reveal style="--d:1">
+            <h3>Com a Cuidare</h3>
+            <p>Uma empresa especializada seleciona, organiza e acompanha o atendimento, com mais segurança, praticidade e continuidade no cuidado.</p>
+            <ul class="chips" aria-label="O que a Cuidare oferece">
+              <li><svg aria-hidden="true"><use href="#i-check"/></svg>Segurança</li><li><svg aria-hidden="true"><use href="#i-check"/></svg>Praticidade</li><li><svg aria-hidden="true"><use href="#i-check"/></svg>Continuidade no cuidado</li>
+            </ul>
+          </article>
+        </div>
+
+        <ul class="bento" role="list">
+          <li class="tile tile--lead" data-reveal>
+            <span class="tile__n">01</span>
+            <h3>Seleção de profissionais</h3>
+            <p>Cuidadores(as) ou técnicos(as) de enfermagem, todos verificados: documentos, cursos, referências e entrevista presencial.</p>
+          </li>
+          <li class="tile" data-reveal style="--d:1"><span class="tile__n">02</span><h3>Compatibilidade com a família</h3><p>A seleção busca o perfil compatível com as necessidades de cada atendimento.</p></li>
+          <li class="tile" data-reveal style="--d:2"><span class="tile__n">03</span><h3>Acompanhamento contínuo</h3><p>Visita mensal da supervisão, relatórios do suporte ou grupo com a equipe.</p></li>
+          <li class="tile" data-reveal style="--d:3"><span class="tile__n">04</span><h3>Gestão de faltas e trocas</h3><p>Se o cuidador faltar, a Cuidare organiza o envio de outro profissional. Se não houver adaptação, a família pode solicitar a troca.</p></li>
+          <li class="tile" data-reveal style="--d:4"><span class="tile__n">05</span><h3>Sem vínculo trabalhista para a família</h3><p>A Cuidare é responsável pela contratação dos profissionais.</p></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 3. Tipos de atendimento -->
+    <section class="sec sec--tight" id="atendimento" aria-labelledby="care-title">
+      <div class="wrap">
+        <header class="head head--split">
           <div>
-            <p class="sec-label" data-reveal><b>02</b> Atendimento</p>
+            <p class="eyebrow" data-reveal>Atendimento</p>
             <h2 class="display h2" id="care-title" data-reveal style="--d:1">Onde a sua família <em>precisar.</em></h2>
           </div>
           <p class="lead" data-reveal style="--d:2">O cuidador auxilia na rotina, com companhia, segurança e atenção, respeitando as limitações de cada pessoa.</p>
-        </div>
+        </header>
         <ul class="care__track" role="list" tabindex="0" aria-label="Tipos de atendimento (role para ver todos)">
           <li class="care-card" data-reveal>
             <div class="care-card__media photo" data-photo="domicilio" data-photo-alt="Atendimento em domicílio"><span class="care-card__word" aria-hidden="true">Em casa</span></div>
@@ -167,73 +181,71 @@
       </div>
     </section>
 
-    <!-- 5. Depoimentos -->
+    <!-- 4. Depoimentos -->
     <section class="tst" id="depoimentos" aria-labelledby="tst-title">
-      <div class="wrap">
-        <p class="sec-label" data-reveal><b>03</b> Depoimentos</p>
-        <h2 class="display h2" id="tst-title" data-reveal style="--d:1">A confiança de quem já cuidou de <em>quem ama.</em></h2>
-        <div class="tst__stage" data-tst aria-roledescription="carrossel" aria-label="Depoimentos de famílias">
-          <figure class="tst__item is-active">
-            <blockquote class="tst__q">Eles foram simplesmente sensacionais. Além de serem ótimos profissionais, são muito humanos e estão cuidando do meu pai com muito carinho.</blockquote>
-            <figcaption class="tst__who"><span class="stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>Gabi Petkovic</figcaption>
-          </figure>
-          <figure class="tst__item">
-            <blockquote class="tst__q">Cuida com carinho, dedicação, responsabilidade e atenção daqueles que amamos. Por isso, entregamos os cuidados de minha mãe e estamos bastante satisfeitos com a qualidade dos serviços.</blockquote>
-            <figcaption class="tst__who"><span class="stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>Ricardo Ferreira</figcaption>
-          </figure>
-          <figure class="tst__item">
-            <blockquote class="tst__q">Há mais de um ano cuidando com muito profissionalismo da nossa mamãe de 90 anos. Comprometimento e respeito são as palavras que podem definir o trabalho de vocês.</blockquote>
-            <figcaption class="tst__who"><span class="stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>Triuze Yano Barone</figcaption>
-          </figure>
-          <figure class="tst__item">
-            <blockquote class="tst__q">Destaco o atendimento, carinho, cuidado e dedicação. Meu pai merece esse cuidado e recomendo a Cuidare.</blockquote>
-            <figcaption class="tst__who"><span class="stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>Camila Domingues</figcaption>
-          </figure>
-          <figure class="tst__item">
-            <blockquote class="tst__q">A Cuidare ofereceu assistência à minha mãe com cuidado, profissionalismo e carinho.</blockquote>
-            <figcaption class="tst__who"><span class="stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>Felipe Carvalho</figcaption>
-          </figure>
+      <div class="wrap tst__grid">
+        <div>
+          <p class="eyebrow" data-reveal>Depoimentos</p>
+          <h2 class="display h2" id="tst-title" data-reveal style="--d:1">A confiança de quem já cuidou de <em>quem ama.</em></h2>
+          <div class="tst__score" data-reveal style="--d:2">
+            <span class="tst__big">4,8</span>
+            <span><span class="stars" aria-hidden="true"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></span><small>avaliação dos clientes · 99+ avaliações públicas</small></span>
+          </div>
         </div>
-        <div class="tst__nav">
-          <button class="icon-btn" type="button" data-tst-prev aria-label="Depoimento anterior"><svg aria-hidden="true" style="transform:scaleX(-1)"><use href="#i-arrow"/></svg></button>
-          <span class="tst__count" aria-live="polite"><span data-tst-cur>01</span> / 05</span>
-          <button class="icon-btn" type="button" data-tst-next aria-label="Próximo depoimento"><svg aria-hidden="true"><use href="#i-arrow"/></svg></button>
-          <a class="link" data-reviews href="https://www.google.com/maps/search/?api=1&amp;query=Cuidare%20Vila%20Mariana" target="_blank" rel="noopener">Ver avaliações públicas <svg aria-hidden="true"><use href="#i-ext"/></svg></a>
+        <div class="tst__panel" data-reveal style="--d:2">
+          <div class="tst__stage" data-tst aria-roledescription="carrossel" aria-label="Depoimentos de famílias">
+            <figure class="tst__item is-active"><blockquote class="tst__q">Eles foram simplesmente sensacionais. Além de serem ótimos profissionais, são muito humanos e estão cuidando do meu pai com muito carinho.</blockquote><figcaption class="tst__who"><span class="stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>Gabi Petkovic</figcaption></figure>
+            <figure class="tst__item"><blockquote class="tst__q">Cuida com carinho, dedicação, responsabilidade e atenção daqueles que amamos. Por isso, entregamos os cuidados de minha mãe e estamos bastante satisfeitos com a qualidade dos serviços.</blockquote><figcaption class="tst__who"><span class="stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>Ricardo Ferreira</figcaption></figure>
+            <figure class="tst__item"><blockquote class="tst__q">Há mais de um ano cuidando com muito profissionalismo da nossa mamãe de 90 anos. Comprometimento e respeito são as palavras que podem definir o trabalho de vocês.</blockquote><figcaption class="tst__who"><span class="stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>Triuze Yano Barone</figcaption></figure>
+            <figure class="tst__item"><blockquote class="tst__q">Destaco o atendimento, carinho, cuidado e dedicação. Meu pai merece esse cuidado e recomendo a Cuidare.</blockquote><figcaption class="tst__who"><span class="stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>Camila Domingues</figcaption></figure>
+            <figure class="tst__item"><blockquote class="tst__q">A Cuidare ofereceu assistência à minha mãe com cuidado, profissionalismo e carinho.</blockquote><figcaption class="tst__who"><span class="stars" role="img" aria-label="5 de 5 estrelas"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></span>Felipe Carvalho</figcaption></figure>
+          </div>
+          <div class="tst__nav">
+            <button class="icon-btn" type="button" data-tst-prev aria-label="Depoimento anterior"><svg aria-hidden="true" style="transform:scaleX(-1)"><use href="#i-arrow"/></svg></button>
+            <span class="tst__count" aria-live="polite"><span data-tst-cur>01</span> / 05</span>
+            <button class="icon-btn" type="button" data-tst-next aria-label="Próximo depoimento"><svg aria-hidden="true"><use href="#i-arrow"/></svg></button>
+            <a class="link" data-reviews href="https://www.google.com/maps/search/?api=1&amp;query=Cuidare%20Vila%20Mariana" target="_blank" rel="noopener">Ver avaliações públicas <svg aria-hidden="true"><use href="#i-ext"/></svg></a>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- 6. Jornada -->
+    <!-- 5. Como funciona -->
     <section class="sec" id="como-funciona" aria-labelledby="journey-title">
-      <div class="wrap journey__grid">
-        <div class="journey__intro">
-          <p class="sec-label" data-reveal><b>04</b> Como funciona</p>
-          <h2 class="display h2" id="journey-title" data-reveal style="--d:1">Da primeira conversa ao <em>acompanhamento contínuo.</em></h2>
-          <p class="lead" data-reveal style="--d:2">Cada proposta é personalizada: considera o tipo de atendimento, o período contratado e as necessidades identificadas.</p>
-          <a class="btn btn--primary" href="experiencia/" data-track="journey" data-reveal style="--d:3"><span>Começar agora</span><svg class="arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-        </div>
+      <div class="wrap">
+        <header class="head head--split">
+          <div>
+            <p class="eyebrow" data-reveal>Como funciona</p>
+            <h2 class="display h2" id="journey-title" data-reveal style="--d:1">Da primeira conversa ao <em>acompanhamento contínuo.</em></h2>
+          </div>
+          <div data-reveal style="--d:2">
+            <p class="lead">Cada proposta é personalizada: considera o tipo de atendimento, o período contratado e as necessidades identificadas.</p>
+            <a class="btn btn--primary" href="experiencia/" data-track="journey" style="margin-top:24px"><span>Começar agora</span><svg class="arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </header>
         <div class="steps" data-steps>
           <span class="steps__line" aria-hidden="true"><span class="steps__fill"></span></span>
           <ol>
-          <li data-reveal><p class="steps__k">Etapa 1</p><h3>Você conta o que sua família precisa</h3><p>Em poucos minutos, pela experiência online ou pelo WhatsApp. Sem documentos nesta etapa.</p></li>
-          <li data-reveal><p class="steps__k">Etapa 2</p><h3>Conversamos e avaliamos a necessidade</h3><p>A equipe entende a rotina e combina a avaliação. A visita e a avaliação são gratuitas, com horário agendado.</p></li>
-          <li data-reveal><p class="steps__k">Etapa 3</p><h3>Você recebe uma proposta personalizada</h3><p>Formato, período e profissional indicados para a necessidade identificada, com disponibilidade verificada pela equipe.</p></li>
-          <li data-reveal><p class="steps__k">Etapa 4</p><h3>Seleção e início do atendimento</h3><p>Buscamos o perfil compatível com a sua família. A proposta é validar o cuidador nos primeiros 5 dias.</p></li>
-          <li data-reveal><p class="steps__k">Etapa 5</p><h3>Acompanhamento contínuo</h3><p>Visita mensal da supervisão, relatórios do suporte ou grupo com a equipe, para que a família acompanhe de perto.</p></li>
+            <li data-reveal><span class="steps__dot" aria-hidden="true">1</span><h3>Você conta o que sua família precisa</h3><p>Em poucos minutos, pela experiência online ou pelo WhatsApp. Sem documentos nesta etapa.</p></li>
+            <li data-reveal style="--d:1"><span class="steps__dot" aria-hidden="true">2</span><h3>Conversamos e avaliamos a necessidade</h3><p>A equipe entende a rotina e combina a avaliação. A visita e a avaliação são gratuitas, com horário agendado.</p></li>
+            <li data-reveal style="--d:2"><span class="steps__dot" aria-hidden="true">3</span><h3>Você recebe uma proposta personalizada</h3><p>Formato, período e profissional indicados para a necessidade identificada, com disponibilidade verificada pela equipe.</p></li>
+            <li data-reveal style="--d:3"><span class="steps__dot" aria-hidden="true">4</span><h3>Seleção e início do atendimento</h3><p>Buscamos o perfil compatível com a sua família. A proposta é validar o cuidador nos primeiros 5 dias.</p></li>
+            <li data-reveal style="--d:4"><span class="steps__dot" aria-hidden="true">5</span><h3>Acompanhamento contínuo</h3><p>Visita mensal da supervisão, relatórios do suporte ou grupo com a equipe.</p></li>
           </ol>
         </div>
       </div>
     </section>
 
-    <!-- 7. Chamada final -->
+    <!-- 6. Chamada final -->
     <section class="final" aria-labelledby="final-title">
       <div class="wrap">
         <div class="final__card" data-reveal>
+          <span class="final__orb" aria-hidden="true"></span>
           <h2 class="display" id="final-title">Vamos encontrar, juntos, o <em>cuidado ideal.</em></h2>
           <p>Responda algumas perguntas sobre a necessidade da sua família. A equipe analisa e retorna com uma proposta personalizada.</p>
           <div class="final__actions">
-            <a class="btn btn--light" href="experiencia/" data-track="final"><span>Encontrar o cuidado ideal</span><svg class="arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-            <a class="link" data-wa="home_final" href="https://wa.me/5511916349800" target="_blank" rel="noopener">Prefiro conversar pelo WhatsApp <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            <a class="btn btn--white btn--lg" href="experiencia/" data-track="final"><span>Encontrar o cuidado ideal</span><svg class="arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            <a class="link link--light" data-wa="home_final" href="https://wa.me/5511916349800" target="_blank" rel="noopener">Prefiro conversar pelo WhatsApp <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
           </div>
         </div>
       </div>
@@ -244,7 +256,7 @@
     <div class="wrap">
       <div class="ftr__grid">
         <div class="ftr__brand">
-          <img src="assets/img/logo-ink-320.png" alt="Cuidare Vila Mariana" width="320" height="87" loading="lazy">
+          <img src="assets/img/logo-white-320.png" alt="Cuidare Vila Mariana" width="320" height="87" loading="lazy">
           <p>Cuidare Vila Mariana faz parte da Cuidare Brasil.</p>
         </div>
         <div class="ftr__links">

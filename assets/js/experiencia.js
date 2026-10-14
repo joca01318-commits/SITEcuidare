@@ -20,6 +20,7 @@
   var orbWrap = $('[data-flow-orb]');
   C.orb($('canvas', orbWrap), {
     satellites: answered(), particles: C.finePointer ? 90 : 40,
+    palette: { deep: '#082B59', mid: '#1769E0', rim: '#FFFFFF', spec: '#FFFFFF', particle: '#0757B8' },
     layout: function (aspect, hw, hh) { return { x: 0, y: 0, s: Math.min(hw, hh) * 0.62, a: 1 }; },
     onReady: function () { orbWrap.classList.add('is-3d'); },
     onFail: function () { orbWrap.classList.remove('is-3d'); }

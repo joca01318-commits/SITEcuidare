@@ -14,7 +14,7 @@ nele preços, tokens ou regras comerciais.
 1. Publique esta versão em um **projeto Netlify novo** (ex.: `cuidare-vm-nova`), arrastando a pasta
    do `.zip` em *Add new project → Deploy manually*. O site atual continua no ar.
 2. Ative o **Netlify Forms** nesse projeto (seção 2) e faça uma solicitação de teste.
-3. Valide no celular e no computador o checklist da seção 11.
+3. Valide no celular e no computador o checklist da seção 12.
 4. Só então aponte o domínio definitivo para o projeto novo (*Domain management*).
 5. Ao definir o domínio, atualize `siteUrl` em `config.js` e os endereços em: `index.html`,
    `experiencia/index.html` (tags `canonical`, `og:url`, `og:image`), `robots.txt` e `sitemap.xml`.
@@ -136,7 +136,8 @@ interna** de forma protegida, existe a função `netlify/functions/precificacao.
 ## 8. Fotos reais (pendente: material da Cuidare)
 
 O briefing pede fotografias autênticas. **Não foram usadas fotos de banco nem imagens geradas por IA.**
-Enquanto não houver fotos, o site usa composições próprias (arco com escultura 3D e cartões tipográficos).
+Enquanto não houver fotos, o site usa composições próprias (escultura 3D em azul e cartões tipográficos).
+As fotos devem combinar com a identidade azul e branca (evite filtros quentes, sépia ou fundos bege).
 
 Para incluir fotos, com **autorização de uso de imagem** de quem aparece:
 1. Salve em `assets/photos/` (WebP ou JPG, ~200–300 KB cada).
@@ -144,7 +145,16 @@ Para incluir fotos, com **autorização de uso de imagem** de quem aparece:
    `consultas`, `viagens` (~900×1200).
 3. As fotos entram automaticamente, com carregamento progressivo, no lugar das composições.
 
-## 9. Conteúdo que precisa da sua validação antes de publicar
+## 9. Identidade visual e logo
+
+- Paleta exclusiva: `#082B59`, `#0757B8`, `#1769E0`, `#EAF3FF` e `#FFFFFF` (variáveis em `assets/css/site.css`).
+  Nenhum bege, creme, areia, verde, dourado ou marrom é usado, inclusive na escultura 3D e na imagem de compartilhamento.
+- **Logo:** o arquivo colorido disponível tem o subtítulo em cinza, que não combina com a paleta. Por isso o site
+  usa a **versão oficial branca** (`assets/img/logo-white.png`) sobre o azul-marinho, sem redesenhar a marca.
+  **Pendente:** enviar o logo em vetor (SVG ou PDF) e, se existir, uma versão oficial em azul para fundos brancos.
+- Imagem de compartilhamento (`assets/img/og-cover.jpg`, 1200×630) refeita em azul e branco.
+
+## 10. Conteúdo que precisa da sua validação antes de publicar
 
 | Item | Onde aparece | Fonte usada |
 | --- | --- | --- |
@@ -158,14 +168,14 @@ Para incluir fotos, com **autorização de uso de imagem** de quem aparece:
 | Aviso de privacidade | Todas as páginas | Texto-base. **Revise com o jurídico**: incluir razão social/CNPJ e um canal formal (e-mail) para direitos do titular |
 | Opções da experiência (pós-operatório, Alzheimer/Parkinson, 12h noturno, atendimento pontual) | /experiencia | Briefing. **Confirme que a operação atende todos** |
 
-## 10. O que mudou em relação ao site anterior
+## 11. O que mudou em relação ao site anterior
 
 - A tabela pública de preços foi **removida**; os valores também saíram do código do navegador.
 - Plano de 24 horas não é oferecido.
 - A página única virou 3 rotas: `/`, `/experiencia/`, `/avaliacao/` (mais `404.html`).
 - Links antigos como `/#planos` levam à home (sem erro).
 
-## 11. Checklist de validação (antes do domínio definitivo)
+## 12. Checklist de validação (antes do domínio definitivo)
 
 - [ ] Home abre bem no celular e no computador; CTA leva a `/experiencia/`.
 - [ ] Experiência completa; “Voltar”, editar respostas e voltar do navegador funcionam.

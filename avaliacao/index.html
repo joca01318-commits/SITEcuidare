@@ -6,12 +6,24 @@
   <title>Sua avaliação personalizada — Cuidare Vila Mariana</title>
   <meta name="description" content="Revise suas respostas e solicite uma avaliação personalizada da Cuidare Vila Mariana.">
   <meta name="robots" content="noindex, follow">
-  <meta name="theme-color" content="#f6f2ea">
+  <meta name="theme-color" content="#082B59">
   <link rel="icon" href="../assets/img/favicon.png" type="image/png" sizes="64x64">
   <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
-  <link rel="preload" as="font" href="../assets/fonts/instrument-serif-400.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="../assets/fonts/newsreader-wght.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="font" href="../assets/fonts/manrope-wght.woff2" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/css/site.css">
+  <script>
+    /* Escolhe a tela antes da primeira pintura, para a página não "pular" ao carregar. */
+    (function () {
+      var v = 'empty';
+      try {
+        var a = (JSON.parse(sessionStorage.getItem('cuidare.jornada.v1') || 'null') || {}).answers || {};
+        if (Object.keys(a).some(function (k) { return a[k]; })) v = 'form';
+        else if (sessionStorage.getItem('cuidare.lead.enviado')) v = 'done';
+      } catch (e) { v = 'form'; }
+      document.documentElement.setAttribute('data-av', v);
+    })();
+  </script>
   <script src="../assets/js/config.js" defer></script>
   <script src="../assets/js/jornada.js" defer></script>
   <script src="../assets/js/core.js" defer></script>
@@ -30,7 +42,7 @@
   <header class="hdr is-scrolled" data-hdr>
     <div class="wrap hdr__in">
       <a class="brand" href="../" aria-label="Cuidare Vila Mariana — início">
-        <picture><source srcset="../assets/img/logo-ink-320.webp" type="image/webp"><img src="../assets/img/logo-ink-320.png" alt="Cuidare — Cuidadores de Pessoas, Vila Mariana/SP" width="320" height="87"></picture>
+        <picture><source srcset="../assets/img/logo-white-320.webp" type="image/webp"><img src="../assets/img/logo-white-320.png" alt="Cuidare — Cuidadores de Pessoas, Vila Mariana/SP" width="320" height="87"></picture>
       </a>
       <a class="flow-exit" style="margin-left:auto" href="../experiencia/" data-back-exp>Voltar à experiência</a>
     </div>
@@ -150,7 +162,7 @@
         <p class="eyebrow">Avaliação personalizada</p>
         <h1 class="display" style="font-size:clamp(2.4rem,7vw,4.2rem);margin-top:16px">Vamos começar pelo que sua família <em>precisa.</em></h1>
         <p class="lead" style="margin-top:18px">Responda algumas perguntas rápidas para montarmos o resumo da sua solicitação.</p>
-        <div class="hero__actions">
+        <div class="stage__actions">
           <a class="btn btn--primary" href="../experiencia/"><span>Encontrar o cuidado ideal</span><svg class="arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
           <a class="link" data-wa="avaliacao_vazia" href="https://wa.me/5511916349800" target="_blank" rel="noopener">Prefiro conversar pelo WhatsApp</a>
         </div>

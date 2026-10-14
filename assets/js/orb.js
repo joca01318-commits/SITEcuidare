@@ -57,21 +57,20 @@
   var ORB_FS = [
     'precision mediump float;',
     'varying vec3 vN; varying vec3 vW; varying float vD;',
-    'uniform vec3 uCam; uniform vec3 uLight; uniform float uAlpha; uniform float uPhase; uniform float uGlow;',
+    'uniform vec3 uCam; uniform vec3 uLight; uniform float uAlpha; uniform float uGlow;',
     'uniform vec3 uDeep; uniform vec3 uMid; uniform vec3 uRim; uniform vec3 uSpec;',
     'void main(){',
     '  vec3 N=normalize(vN); vec3 V=normalize(uCam-vW); vec3 L=normalize(uLight-vW);',
     '  float ndl=max(dot(N,L),0.0); float ndv=max(dot(N,V),0.0);',
     '  float fres=pow(1.0-ndv,2.2);',
-    '  vec3 H=normalize(L+V); float spec=pow(max(dot(N,H),0.0),40.0);',
+    '  vec3 H=normalize(L+V); float nh=max(dot(N,H),0.0); float spec=pow(nh,64.0)*0.85+pow(nh,9.0)*0.14;',
     '  float wrap=ndl*0.75+0.25;',
     '  vec3 col=mix(uDeep,uMid,smoothstep(0.0,1.0,wrap));',
-    '  col*=mix(0.82,1.04,smoothstep(0.0,0.9,ndl));',
+    '  col*=mix(0.68,1.04,smoothstep(0.0,0.9,ndl));',
     '  col=mix(col,uRim,fres*0.62);',
     '  col+=uMid*clamp(vD*1.2,-0.04,0.14);',
-    '  float ph=fres*5.0+uPhase*0.22;',
-    '  col+=0.035*vec3(sin(ph),sin(ph+2.1),sin(ph+4.2))*fres;',
-    '  col+=uSpec*spec*0.5+uRim*uGlow*fres*0.35;',
+    '  col+=uSpec*spec+uRim*uGlow*fres*0.35;',
+    '  col/=max(1.0,max(col.r,max(col.g,col.b)));',
     '  float a=uAlpha;',
     '  gl_FragColor=vec4(col*a,a);',
     '}'
@@ -166,7 +165,7 @@
   }
   function hex(h) { var n = parseInt(h.replace('#', ''), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
 
-  var DEFAULT_PALETTE = { deep: '#1f4537', mid: '#7fa392', rim: '#f4efe4', spec: '#ffffff', particle: '#2b5a49' };
+  var DEFAULT_PALETTE = { deep: '#082B59', mid: '#0757B8', rim: '#EAF3FF', spec: '#FFFFFF', particle: '#1769E0' };
   var MAX_SAT = 7;
 
   function init(canvas, opts) {
@@ -247,7 +246,7 @@
       gl.uniformMatrix4fv(orbP.u.uProj, false, proj);
       gl.uniformMatrix4fv(orbP.u.uView, false, view);
       gl.uniformMatrix4fv(orbP.u.uModel, false, m);
-      gl.uniform1f(orbP.u.uTime, t); gl.uniform1f(orbP.u.uPhase, t);
+      gl.uniform1f(orbP.u.uTime, t);
       gl.uniform1f(orbP.u.uAmp, amp); gl.uniform1f(orbP.u.uFreq, freq);
       gl.uniform3f(orbP.u.uCam, 0, 0, CAMZ);
       gl.uniform3f(orbP.u.uLight, mouse.x * 4 - 2, -mouse.y * 3 + 3.5, 5);
@@ -265,7 +264,7 @@
       var s = layout.s * (0.84 + 0.16 * e) * (1 + scroll * 0.1) * (1 + pulseV * 0.06);
       var cx = layout.x + mouse.x * 0.1, cy = layout.y + scroll * layout.s * 0.6 - mouse.y * 0.06;
       var rx = mouse.y * 0.3 + t * 0.03 + scroll * 0.6, ry = mouse.x * 0.45 + t * 0.06;
-      var amp = 0.1 + 0.02 * Math.sin(t * 0.45) + mouse.v * 0.05 + pulseV * 0.09;
+      var amp = 0.075 + 0.018 * Math.sin(t * 0.45) + mouse.v * 0.05 + pulseV * 0.09;
 
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       gl.depthMask(true);

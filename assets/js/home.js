@@ -4,15 +4,16 @@
   var C = window.Cuidare; if (!C) return;
   var $ = C.$, $$ = C.$$;
 
-  /* Esfera 3D dentro do arco do hero */
-  var arch = $('[data-hero-arch]');
+  /* Escultura 3D do palco azul-marinho */
+  var sculpt = $('[data-hero-sculpture]');
   var heroOrb = null;
-  if (arch && !(C.cfg.photos && C.cfg.photos.hero)) {
-    C.orb($('[data-orb]', arch), {
-      satellites: 2,
-      layout: function (aspect, hw, hh) { return { x: 0, y: -hh * 0.02, s: Math.min(hw, hh) * 0.6, a: 1 }; },
-      onReady: function () { arch.classList.add('is-3d'); },
-      onFail: function () { arch.classList.remove('is-3d'); }
+  if (sculpt && !(C.cfg.photos && C.cfg.photos.hero)) {
+    C.orb($('[data-orb]', sculpt), {
+      satellites: 3,
+      palette: { deep: '#0757B8', mid: '#1769E0', rim: '#EAF3FF', spec: '#FFFFFF', particle: '#EAF3FF' },
+      layout: function (aspect, hw, hh) { return { x: 0, y: 0, s: Math.min(hw, hh) * 0.5, a: 1 }; },
+      onReady: function () { sculpt.classList.add('is-3d'); },
+      onFail: function () { sculpt.classList.remove('is-3d'); }
     }).then(function (inst) { heroOrb = inst; });
   }
   var ticking = false;

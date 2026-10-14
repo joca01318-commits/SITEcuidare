@@ -14,6 +14,7 @@
 
   function show(name) {
     Object.keys(views).forEach(function (k) { views[k].hidden = k !== name; });
+    document.documentElement.removeAttribute('data-av');
   }
   function hasAnswers() { return Object.keys(answers).some(function (k) { return answers[k]; }); }
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
