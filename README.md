@@ -54,6 +54,12 @@ python3 -m http.server 8000
 O envio do formulário só funciona publicado no Netlify, com o Forms ativo. Fora dele, o site mostra
 erro e oferece o WhatsApp, sem simular sucesso.
 
+## Arquivo único
+
+`python3 tools/gerar-html-unico.py` gera `dist/cuidare-vila-mariana.html`: as 3 páginas em um só arquivo,
+com CSS, fontes, logo e scripts embutidos (as páginas viram `?pagina=experiencia` e `?pagina=avaliacao`).
+Abre com duplo clique, sem internet. Para hospedar, prefira a versão em pastas (mais rápida).
+
 ## Publicar
 
 Arraste a pasta do site (sem `docs/`) em *Netlify → Add new project → Deploy manually*, ou conecte o

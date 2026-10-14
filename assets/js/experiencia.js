@@ -160,8 +160,8 @@
 
   /* ---------- Navegação ---------- */
   function urlFor(i) {
-    if (i < 0) return location.pathname;
-    return location.pathname + '?etapa=' + (i + 1) + (returnMode ? '&retorno=1' : '');
+    if (i < 0) return C.pageUrl('experiencia');
+    return C.pageUrl('experiencia', '?etapa=' + (i + 1) + (returnMode ? '&retorno=1' : ''));
   }
 
   function go(i, dir, fromPop) {

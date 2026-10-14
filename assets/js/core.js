@@ -27,12 +27,18 @@
   };
 
   /* ---------- URLs entre páginas (funciona no Netlify e abrindo do disco) ---------- */
+  // Versão em arquivo único (dist/cuidare-vila-mariana.html): as páginas viram ?pagina=nome.
+  var single = window.CUIDARE_SINGLE === true;
   function pageUrl(name, query) {
+    if (single) {
+      var q = (query || '').replace(/^\?/, '');
+      return location.pathname + '?pagina=' + (name || 'inicio') + (q ? '&' + q : '');
+    }
     var path = root + (name ? name + '/' : '');
     if (isFile) path += 'index.html';
     return path + (query || '');
   }
-  if (isFile) {
+  if (isFile && !single) {
     $$('a[href]').forEach(function (a) {
       var href = a.getAttribute('href');
       if (/^(https?:|mailto:|tel:|#)/.test(href)) return;
