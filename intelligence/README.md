@@ -105,6 +105,18 @@ Tabelas principais: `users`, `organizations`, `clients`, `spreadsheets`, `record
 - Backups automáticos (`VACUUM INTO`) com retenção configurável; lixeira de 30 dias; sessões e tentativas
   antigas são limpas automaticamente; registro de falhas no log do servidor.
 
+## Testar no computador (2 cliques)
+
+1. Instale o **Node.js** (versão LTS) em https://nodejs.org/pt-br/download.
+2. Baixe esta pasta do GitHub (botão **Code → Download ZIP**) e descompacte.
+3. Entre na pasta `intelligence` e dê dois cliques em **`INICIAR-WINDOWS.bat`**
+   (no Mac/Linux: `bash iniciar-mac-linux.sh`).
+4. Na primeira vez ele instala tudo (1 a 3 minutos), mostra o **código de acesso** (também salvo em
+   `CODIGO-DE-ACESSO.txt`) e abre o navegador em http://localhost:8787.
+5. Digite o código, crie seu login e importe as planilhas. Para desligar, feche a janela preta.
+
+Os dados ficam na pasta `intelligence/data` do seu computador. Nada vai para a internet.
+
 ## Instalação
 
 Requisitos: Node.js 22.13 ou mais novo.
