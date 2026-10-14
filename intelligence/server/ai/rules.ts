@@ -357,6 +357,8 @@ function totals(ctx: ToolCtx, p: Parsed, state: ConvState, page: PageContext, fo
   }
   const groupWord = p.norm.match(/\bpor (cuidador\w*|regime|turno|cliente|assistido|situacao|status)\b/)?.[1];
   const res = calculateTotals(ctx, { spreadsheetId, clientId: client?.id, month: month ?? undefined, year: year ?? undefined, status, groupBy: groupWord });
+  // Planilhas sem nenhum lançamento no critério não entram na resposta.
+  res.perSheet = res.perSheet.filter((s) => s.count > 0 || s.errors > 0);
   const scope = [client ? `de ${client.name}` : "", spreadsheetId ? "nesta planilha" : month ? `em ${MONTHS_PT[month - 1].toLowerCase()} de ${year}` : year ? `em ${year}` : ""]
     .filter(Boolean)
     .join(" ");
