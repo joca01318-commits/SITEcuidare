@@ -1,0 +1,54 @@
+{
+  "name": "cuidare-intelligence",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cuidare Intelligence — gestão inteligente de planilhas",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n api,web \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "tsx watch server/index.ts",
+    "dev:web": "vite",
+    "build": "vite build && tsc -p tsconfig.server.json",
+    "start": "node --disable-warning=ExperimentalWarning dist/server/index.js",
+    "invite": "node --disable-warning=ExperimentalWarning dist/server/cli/invite.js",
+    "invite:dev": "tsx server/cli/invite.ts",
+    "typecheck": "tsc -p tsconfig.server.json --noEmit && tsc -p tsconfig.web.json --noEmit",
+    "test": "vitest run",
+    "e2e": "bash tests/e2e/run.sh"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.1.3",
+    "@fastify/helmet": "^13.2.0",
+    "@fastify/multipart": "^10.1.3",
+    "@fastify/static": "^10.1.6",
+    "exceljs": "^4.4.0",
+    "fastify": "^5.12.7",
+    "papaparse": "^5.7.0",
+    "pdfkit": "^0.20.2",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/papaparse": "^5.5.2",
+    "@types/pdfkit": "^0.17.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "concurrently": "^10.0.6",
+    "lucide-react": "^1.57.0",
+    "playwright-core": "^1.56.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-router-dom": "^7.18.4",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.4"
+  },
+  "overrides": {
+    "uuid": "^11.1.1"
+  }
+}

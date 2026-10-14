@@ -43,3 +43,8 @@ Não há etapa de build: basta publicar a pasta inteira (ex.: arrastar para o Ne
 
 Os valores ficam em `PLAN_DATA` (`assets/js/main.js`) e o estado inicial (Seg a seg) também está
 no HTML. Ao alterar um preço, atualize os dois lugares.
+
+## Cuidare Intelligence (sistema interno)
+
+A pasta [`intelligence/`](intelligence/README.md) contém o sistema interno de planilhas com assistente de IA.
+Ele é independente deste site e roda em um servidor Node.js próprio (veja as instruções no README da pasta).
