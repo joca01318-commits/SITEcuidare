@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Gera o pacote "baixe, descompacte e dê dois cliques" para testar no Windows.
-# Inclui o Node.js portátil, então o computador não precisa de nenhuma instalação.
+# O computador não precisa de nenhuma instalação: o Node.js portátil vem junto ou é baixado sozinho.
 # Uso: bash tools/kit-windows.sh [pasta-de-saída]
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -20,12 +20,15 @@ find "$KIT/app/node_modules" -type f \( -name "*.md" -o -name "*.map" -o -name "
 find "$KIT/app/node_modules" -mindepth 2 -maxdepth 3 -type d \( -name test -o -name tests -o -name __tests__ -o -name example -o -name examples \) -prune -exec rm -rf {} +
 rm -f "$KIT/app/package-lock.json"
 
-# Node.js portátil para Windows (licença MIT).
-curl -fsSL "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-win-x64.zip" -o "$WORK/node.zip"
-unzip -q -j "$WORK/node.zip" "node-v$NODE_VERSION-win-x64/node.exe" "node-v$NODE_VERSION-win-x64/LICENSE" -d "$KIT/node"
+# Node.js portátil para Windows (licença MIT). Sem INCLUDE_NODE=1, o ABRIR-CUIDARE.bat baixa
+# o Node na primeira vez (deixa o pacote com ~15 MB em vez de ~45 MB).
+if [ "${INCLUDE_NODE:-0}" = "1" ]; then
+  curl -fsSL "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-win-x64.zip" -o "$WORK/node.zip"
+  unzip -q -j "$WORK/node.zip" "node-v$NODE_VERSION-win-x64/node.exe" "node-v$NODE_VERSION-win-x64/LICENSE" -d "$KIT/node"
+fi
 
 printf 'PORT=8787\r\nHOST=127.0.0.1\r\nDATA_DIR=../dados\r\nCOOKIE_SECURE=false\r\nAI_MODE=rules\r\n' > "$KIT/app/.env"
-cp tools/kit/ABRIR-CUIDARE.bat "$KIT/"
+sed "s/__NODE_VERSION__/$NODE_VERSION/g" tools/kit/ABRIR-CUIDARE.bat > "$KIT/ABRIR-CUIDARE.bat"
 cp tools/kit/LEIA-ME.txt "$KIT/"
 
 rm -f "$OUT/CuidareIntelligence-Windows.zip"
