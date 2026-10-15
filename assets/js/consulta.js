@@ -1,6 +1,6 @@
 /* Cuidare — consulta de valores (compartilhado pelas 3 páginas).
-   Opções, perguntas condicionais, estado da consulta, cálculo do valor da
-   configuração escolhida e mensagem do WhatsApp.
+   Opções, perguntas condicionais, estado da consulta e cálculo do valor da
+   configuração escolhida.
    Os valores ficam em precos.js (modo local) ou no servidor (modo servidor). */
 (function () {
   'use strict';
@@ -64,7 +64,7 @@
       help: 'Escolha a duração desejada. Se ainda não souber, a equipe ajuda a definir.' },
     { id: 'frequencia', label: 'Frequência', title: 'Com que frequência?',
       help: 'Os planos mensais consideram 22, 26 ou 30 dias. O atendimento pontual é cobrado por diária.' },
-    { id: 'detalhes', label: 'Detalhes', title: 'Para finalizar, só o essencial.',
+    { id: 'detalhes', label: 'Informações', title: 'Para finalizar, só o essencial.',
       help: 'Não pedimos documentos, endereço completo nem dados clínicos.' }
   ];
 
@@ -185,22 +185,6 @@
     ];
   }
 
-  function whatsappMessage(a, r, contact) {
-    a = a || {}; contact = contact || {};
-    var p = priceText(r, a);
-    var lines = ['Olá! Fiz uma consulta no site da Cuidare Vila Mariana e quero avançar com este atendimento.', ''];
-    summaryRows(a).forEach(function (row) { if (row.value) lines.push('• ' + row.label + ': ' + row.value + (row.k === 'frequencia' && a.frequencia !== 'pontual' ? ' (' + (find(FREQUENCIAS, a.frequencia) || {}).d + ')' : '')); });
-    lines.push('• Valor apresentado na consulta: ' + p.linha);
-    var d = [];
-    if (contact.nome) d.push('• Nome: ' + contact.nome);
-    if (contact.email) d.push('• E-mail: ' + contact.email);
-    if (contact.whatsapp) d.push('• WhatsApp: ' + contact.whatsapp);
-    if (contact.observacoes) d.push('• Observações: ' + contact.observacoes);
-    if (d.length) lines.push('', 'Meus dados:', d.join('\n'));
-    if (contact.id) lines.push('', 'Código da consulta: ' + contact.id);
-    return lines.join('\n');
-  }
-
   /* ---------- Estado (somente nesta aba do navegador) ---------- */
   function load() {
     try { var raw = sessionStorage.getItem(KEY); var s = raw ? JSON.parse(raw) : null; return { a: sanitize((s && s.a) || {}) }; }
@@ -216,7 +200,7 @@
     optionsFor: optionsFor, sanitize: sanitize, labelOf: labelOf, servico: servico,
     stepDone: stepDone, firstIncomplete: firstIncomplete, isComplete: isComplete, priority: priority,
     calcular: calcular, obterPreco: obterPreco, money: money, priceText: priceText,
-    summaryRows: summaryRows, whatsappMessage: whatsappMessage,
+    summaryRows: summaryRows,
     load: load, save: save, clear: clear
   };
 })();

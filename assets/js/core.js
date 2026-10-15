@@ -47,19 +47,7 @@
     });
   }
 
-  /* ---------- WhatsApp ---------- */
-  function waLink(message) {
-    var n = (CFG.whatsapp && CFG.whatsapp.number) || '5511916349800';
-    return 'https://wa.me/' + n + (message ? '?text=' + encodeURIComponent(message) : '');
-  }
-  $$('[data-wa]').forEach(function (a) {
-    a.href = waLink(a.getAttribute('data-wa-msg') || 'Olá! Vim pelo site da Cuidare Vila Mariana e gostaria de falar com a equipe.');
-    a.addEventListener('click', function () { track('whatsapp_click', { location: a.getAttribute('data-wa') || 'site' }); });
-  });
   $$('[data-reviews]').forEach(function (a) { if (CFG.reviewsUrl) a.href = CFG.reviewsUrl; });
-  $$('[data-phone]').forEach(function (a) {
-    if (CFG.whatsapp) { a.href = 'tel:+' + CFG.whatsapp.number; a.textContent = CFG.whatsapp.display; }
-  });
 
   /* ---------- Origem da visita (primeiro acesso da sessão) ---------- */
   (function captureOrigin() {
@@ -121,18 +109,15 @@
     d.className = 'privacy';
     d.id = 'privacidade';
     d.setAttribute('aria-labelledby', 'privacy-title');
-    var phone = (CFG.whatsapp && CFG.whatsapp.display) || '(11) 91634-9800';
     d.innerHTML =
       '<div class="privacy__inner">' +
       '<button type="button" class="privacy__close" data-close aria-label="Fechar">×</button>' +
       '<p class="eyebrow">Privacidade</p>' +
       '<h2 id="privacy-title">Aviso de privacidade</h2>' +
-      '<h3>Quais dados usamos</h3><p>As escolhas da consulta (tipo de atendimento, duração, frequência, bairro, previsão de início e, se você informar, necessidades), seu nome, seu WhatsApp e, se você quiser, seu e-mail e observações. Não pedimos CPF, documentos, endereço completo nem dados clínicos detalhados.</p>' +
-      '<h3>Para quê</h3><p>Para mostrar o valor da configuração escolhida, entrar em contato com você e dar continuidade à sua solicitação. As informações sobre a necessidade de cuidado são usadas somente para esse fim.</p>' +
-      '<h3>No seu navegador</h3><p>Suas escolhas ficam salvas apenas nesta aba do navegador e são apagadas ao fechá-la.</p>' +
-      '<h3>WhatsApp</h3><p>Ao continuar pelo WhatsApp, a conversa acontece no aplicativo, com a mensagem que você revisa antes de enviar.</p>' +
-      '<h3>Medição</h3><p>Ferramentas de análise só são ativadas se você autorizar. Elas não recebem seu nome, telefone, e-mail nem informações sobre a necessidade de cuidado.</p>' +
-      '<h3>Seus direitos</h3><p>Você pode pedir acesso, correção ou exclusão dos seus dados a qualquer momento pelo WhatsApp ou telefone ' + phone + '.</p>' +
+      '<h3>Quais dados usamos</h3><p>Somente as escolhas desta consulta: tipo de atendimento, duração, frequência, bairro, previsão de início e, se você marcar, necessidades. O site não pede nome, telefone, e-mail, documentos nem dados clínicos.</p>' +
+      '<h3>Para quê</h3><p>Para mostrar o valor da configuração escolhida e o resumo do atendimento.</p>' +
+      '<h3>Onde ficam</h3><p>Apenas nesta aba do seu navegador. São apagadas ao fechá-la, e o site não registra dados pessoais.</p>' +
+      '<h3>Medição</h3><p>Ferramentas de análise só são ativadas se você autorizar e nunca recebem o bairro nem informações sobre a necessidade de cuidado.</p>' +
       '<p class="privacy__who">Responsável: Cuidare Vila Mariana.</p>' +
       '</div>';
     document.body.appendChild(d);
@@ -221,6 +206,6 @@
 
   window.Cuidare = {
     cfg: CFG, $: $, $$: $$, store: store, reduce: reduce, finePointer: finePointer, lowPower: lowPower,
-    pageUrl: pageUrl, waLink: waLink, track: track, reveal: reveal, cena: cena, esc: esc, photo: photo
+    pageUrl: pageUrl, track: track, reveal: reveal, cena: cena, esc: esc, photo: photo
   };
 })();

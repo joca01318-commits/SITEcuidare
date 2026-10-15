@@ -15,7 +15,7 @@
     duracao: 'Como a duração ainda não foi definida, a equipe monta a proposta junto com você.',
     sem_preco: 'Para esta combinação, o valor é confirmado diretamente pela equipe comercial.',
     servico: 'Para este tipo de atendimento, o valor é confirmado diretamente pela equipe comercial.',
-    indisponivel: 'Não foi possível consultar o valor agora. A equipe envia a proposta pelo WhatsApp.'
+    indisponivel: 'Não foi possível consultar o valor agora. A equipe envia a proposta para você.'
   };
 
   function chips() {
@@ -27,7 +27,6 @@
   }
 
   var detailsUrl = C.pageUrl('detalhes') + '#detalhes';
-  var formUrl = C.pageUrl('detalhes') + '#solicitar';
   var changeUrl = C.pageUrl('', '?etapa=1&retorno=1') + '#consulta';
 
   function trust() {
@@ -63,11 +62,7 @@
           '<p class="pcard__price"><span class="pcard__v">Proposta personalizada</span></p>' +
           '<p class="pcard__note">' + ICON('info') + '<span>' + (REASON[r.motivo] || REASON.sem_preco) + '</span></p></div>';
 
-    var actions = ok
-      ? '<a class="btn btn--primary btn--lg" href="' + detailsUrl + '" data-track="ver_detalhes"><span>Ver detalhes deste atendimento</span><span class="btn__ico" aria-hidden="true">' + ICON('arrow') + '</span></a>' +
-        '<a class="btn btn--glass btn--lg" href="' + formUrl + '" data-track="continuar_opcao"><span>Continuar com esta opção</span></a>'
-      : '<a class="btn btn--primary btn--lg" href="' + formUrl + '" data-track="solicitar_proposta"><span>Solicitar proposta personalizada</span><span class="btn__ico" aria-hidden="true">' + ICON('arrow') + '</span></a>' +
-        '<a class="btn btn--glass btn--lg" href="' + detailsUrl + '" data-track="ver_detalhes"><span>Ver detalhes deste atendimento</span></a>';
+    var actions = '<a class="btn btn--primary btn--lg" href="' + detailsUrl + '" data-track="ver_detalhes"><span>Ver detalhes deste atendimento</span><span class="btn__ico" aria-hidden="true">' + ICON('arrow') + '</span></a>';
 
     box.innerHTML = '<div class="price-grid">' + head +
       '<div class="price__side" data-intro style="--d:2">' + card +
@@ -85,8 +80,7 @@
       '<p class="eyebrow">Consulta de valores</p>' +
       '<h1 class="price__title" tabindex="-1">Primeiro, conte qual atendimento <em>você procura.</em></h1>' +
       '<p class="price__lead">O valor aparece aqui depois que você escolhe o tipo de atendimento, a duração e a frequência.</p>' +
-      '<div class="price__actions"><a class="btn btn--primary btn--lg" href="' + C.pageUrl('') + '#consulta"><span>Começar a consulta</span><span class="btn__ico" aria-hidden="true">' + ICON('arrow') + '</span></a>' +
-      '<a class="btn btn--glass btn--lg" data-wa="valor_vazio" href="' + C.waLink('Olá! Vim pelo site da Cuidare Vila Mariana e gostaria de saber o valor de um atendimento.') + '" target="_blank" rel="noopener">' + ICON('wa') + '<span>Falar no WhatsApp</span></a></div></div>';
+      '<div class="price__actions"><a class="btn btn--primary btn--lg" href="' + C.pageUrl('') + '#consulta"><span>Começar a consulta</span><span class="btn__ico" aria-hidden="true">' + ICON('arrow') + '</span></a></div></div>';
   }
 
   // Cena 3D atrás do valor

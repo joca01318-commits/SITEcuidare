@@ -69,19 +69,6 @@ def page_parts(rel):
     return src, {'title': title, 'description': desc, 'bodyClass': cls.group(1) if cls else '', 'pre': pre}, body
 
 
-def netlify_form(avaliacao_src):
-    """Cópia oculta do formulário para o Netlify detectar no deploy (o original fica dentro de <template>)."""
-    form = first(r'(<form[^>]*data-lead-form.*?</form>)', avaliacao_src)
-    form_name = first(r'<form[^>]*name="([^"]+)"', form)
-    names = []
-    for n in re.findall(r'name="([^"]+)"', form):
-        if n not in names and n != 'form-name':
-            names.append(n)
-    fields = ''.join('<input type="hidden" name="%s">' % n for n in names)
-    return ('<form name="%s" data-netlify="true" netlify-honeypot="empresa" hidden aria-hidden="true">'
-            '<input type="hidden" name="form-name" value="%s">' % (form_name, form_name) + fields + '</form>')
-
-
 def main():
     css = read('assets/css/site.css')
     for font in ('newsreader-wght.woff2', 'newsreader-wght-italic.woff2', 'manrope-wght.woff2'):
@@ -103,14 +90,12 @@ def main():
             keep.append(s)
     ld = first(r'(<script type="application/ld\+json">.*?</script>)', home_head)
 
-    meta, templates, avaliacao_src = {}, [], ''
+    meta, templates = {}, []
     for pid, rel, scripts in PAGES:
         src, info, body = page_parts(rel)
         info['scripts'] = scripts
         meta[pid] = info
         templates.append('<template id="pg-%s">%s</template>' % (pid, body))
-        if pid == 'detalhes':
-            avaliacao_src = src
 
     boot = """
 (function () {
@@ -142,7 +127,7 @@ def main():
     out.append('  ' + ld)
     for n, code in js.items():
         out.append('  <script type="text/plain" id="js-%s">\n%s\n  </script>' % (n, code))
-    out += ['</head>', '<body>', netlify_form(avaliacao_src)] + templates
+    out += ['</head>', '<body>'] + templates
     out += ['<script>%s</script>' % boot, '</body>', '</html>', '']
     OUT.parent.mkdir(exist_ok=True)
     OUT.write_text('\n'.join(out), encoding='utf-8')

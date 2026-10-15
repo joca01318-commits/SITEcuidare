@@ -6,9 +6,12 @@ Experiência digital da Cuidare Vila Mariana em três páginas:
 | --- | --- |
 | `/` | Capa com 3D, consulta em 4 etapas (atendimento, duração, frequência, detalhes), diferenciais e depoimentos |
 | `/valor/` | Mostra **somente** o valor da configuração escolhida (ou proposta personalizada, quando não há valor validado) |
-| `/detalhes/` | Resumo, detalhes do atendimento escolhido, dados de contato e continuação pelo WhatsApp |
+| `/detalhes/` | Resumo e detalhes do atendimento escolhido (incluído, contratação, avaliação, condições) |
 
 Regra comercial: seleção antes do preço, **um preço por consulta** e nenhuma tabela pública comparando opções.
+
+É uma apresentação de valores para quem **já está em conversa** com a equipe: o site não tem formulário,
+número de telefone nem botões de WhatsApp.
 
 ## Identidade visual
 
@@ -30,14 +33,14 @@ As cores ficam como variáveis no topo de `assets/css/site.css`. Logo: versão o
 ```
 index.html, valor/, detalhes/, 404.html
 assets/css/site.css        sistema visual (mobile first)
-assets/js/config.js        configuração pública (WhatsApp, registro, preços, medição, fotos)
+assets/js/config.js        configuração pública (preços, medição, fotos)
 assets/js/precos.js        tabela de preços (fonte única, modo local)
-assets/js/consulta.js      opções, perguntas condicionais, cálculo, resumo, mensagem do WhatsApp
+assets/js/consulta.js      opções, perguntas condicionais, cálculo e resumo
 assets/js/core.js          base comum: links, origem da visita, consentimento, privacidade, 3D
 assets/js/cena.js          cena 3D em WebGL (corações e esferas de vidro), sem bibliotecas
 assets/js/home.js          capa e consulta em 4 etapas
 assets/js/valor.js         página do valor
-assets/js/detalhes.js      detalhes, formulário, WhatsApp e registro
+assets/js/detalhes.js      resumo e detalhes do atendimento
 assets/fonts/              Newsreader + Manrope (SIL OFL), hospedadas localmente
 netlify/functions/preco.mjs  cálculo no servidor (modo opcional)
 tools/gerar-html-unico.py  gera o site inteiro em um arquivo (dist/)
@@ -53,9 +56,6 @@ Sem etapa de build e sem dependências de terceiros no navegador.
 python3 -m http.server 8000
 # abra http://localhost:8000
 ```
-
-O registro das solicitações (Netlify Forms) só funciona publicado no Netlify. Fora dele, o site
-informa que o registro não foi concluído e mantém a continuação pelo WhatsApp, sem simular sucesso.
 
 ## Arquivo único
 
