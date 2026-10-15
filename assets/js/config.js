@@ -33,12 +33,13 @@ window.CUIDARE_CONFIG = {
     apoio: 'assets/photos/cuidado-apoio.webp'
   },
 
-  // Fotos reais (com autorização de uso de imagem). Caminho relativo à raiz do site.
-  // Enquanto vazio, cada cartão usa a composição visual própria no lugar da foto.
+  // Fotos dos cartões de atendimento (recortes das imagens de referência enviadas pela Cuidare).
+  // Troque por fotos reais da equipe, com autorização de uso de imagem (~900x700).
+  // Deixe vazio ('') para usar a composição visual própria no lugar da foto.
   photos: {
-    residencia: '',      // ex.: 'assets/photos/residencia.webp' (~900x700)
-    hospital: '',
-    pos_operatorio: '',
-    consultas: ''
+    residencia: 'assets/photos/residencia.webp',
+    hospital: 'assets/photos/hospital.webp',
+    pos_operatorio: 'assets/photos/pos_operatorio.webp',
+    consultas: 'assets/photos/consultas.webp'
   }
 };

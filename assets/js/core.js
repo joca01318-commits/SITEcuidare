@@ -187,9 +187,11 @@
     var img = new Image();
     img.alt = slot.getAttribute('data-photo-alt') || '';
     img.decoding = 'async';
-    img.loading = 'lazy';
+    // A imagem só entra no cartão depois de carregada; carregamento "lazy" impediria o download
+    // (ela ainda não está na página), então o pedido é feito na hora, com prioridade baixa.
+    if ('fetchPriority' in img) img.fetchPriority = 'low';
     img.onload = function () { slot.insertBefore(img, slot.firstChild); slot.classList.add('has-photo'); };
-    img.src = root + src;
+    img.src = /^(data:|https?:)/.test(src) ? src : root + src;
   }
   function photos(scope) { $$('[data-photo]', scope).forEach(photo); }
 

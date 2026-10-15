@@ -89,9 +89,10 @@ coração dos uniformes. Atenção: essas imagens parecem geradas por IA e têm 
 ampliadas). **Recomendado:** trocar por fotos reais da equipe, com autorização de uso de imagem, em
 `config.js → fotosValor` (retrato ~900×1000 e paisagem ~900×800).
 
-**Cartões de atendimento (página inicial):** usam composição visual própria. Para incluir fotos reais:
-1. Salve em `assets/photos/` (WebP ou JPG, ~900×700, até ~250 KB).
-2. Preencha em `config.js → photos`: `residencia`, `hospital`, `pos_operatorio`, `consultas`.
+**Cartões de atendimento (página inicial):** usam fotos recortadas da imagem de referência enviada pela
+Cuidare (`assets/photos/residencia.webp`, `hospital.webp`, `pos_operatorio.webp`, `consultas.webp`), sem os
+textos, selos e ícones que vinham sobre a imagem. Para trocar por fotos reais, substitua esses arquivos
+(~900×700) ou altere os caminhos em `config.js → photos`; deixe vazio para voltar à composição visual.
 
 ## 7. Identidade visual e logo
 
