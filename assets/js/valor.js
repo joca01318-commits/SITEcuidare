@@ -30,7 +30,7 @@
   var changeUrl = C.pageUrl('', '?etapa=1&retorno=1') + '#consulta';
 
   function trust() {
-    return '<ul class="price__trust">' +
+    return '<ul class="price__trust" data-stagger>' +
       '<li><span class="ic">' + ICON('calendar') + '</span>Avaliação gratuita, com horário agendado</li>' +
       '<li><span class="ic">' + ICON('swap') + '</span>Se o cuidador faltar, a Cuidare envia outro profissional</li>' +
       '<li><span class="ic">' + ICON('doc') + '</span>Sem vínculo trabalhista para a família</li></ul>';
@@ -41,8 +41,8 @@
     var p = K.priceText(r, a);
     var head = '<div class="price__head">' +
       '<p class="eyebrow" data-intro style="--d:0">Seu atendimento selecionado</p>' +
-      (ok ? '<h1 class="price__title" data-intro style="--d:1" tabindex="-1">Este é o valor do <em>seu atendimento.</em></h1>'
-          : '<h1 class="price__title" data-intro style="--d:1" tabindex="-1">Seu atendimento pede uma <em>proposta personalizada.</em></h1>') + '</div>';
+      (ok ? '<h1 class="price__title" data-intro data-split style="--d:1" tabindex="-1">Este é o valor do <em>seu atendimento.</em></h1>'
+          : '<h1 class="price__title" data-intro data-split style="--d:1" tabindex="-1">Seu atendimento pede uma <em>proposta personalizada.</em></h1>') + '</div>';
     var rest = '<div class="price__rest">' +
       (ok ? '<p class="price__lead" data-intro style="--d:2">Calculado a partir das suas escolhas. Abra os detalhes para ver o que está incluído e as condições da contratação.</p>'
           : '<p class="price__lead" data-intro style="--d:2">' + (REASON[r.motivo] || REASON.sem_preco) + '</p>') +
@@ -64,11 +64,18 @@
 
     var actions = '<a class="btn btn--primary btn--lg" href="' + detailsUrl + '" data-track="ver_detalhes"><span>Ver detalhes deste atendimento</span><span class="btn__ico" aria-hidden="true">' + ICON('arrow') + '</span></a>';
 
-    box.innerHTML = '<div class="price-grid">' + head +
+    var F = C.cfg.fotosValor || {};
+    var photo = F.principal ? '<figure class="price__photo" data-intro style="--d:3">' +
+      '<span class="price__ph price__ph--main"><img src="' + C.asset(F.principal) + '" alt="Cuidadora sorrindo para uma senhora" width="724" height="808" decoding="async"></span>' +
+      (F.apoio ? '<span class="price__ph price__ph--sub"><img src="' + C.asset(F.apoio) + '" alt="" width="448" height="404" decoding="async"></span>' : '') +
+      '<span class="badge price__badge"><span class="badge__i">' + ICON('heart') + '</span>Cuidare, cuidado de verdade</span></figure>' : '';
+
+    box.innerHTML = '<div class="price-grid' + (photo ? ' has-photo' : '') + '">' + head +
       '<div class="price__side" data-intro style="--d:2">' + card +
       '<div class="price__actions">' + actions + '</div>' +
-      '<a class="price__change" href="' + changeUrl + '">' + ICON('edit') + 'Alterar minhas escolhas</a></div>' + rest + '</div>';
+      '<a class="price__change" href="' + changeUrl + '">' + ICON('edit') + 'Alterar minhas escolhas</a></div>' + rest + photo + '</div>';
 
+    C.reveal(box);
     C.track('price_view', { status: r.status, duracao: a.duracao, frequencia: a.frequencia });
     if (scene) scene.pulse();
   }
@@ -86,6 +93,7 @@
   // Cena 3D atrás do valor
   if (stage) {
     C.cena($('[data-cena]', stage), {
+      delay: C.intro ? 650 : 0,
       particles: 70,
       objects: function (aspect, hw, hh) {
         if (aspect < 0.9) return [
@@ -93,10 +101,10 @@
           { shape: 'sphere', x: -hw * 0.82, y: -hh * 0.4, z: 0, s: hh * 0.05 }
         ];
         return [
-          { shape: 'heart', x: hw * 0.98, y: hh * 0.7, z: -2, s: hh * 0.24, ry: -0.6, rz: 0.2, depth: 0.6 },
-          { shape: 'heart', x: -hw * 0.06, y: -hh * 0.72, z: -1, s: hh * 0.12, ry: 0.8, rz: -0.2, depth: 0.9 },
-          { shape: 'sphere', x: -hw * 0.88, y: hh * 0.62, z: 0, s: hh * 0.06, depth: 1.2 },
-          { shape: 'sphere', x: hw * 0.95, y: -hh * 0.75, z: 0.5, s: hh * 0.05, depth: 1.3 }
+          { shape: 'heart', x: hw * 0.9, y: hh * 0.86, z: -2, s: hh * 0.14, ry: -0.6, rz: 0.2, depth: 0.6 },
+          { shape: 'heart', x: -hw * 0.94, y: -hh * 0.8, z: -1, s: hh * 0.12, ry: 0.8, rz: -0.2, depth: 0.9 },
+          { shape: 'sphere', x: -hw * 0.25, y: hh * 0.9, z: 0, s: hh * 0.04, depth: 1.2 },
+          { shape: 'sphere', x: hw * 0.97, y: -hh * 0.82, z: 0.5, s: hh * 0.05, depth: 1.3 }
         ];
       },
       onReady: function () { stage.classList.add('is-3d'); },

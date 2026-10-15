@@ -9,9 +9,19 @@
   <meta name="theme-color" content="#061A35">
   <link rel="icon" href="../assets/img/favicon.png" type="image/png" sizes="64x64">
   <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
-  <link rel="preload" as="font" href="../assets/fonts/newsreader-wght.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="../assets/fonts/fredoka-wght.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="font" href="../assets/fonts/manrope-wght.woff2" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/css/site.css">
+  <script>
+    /* Abertura animada: só na primeira página da visita e com movimento liberado. */
+    (function () {
+      try {
+        if (sessionStorage.getItem('cuidare.abertura') || /etapa=/.test(location.search) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        sessionStorage.setItem('cuidare.abertura', '1');
+        document.documentElement.classList.add('intro-on');
+      } catch (e) { /* sem armazenamento: sem abertura */ }
+    })();
+  </script>
   <script>
     /* Decide antes da primeira pintura se há consulta, para a página não "pular" ao carregar. */
     (function () {
@@ -79,14 +89,14 @@
       </div>
       <div data-full>
         <header class="dt__head" id="detalhes">
-          <p class="eyebrow">Detalhes do atendimento</p>
-          <h1 class="dt__title" data-dt-title tabindex="-1">Detalhes do <em>seu atendimento.</em></h1>
-          <p class="dt__intro" data-dt-intro></p>
+          <p class="eyebrow" data-intro style="--d:0">Detalhes do atendimento</p>
+          <h1 class="dt__title" data-dt-title tabindex="-1" style="--d:1">Detalhes do <em>seu atendimento.</em></h1>
+          <p class="dt__intro" data-dt-intro data-intro style="--d:2"></p>
         </header>
 
         <div class="dt__grid">
           <aside class="dt__sum aside" data-dt-sum aria-label="Resumo do seu atendimento"></aside>
-          <div class="info" data-dt-info></div>
+          <div class="info" data-dt-info data-stagger></div>
         </div>
 
         <div class="dt__end" data-dt-end></div>

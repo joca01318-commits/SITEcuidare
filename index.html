@@ -19,9 +19,19 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="assets/img/favicon.png" type="image/png" sizes="64x64">
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
-  <link rel="preload" as="font" href="assets/fonts/newsreader-wght.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="assets/fonts/fredoka-wght.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="font" href="assets/fonts/manrope-wght.woff2" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/site.css">
+  <script>
+    /* Abertura animada: só na primeira página da visita e com movimento liberado. */
+    (function () {
+      try {
+        if (sessionStorage.getItem('cuidare.abertura') || /etapa=/.test(location.search) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        sessionStorage.setItem('cuidare.abertura', '1');
+        document.documentElement.classList.add('intro-on');
+      } catch (e) { /* sem armazenamento: sem abertura */ }
+    })();
+  </script>
   <script src="assets/js/config.js" defer></script>
   <script src="assets/js/precos.js" defer></script>
   <script src="assets/js/consulta.js" defer></script>
@@ -101,17 +111,17 @@
 
       <div class="wrap hero__in">
         <p class="chip chip--glow" data-intro style="--d:0"><svg aria-hidden="true"><use href="#i-heart"/></svg>Cuidado humanizado · Vila Mariana</p>
-        <h1 class="hero__title" id="hero-title" data-intro style="--d:1">Encontre o <em>cuidado ideal</em> para sua família.</h1>
+        <h1 class="hero__title" id="hero-title" data-intro data-split style="--d:1">Encontre o <em>cuidado ideal</em> para sua família.</h1>
         <p class="hero__lead" data-intro style="--d:2">Escolha o atendimento que você procura e consulte o valor correspondente de forma rápida e personalizada.</p>
         <div class="hero__actions" data-intro style="--d:3">
           <a class="btn btn--primary btn--xl" href="#consulta" data-track="hero"><span>Consultar valores</span><span class="btn__ico" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>
           <a class="btn btn--glass btn--xl" href="#cuidare"><span>Conhecer a Cuidare</span></a>
         </div>
         <ul class="kpis" data-intro style="--d:4" aria-label="A Cuidare em números">
-          <li><span class="kpis__i" aria-hidden="true"><svg><use href="#i-users"/></svg></span><span><strong>2.000+</strong><small>famílias atendidas</small></span></li>
-          <li><span class="kpis__i" aria-hidden="true"><svg><use href="#i-calendar"/></svg></span><span><strong>7+ anos</strong><small>de experiência</small></span></li>
-          <li><span class="kpis__i" aria-hidden="true"><svg><use href="#i-star"/></svg></span><span><strong>4,8/5</strong><small>avaliação dos clientes</small></span></li>
-          <li><span class="kpis__i" aria-hidden="true"><svg><use href="#i-chat"/></svg></span><span><strong>99+</strong><small>avaliações públicas</small></span></li>
+          <li style="--i:0"><span class="kpis__i" aria-hidden="true"><svg><use href="#i-users"/></svg></span><span><strong>2.000+</strong><small>famílias atendidas</small></span></li>
+          <li style="--i:1"><span class="kpis__i" aria-hidden="true"><svg><use href="#i-calendar"/></svg></span><span><strong>7+ anos</strong><small>de experiência</small></span></li>
+          <li style="--i:2"><span class="kpis__i" aria-hidden="true"><svg><use href="#i-star"/></svg></span><span><strong>4,8/5</strong><small>avaliação dos clientes</small></span></li>
+          <li style="--i:3"><span class="kpis__i" aria-hidden="true"><svg><use href="#i-chat"/></svg></span><span><strong>99+</strong><small>avaliações públicas</small></span></li>
         </ul>
       </div>
       <a class="hero__cue" href="#consulta"><span class="hero__mouse" aria-hidden="true"></span><span>Role para consultar</span></a>
@@ -123,7 +133,7 @@
       <div class="wrap">
         <header class="cfg__head">
           <p class="eyebrow" data-reveal>Consulta de valores</p>
-          <h2 class="h2" id="cfg-title" data-reveal style="--d:1">Monte o atendimento. <em>Veja o valor.</em></h2>
+          <h2 class="h2" id="cfg-title" data-reveal data-split style="--d:1">Monte o atendimento. <em>Veja o valor.</em></h2>
           <p class="lead" data-reveal style="--d:2">Quatro escolhas rápidas. O valor aparece na próxima tela, somente para a configuração que você escolher.</p>
         </header>
         <ol class="stepper" data-stepper aria-label="Etapas da consulta"></ol>
@@ -142,11 +152,11 @@
       <div class="why__bg" aria-hidden="true"><span class="shape shape--scallop"></span></div>
       <div class="wrap why__head">
         <p class="eyebrow" data-reveal>A Cuidare</p>
-        <h2 class="h2" id="why-title" data-reveal style="--d:1">Uma operação organizada em torno de <em>quem você ama.</em></h2>
+        <h2 class="h2" id="why-title" data-reveal data-split style="--d:1">Uma operação organizada em torno de <em>quem você ama.</em></h2>
         <p class="lead" data-reveal style="--d:2">Contratando diretamente, a família assume a seleção, a escala, os pagamentos, as faltas e as substituições. Com a Cuidare, uma empresa especializada seleciona, organiza e acompanha o atendimento.</p>
       </div>
       <div class="rail" data-rail>
-        <ul class="rail__track" data-rail-track aria-label="Diferenciais da Cuidare" tabindex="0">
+        <ul class="rail__track" data-rail-track data-stagger aria-label="Diferenciais da Cuidare" tabindex="0">
           <li class="xcard" style="--a:200deg"><div class="xcard__tags"><span>Equipe</span><span>Verificação</span></div><div class="xcard__art" aria-hidden="true"><span class="xcard__ring"></span><svg><use href="#i-shield"/></svg></div><h3>Profissionais verificados</h3><p>Cuidadores(as) ou técnicos(as) de enfermagem, com documentos, cursos, referências e entrevista presencial verificados.</p></li>
           <li class="xcard" style="--a:240deg"><div class="xcard__tags"><span>Continuidade</span></div><div class="xcard__art" aria-hidden="true"><span class="xcard__ring"></span><svg><use href="#i-swap"/></svg></div><h3>Faltas cobertas</h3><p>Se o cuidador faltar, a Cuidare envia outro profissional para substituí-lo.</p></li>
           <li class="xcard" style="--a:160deg"><div class="xcard__tags"><span>Flexibilidade</span></div><div class="xcard__art" aria-hidden="true"><span class="xcard__ring"></span><svg><use href="#i-users"/></svg></div><h3>Troca de cuidador</h3><p>Se o cuidador não se adaptar, você pode trocar.</p></li>
@@ -167,7 +177,7 @@
       <div class="wrap tst__grid">
         <div class="tst__intro">
           <p class="eyebrow" data-reveal>Depoimentos</p>
-          <h2 class="h2" id="tst-title" data-reveal style="--d:1">A confiança de quem já cuidou de <em>quem ama.</em></h2>
+          <h2 class="h2" id="tst-title" data-reveal data-split style="--d:1">A confiança de quem já cuidou de <em>quem ama.</em></h2>
           <div class="tst__score" data-reveal style="--d:2">
             <span class="tst__big">4,8</span>
             <span><span class="stars" aria-hidden="true"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></span><small>avaliação dos clientes · 99+ avaliações públicas</small></span>
@@ -196,7 +206,7 @@
       <div class="wrap">
         <div class="final__card" data-reveal>
           <span class="gheart gheart--final" aria-hidden="true"></span>
-          <h2 class="h2" id="final-title">Pronto para conhecer o valor do <em>seu atendimento?</em></h2>
+          <h2 class="h2" id="final-title" data-split>Pronto para conhecer o valor do <em>seu atendimento?</em></h2>
           <p>São quatro escolhas rápidas. Você vê somente o valor da configuração que escolher.</p>
           <div class="final__actions">
             <a class="btn btn--primary btn--lg" href="#consulta" data-track="final"><span>Consultar valores</span><span class="btn__ico" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>

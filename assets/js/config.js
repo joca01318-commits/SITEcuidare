@@ -26,6 +26,13 @@ window.CUIDARE_CONFIG = {
   // Link "Ver avaliações públicas". Troque pelo link exato do perfil no Google.
   reviewsUrl: 'https://www.google.com/maps/search/?api=1&query=Cuidare%20Vila%20Mariana',
 
+  // Fotos da página do valor (recortes das imagens de referência enviadas pela Cuidare).
+  // Troque por fotos reais da equipe, com autorização de uso de imagem.
+  fotosValor: {
+    principal: 'assets/photos/cuidado-principal.webp',
+    apoio: 'assets/photos/cuidado-apoio.webp'
+  },
+
   // Fotos reais (com autorização de uso de imagem). Caminho relativo à raiz do site.
   // Enquanto vazio, cada cartão usa a composição visual própria no lugar da foto.
   photos: {

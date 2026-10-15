@@ -141,14 +141,44 @@
   }
 
   /* ---------- Entradas suaves ---------- */
+  /* Títulos que entram palavra por palavra */
+  function split(el) {
+    if (!el || el.hasAttribute('data-split-done')) return;
+    var n = 0;
+    (function walk(node) {
+      Array.prototype.slice.call(node.childNodes).forEach(function (c) {
+        if (c.nodeType === 3) {
+          if (!c.textContent.trim()) return;
+          var frag = document.createDocumentFragment();
+          c.textContent.split(/(\s+)/).forEach(function (t) {
+            if (!t) return;
+            if (/^\s+$/.test(t)) { frag.appendChild(document.createTextNode(t)); return; }
+            var w = document.createElement('span'), i = document.createElement('span');
+            w.className = 'w'; i.className = 'w__i'; i.style.setProperty('--wi', n++); i.textContent = t;
+            w.appendChild(i); frag.appendChild(w);
+          });
+          node.replaceChild(frag, c);
+        } else if (c.nodeType === 1 && c.tagName !== 'BR' && c.tagName.toLowerCase() !== 'svg') walk(c);
+      });
+    })(el);
+    el.setAttribute('data-split-done', '');
+    el.classList.add('is-split');
+  }
+
   function reveal(scope) {
-    var els = $$('[data-reveal]', scope);
+    var els = $$('[data-reveal], [data-stagger], [data-split]:not([data-intro])', scope);
+    els.forEach(function (el) {
+      if (el.hasAttribute('data-split')) split(el);
+      if (el.hasAttribute('data-stagger')) Array.prototype.forEach.call(el.children, function (c, i) { c.style.setProperty('--si', i); });
+    });
+    $$('[data-split][data-intro]', scope).forEach(function (el) { split(el); el.classList.add('is-in'); });
     if (reduce || !('IntersectionObserver' in window)) { els.forEach(function (el) { el.classList.add('is-in'); }); return; }
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
     }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
     els.forEach(function (el) { io.observe(el); });
   }
+
 
   /* ---------- Fotos reais (opcionais, via config) ---------- */
   function photo(slot) {
@@ -206,6 +236,6 @@
 
   window.Cuidare = {
     cfg: CFG, $: $, $$: $$, store: store, reduce: reduce, finePointer: finePointer, lowPower: lowPower,
-    pageUrl: pageUrl, track: track, reveal: reveal, cena: cena, esc: esc, photo: photo
+    pageUrl: pageUrl, asset: function (p) { return /^(data:|https?:)/.test(p) ? p : root + p; }, track: track, reveal: reveal, split: split, intro: doc.classList.contains('intro-on'), cena: cena, esc: esc, photo: photo
   };
 })();

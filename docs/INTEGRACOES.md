@@ -81,17 +81,17 @@ frequência), `consulta_complete`, `price_view` e `details_view`.
 
 **Nunca são enviados:** bairro, tipo de atendimento e necessidades.
 
-## 6. Fotos reais (pendente: material da Cuidare)
+## 6. Fotos
 
-As imagens enviadas como referência visual são montagens geradas por IA, com um logo de coração que
-não é o oficial nos uniformes, e em baixa resolução; por isso **não foram usadas**. Também não foram
-usadas fotos de banco de imagens. Cada cartão de atendimento usa uma composição visual própria até
-receber a foto real.
+**Página do valor:** usa duas fotos recortadas das imagens de referência enviadas pela Cuidare
+(`assets/photos/cuidado-principal.webp` e `cuidado-apoio.webp`), sem os selos embutidos e sem o logo de
+coração dos uniformes. Atenção: essas imagens parecem geradas por IA e têm resolução baixa (foram
+ampliadas). **Recomendado:** trocar por fotos reais da equipe, com autorização de uso de imagem, em
+`config.js → fotosValor` (retrato ~900×1000 e paisagem ~900×800).
 
-Para incluir fotos, com **autorização de uso de imagem** de quem aparece:
+**Cartões de atendimento (página inicial):** usam composição visual própria. Para incluir fotos reais:
 1. Salve em `assets/photos/` (WebP ou JPG, ~900×700, até ~250 KB).
 2. Preencha em `config.js → photos`: `residencia`, `hospital`, `pos_operatorio`, `consultas`.
-3. As fotos entram automaticamente nos cartões. Prefira ambientes claros e uniformes azuis ou brancos.
 
 ## 7. Identidade visual e logo
 
@@ -118,6 +118,8 @@ Para incluir fotos, com **autorização de uso de imagem** de quem aparece:
 - Três páginas: `/` (capa + consulta), `/valor/` (somente o valor escolhido), `/detalhes/` (resumo e detalhes do atendimento).
 - Volta a exibir preço, **um por consulta**, a partir de uma tabela única.
 - Visual escuro, azul e branco, com corações e esferas 3D em WebGL (versão leve em CSS nos aparelhos mais simples).
+- Títulos em Fredoka, abertura animada com o logo e entrada dos módulos em cascata.
+- Fotos na página do valor.
 - Sem formulário, telefone ou WhatsApp: a apresentação é enviada a quem já conversa com a equipe.
 
 ## 10. Checklist de validação (antes do domínio definitivo)

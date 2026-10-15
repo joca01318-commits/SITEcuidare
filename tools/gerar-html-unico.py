@@ -71,12 +71,17 @@ def page_parts(rel):
 
 def main():
     css = read('assets/css/site.css')
-    for font in ('newsreader-wght.woff2', 'newsreader-wght-italic.woff2', 'manrope-wght.woff2'):
+    for font in ('fredoka-wght.woff2', 'manrope-wght.woff2'):
         css = css.replace('url("../fonts/%s")' % font, 'url("%s")' % data_uri('assets/fonts/' + font, 'font/woff2'))
-    if '../fonts/' in css:
-        raise SystemExit('fonte não embutida no CSS')
+    css = css.replace('url("../img/logo-white-320.png")', 'url("%s")' % data_uri('assets/img/logo-white-320.png', 'image/png'))
+    if '../fonts/' in css or '../img/' in css:
+        raise SystemExit('fonte ou imagem não embutida no CSS')
 
     js = {n: read('assets/js/%s.js' % n) for n in ('config', 'precos', 'consulta', 'core', 'cena', 'home', 'valor', 'detalhes')}
+    for photo in re.findall(r"'(assets/photos/[^']+\.webp)'", js['config']):
+        if not (ROOT / photo).exists():
+            continue  # exemplos nos comentários
+        js['config'] = js['config'].replace("'%s'" % photo, "'%s'" % data_uri(photo, 'image/webp'))
     for n, code in js.items():
         if '</script' in code.lower():
             raise SystemExit(n + '.js contém </script>')

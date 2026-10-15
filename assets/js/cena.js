@@ -324,8 +324,8 @@
       if (!running || dead) return;
       var t = (now - start) / 1000;
       var dt = prev ? Math.min(now - prev, 100) : 16; prev = now;
-      if (!introStart) introStart = now;
-      intro = Math.min(1, (now - introStart) / 2200);
+      if (!introStart) introStart = now + (opts.delay || 0);
+      intro = Math.max(0, Math.min(1, (now - introStart) / 2200));
       mouse.x += (mouse.tx - mouse.x) * 0.05; mouse.y += (mouse.ty - mouse.y) * 0.05;
       mouse.v *= 0.95; pulseV *= 0.93;
       scroll += (scrollT - scroll) * 0.12;

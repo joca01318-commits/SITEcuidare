@@ -12,6 +12,7 @@
   var scene = null;
   if (hero) {
     C.cena($('[data-cena]', hero), {
+      delay: C.intro ? 650 : 0,
       objects: function (aspect, hw, hh) {
         if (aspect < 0.9) {
           return [
@@ -181,9 +182,19 @@
       var el = $('.q', stage);
       $$('[data-photo]', el).forEach(C.photo);
       renderExtra();
-      if (!C.reduce && !first) {
-        el.classList.add(dir < 0 ? 'enter-back' : 'enter-fwd');
-        el.addEventListener('animationend', function h(e) { if (e.target === el) { el.classList.remove('enter-back', 'enter-fwd'); el.removeEventListener('animationend', h); } });
+      var enter = function (cls) {
+        el.classList.add(cls);
+        setTimeout(function () { el.classList.remove('enter-back', 'enter-fwd'); }, 1400);
+      };
+      if (!C.reduce && !first) enter(dir < 0 ? 'enter-back' : 'enter-fwd');
+      if (!C.reduce && first && 'IntersectionObserver' in window) {
+        // primeira etapa: os cartões entram em cascata quando a consulta aparece na tela
+        el.classList.add('is-waiting');
+        var io = new IntersectionObserver(function (en) {
+          if (!en[0].isIntersecting) return;
+          io.disconnect(); el.classList.remove('is-waiting'); enter('enter-fwd');
+        }, { threshold: 0.15 });
+        io.observe(el);
       }
       renderStepper(); renderAside();
       if (!first) {

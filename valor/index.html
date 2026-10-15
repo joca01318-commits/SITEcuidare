@@ -9,9 +9,19 @@
   <meta name="theme-color" content="#061A35">
   <link rel="icon" href="../assets/img/favicon.png" type="image/png" sizes="64x64">
   <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
-  <link rel="preload" as="font" href="../assets/fonts/newsreader-wght.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="../assets/fonts/fredoka-wght.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="font" href="../assets/fonts/manrope-wght.woff2" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/css/site.css">
+  <script>
+    /* Abertura animada: só na primeira página da visita e com movimento liberado. */
+    (function () {
+      try {
+        if (sessionStorage.getItem('cuidare.abertura') || /etapa=/.test(location.search) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        sessionStorage.setItem('cuidare.abertura', '1');
+        document.documentElement.classList.add('intro-on');
+      } catch (e) { /* sem armazenamento: sem abertura */ }
+    })();
+  </script>
   <script src="../assets/js/config.js" defer></script>
   <script src="../assets/js/precos.js" defer></script>
   <script src="../assets/js/consulta.js" defer></script>

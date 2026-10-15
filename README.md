@@ -26,7 +26,9 @@ Fundo escuro predominante, somente azul e branco:
 | `#FFFFFF` branco | textos principais |
 
 As cores ficam como variáveis no topo de `assets/css/site.css`. Logo: versão oficial branca
-(`assets/img/logo-white.png`), proporção original.
+(`assets/img/logo-white.png`), proporção original. Títulos em Fredoka (arredondada, estilo animação),
+textos em Manrope. Abertura animada com o logo na primeira página da visita, títulos entrando palavra
+por palavra e módulos em cascata (tudo desligado com “reduzir movimento” no aparelho).
 
 ## Estrutura
 
@@ -41,7 +43,8 @@ assets/js/cena.js          cena 3D em WebGL (corações e esferas de vidro), sem
 assets/js/home.js          capa e consulta em 4 etapas
 assets/js/valor.js         página do valor
 assets/js/detalhes.js      resumo e detalhes do atendimento
-assets/fonts/              Newsreader + Manrope (SIL OFL), hospedadas localmente
+assets/fonts/              Fredoka (títulos) + Manrope (textos), SIL OFL, hospedadas localmente
+assets/photos/             fotos da página do valor
 netlify/functions/preco.mjs  cálculo no servidor (modo opcional)
 tools/gerar-html-unico.py  gera o site inteiro em um arquivo (dist/)
 _headers, _redirects, netlify.toml, robots.txt, sitemap.xml
