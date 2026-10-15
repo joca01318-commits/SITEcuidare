@@ -100,7 +100,7 @@
     bar.setAttribute('aria-label', 'Preferências de privacidade');
     bar.innerHTML = '<p>Usamos ferramentas de medição para entender como o site é usado e melhorar o atendimento. ' +
       '<button type="button" class="link" data-open-privacy>Saiba mais</button></p>' +
-      '<div class="consent__actions"><button type="button" class="btn btn--ghost btn--sm" data-c="denied">Recusar</button>' +
+      '<div class="consent__actions"><button type="button" class="btn btn--glass btn--sm" data-c="denied">Recusar</button>' +
       '<button type="button" class="btn btn--primary btn--sm" data-c="granted">Aceitar</button></div>';
     document.body.appendChild(bar);
     requestAnimationFrame(function () { bar.classList.add('is-in'); });
@@ -127,10 +127,11 @@
       '<button type="button" class="privacy__close" data-close aria-label="Fechar">×</button>' +
       '<p class="eyebrow">Privacidade</p>' +
       '<h2 id="privacy-title">Aviso de privacidade</h2>' +
-      '<h3>Quais dados usamos</h3><p>As respostas da experiência (perfil do atendimento desejado, bairro e observações), seu nome, seu WhatsApp e o melhor período para contato. Não pedimos CPF, documentos, endereço completo nem dados clínicos detalhados nesta etapa.</p>' +
-      '<h3>Para quê</h3><p>Para entrar em contato com você, entender a necessidade da sua família e elaborar uma proposta personalizada. As informações sobre a necessidade de cuidado são usadas somente para esse fim.</p>' +
-      '<h3>No seu navegador</h3><p>Suas respostas ficam salvas apenas nesta aba do navegador e são apagadas ao fechá-la ou depois do envio da solicitação.</p>' +
-      '<h3>Medição</h3><p>Ferramentas de análise só são ativadas se você autorizar. Elas não recebem seu nome, telefone nem informações sobre a necessidade de cuidado.</p>' +
+      '<h3>Quais dados usamos</h3><p>As escolhas da consulta (tipo de atendimento, duração, frequência, bairro, previsão de início e, se você informar, necessidades), seu nome, seu WhatsApp e, se você quiser, seu e-mail e observações. Não pedimos CPF, documentos, endereço completo nem dados clínicos detalhados.</p>' +
+      '<h3>Para quê</h3><p>Para mostrar o valor da configuração escolhida, entrar em contato com você e dar continuidade à sua solicitação. As informações sobre a necessidade de cuidado são usadas somente para esse fim.</p>' +
+      '<h3>No seu navegador</h3><p>Suas escolhas ficam salvas apenas nesta aba do navegador e são apagadas ao fechá-la.</p>' +
+      '<h3>WhatsApp</h3><p>Ao continuar pelo WhatsApp, a conversa acontece no aplicativo, com a mensagem que você revisa antes de enviar.</p>' +
+      '<h3>Medição</h3><p>Ferramentas de análise só são ativadas se você autorizar. Elas não recebem seu nome, telefone, e-mail nem informações sobre a necessidade de cuidado.</p>' +
       '<h3>Seus direitos</h3><p>Você pode pedir acesso, correção ou exclusão dos seus dados a qualquer momento pelo WhatsApp ou telefone ' + phone + '.</p>' +
       '<p class="privacy__who">Responsável: Cuidare Vila Mariana.</p>' +
       '</div>';
@@ -165,45 +166,41 @@
   }
 
   /* ---------- Fotos reais (opcionais, via config) ---------- */
-  function photos() {
-    var map = CFG.photos || {};
-    $$('[data-photo]').forEach(function (slot) {
-      var src = map[slot.getAttribute('data-photo')];
-      if (!src) return;
-      var img = new Image();
-      img.alt = slot.getAttribute('data-photo-alt') || '';
-      img.decoding = 'async';
-      img.loading = slot.hasAttribute('data-photo-eager') ? 'eager' : 'lazy';
-      img.onload = function () { slot.appendChild(img); slot.classList.add('has-photo'); };
-      img.src = root + src;
-    });
+  function photo(slot) {
+    var src = (CFG.photos || {})[slot.getAttribute('data-photo')];
+    if (!src || slot.classList.contains('has-photo')) return;
+    var img = new Image();
+    img.alt = slot.getAttribute('data-photo-alt') || '';
+    img.decoding = 'async';
+    img.loading = 'lazy';
+    img.onload = function () { slot.insertBefore(img, slot.firstChild); slot.classList.add('has-photo'); };
+    img.src = root + src;
   }
+  function photos(scope) { $$('[data-photo]', scope).forEach(photo); }
 
-  /* ---------- Esfera 3D (WebGL), sob demanda ---------- */
-  function orb(canvas, opts) {
+  function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  /* ---------- Cena 3D (WebGL), sob demanda ---------- */
+  function cena(canvas, opts) {
     if (!canvas || lowPower || !window.WebGLRenderingContext) return Promise.resolve(null);
     // Celulares: 3D só em aparelhos com folga de processamento; nos demais fica a versão leve em CSS.
     var phone = !finePointer || window.innerWidth < 760;
     if (phone && !((navigator.deviceMemory || 4) >= 4 && (navigator.hardwareConcurrency || 4) >= 6)) return Promise.resolve(null);
     return new Promise(function (resolve) {
       function start() {
-        if (!window.CuidareOrb) return resolve(null);
-        var inst = window.CuidareOrb.init(canvas, Object.assign({
-          reduce: reduce,
-          mobile: !finePointer || window.innerWidth < 760
-        }, opts || {}));
-        resolve(inst || null);
+        if (!window.CuidareCena) return resolve(null);
+        resolve(window.CuidareCena.init(canvas, Object.assign({ reduce: reduce, mobile: phone }, opts || {})) || null);
       }
       function load() {
-        if (window.CuidareOrb) return start();
+        if (window.CuidareCena) return start();
         var s = document.createElement('script');
-        s.src = root + 'assets/js/orb.js';
+        s.src = root + 'assets/js/cena.js';
         s.async = true;
         s.onload = start;
         s.onerror = function () { resolve(null); };
         document.head.appendChild(s);
       }
-      if ('requestIdleCallback' in window) requestIdleCallback(load, { timeout: 800 }); else setTimeout(load, 200);
+      if ('requestIdleCallback' in window) requestIdleCallback(load, { timeout: 700 }); else setTimeout(load, 200);
     });
   }
 
@@ -224,6 +221,6 @@
 
   window.Cuidare = {
     cfg: CFG, $: $, $$: $$, store: store, reduce: reduce, finePointer: finePointer, lowPower: lowPower,
-    pageUrl: pageUrl, waLink: waLink, track: track, reveal: reveal, orb: orb
+    pageUrl: pageUrl, waLink: waLink, track: track, reveal: reveal, cena: cena, esc: esc, photo: photo
   };
 })();

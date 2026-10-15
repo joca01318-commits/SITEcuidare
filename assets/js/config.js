@@ -2,8 +2,8 @@
    ---------------------------------------------------------------
    Tudo o que depende de contas, credenciais ou conteúdo da empresa
    fica aqui. Veja docs/INTEGRACOES.md antes de alterar.
-   Importante: este arquivo é público. NUNCA coloque aqui preços,
-   tokens, chaves secretas ou regras comerciais confidenciais. */
+   Este arquivo é público: nunca coloque aqui tokens ou chaves secretas.
+   Os preços ficam em precos.js (ou no servidor, no modo "servidor"). */
 window.CUIDARE_CONFIG = {
   // Endereço público final do site (usado em links de compartilhamento).
   siteUrl: 'https://cuidare-vila-marianaportifolio03.netlify.app',
@@ -14,15 +14,25 @@ window.CUIDARE_CONFIG = {
     display: '(11) 91634-9800'
   },
 
-  // Para onde vão as solicitações de avaliação.
+  // De onde vem o valor exibido na página 2.
+  //  modo: 'local'    -> tabela em assets/js/precos.js (funciona em qualquer publicação)
+  //        'servidor' -> função netlify/functions/preco.mjs (tabela fora do navegador)
+  precos: {
+    modo: 'local',
+    endpoint: '/api/preco',
+    timeoutMs: 8000
+  },
+
+  // Registro das solicitações (além da conversa no WhatsApp).
   //  mode: 'netlify'  -> Netlify Forms (precisa ativar "Form detection" no Netlify)
   //        'webhook'  -> envia JSON para webhookUrl (ex.: CRM, Make, Zapier)
   //        'both'     -> os dois
+  //        'off'      -> só WhatsApp
   lead: {
     mode: 'netlify',
-    formName: 'avaliacao',
+    formName: 'consulta',
     webhookUrl: '',
-    timeoutMs: 15000
+    timeoutMs: 12000
   },
 
   // Medição. Vazio = nenhuma ferramenta de análise é carregada
@@ -35,12 +45,11 @@ window.CUIDARE_CONFIG = {
   reviewsUrl: 'https://www.google.com/maps/search/?api=1&query=Cuidare%20Vila%20Mariana',
 
   // Fotos reais (com autorização de uso de imagem). Caminho relativo à raiz do site.
-  // Enquanto vazio, o site usa a composição visual própria no lugar da foto.
+  // Enquanto vazio, cada cartão usa a composição visual própria no lugar da foto.
   photos: {
-    hero: '',        // ex.: 'assets/photos/hero.webp'  (retrato, ~1200x1500)
-    domicilio: '',   // ex.: 'assets/photos/domicilio.webp' (~900x1200)
+    residencia: '',      // ex.: 'assets/photos/residencia.webp' (~900x700)
     hospital: '',
-    consultas: '',
-    viagens: ''
+    pos_operatorio: '',
+    consultas: ''
   }
 };

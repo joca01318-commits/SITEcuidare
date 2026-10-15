@@ -4,7 +4,10 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
   X-Frame-Options: SAMEORIGIN
 
-/avaliacao/*
+/valor/*
+  X-Robots-Tag: noindex
+
+/detalhes/*
   X-Robots-Tag: noindex
 
 /assets/fonts/*

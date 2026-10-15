@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Gera dist/cuidare-vila-mariana.html: o site inteiro (3 páginas) em um único arquivo.
 
-CSS, fontes, logo e scripts entram embutidos. As páginas viram ?pagina=inicio|experiencia|avaliacao
+CSS, fontes, logo e scripts entram embutidos. As páginas viram ?pagina=inicio|valor|detalhes
 dentro do mesmo arquivo. Abre com duplo clique e também pode ser publicado sozinho (como index.html).
 
 Uso: python3 tools/gerar-html-unico.py
@@ -15,15 +15,15 @@ import re
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / 'dist' / 'cuidare-vila-mariana.html'
 
-PAGES = [  # (id, arquivo, scripts na ordem original)
-    ('inicio', 'index.html', ['config', 'core', 'orb', 'home']),
-    ('experiencia', 'experiencia/index.html', ['config', 'jornada', 'core', 'orb', 'experiencia']),
-    ('avaliacao', 'avaliacao/index.html', ['config', 'jornada', 'core', 'avaliacao']),
+PAGES = [  # (id, arquivo, scripts na ordem original; cena.js entra direto, sem carregamento sob demanda)
+    ('inicio', 'index.html', ['config', 'precos', 'consulta', 'core', 'cena', 'home']),
+    ('valor', 'valor/index.html', ['config', 'precos', 'consulta', 'core', 'cena', 'valor']),
+    ('detalhes', 'detalhes/index.html', ['config', 'precos', 'consulta', 'core', 'detalhes']),
 ]
 LINKS = {  # destinos internos -> página
     './': 'inicio', '../': 'inicio', '/': 'inicio',
-    'experiencia/': 'experiencia', '../experiencia/': 'experiencia', '/experiencia/': 'experiencia',
-    'avaliacao/': 'avaliacao', '../avaliacao/': 'avaliacao', '/avaliacao/': 'avaliacao',
+    'valor/': 'valor', '../valor/': 'valor', '/valor/': 'valor',
+    'detalhes/': 'detalhes', '../detalhes/': 'detalhes', '/detalhes/': 'detalhes',
 }
 
 
@@ -54,10 +54,11 @@ def page_parts(rel):
     body = re.sub(r'src="[^"]*assets/img/logo-white-320\.png"', 'src="__LOGO__"', body)
 
     def link(m):
-        target = LINKS.get(m.group(1))
+        path, _, frag = m.group(1).partition('#')
+        target = LINKS.get(path)
         if not target:
             return m.group(0)
-        return 'href="?pagina=%s"' % target
+        return 'href="?pagina=%s%s"' % (target, '#' + frag if frag else '')
     body = re.sub(r'href="([^"#][^"]*)"', link, body)
     left = re.findall(r'(?:src|srcset|href)="([^"]*assets/[^"]*)"', body)
     if left:
@@ -71,13 +72,14 @@ def page_parts(rel):
 def netlify_form(avaliacao_src):
     """Cópia oculta do formulário para o Netlify detectar no deploy (o original fica dentro de <template>)."""
     form = first(r'(<form[^>]*data-lead-form.*?</form>)', avaliacao_src)
+    form_name = first(r'<form[^>]*name="([^"]+)"', form)
     names = []
     for n in re.findall(r'name="([^"]+)"', form):
         if n not in names and n != 'form-name':
             names.append(n)
     fields = ''.join('<input type="hidden" name="%s">' % n for n in names)
-    return ('<form name="avaliacao" data-netlify="true" netlify-honeypot="empresa" hidden aria-hidden="true">'
-            '<input type="hidden" name="form-name" value="avaliacao">' + fields + '</form>')
+    return ('<form name="%s" data-netlify="true" netlify-honeypot="empresa" hidden aria-hidden="true">'
+            '<input type="hidden" name="form-name" value="%s">' % (form_name, form_name) + fields + '</form>')
 
 
 def main():
@@ -87,7 +89,7 @@ def main():
     if '../fonts/' in css:
         raise SystemExit('fonte não embutida no CSS')
 
-    js = {n: read('assets/js/%s.js' % n) for n in ('config', 'jornada', 'core', 'orb', 'home', 'experiencia', 'avaliacao')}
+    js = {n: read('assets/js/%s.js' % n) for n in ('config', 'precos', 'consulta', 'core', 'cena', 'home', 'valor', 'detalhes')}
     for n, code in js.items():
         if '</script' in code.lower():
             raise SystemExit(n + '.js contém </script>')
@@ -107,7 +109,7 @@ def main():
         info['scripts'] = scripts
         meta[pid] = info
         templates.append('<template id="pg-%s">%s</template>' % (pid, body))
-        if pid == 'avaliacao':
+        if pid == 'detalhes':
             avaliacao_src = src
 
     boot = """
@@ -115,7 +117,7 @@ def main():
   var PAGES = %s;
   var LOGO = %s;
   var q = new URLSearchParams(location.search);
-  var id = q.get('pagina') || (q.get('etapa') ? 'experiencia' : 'inicio');
+  var id = q.get('pagina') || 'inicio';
   if (!PAGES[id]) id = 'inicio';
   var P = PAGES[id];
   function run(code) { var s = document.createElement('script'); s.textContent = code; document.body.appendChild(s); }

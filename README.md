@@ -1,45 +1,48 @@
-# Cuidare Vila Mariana — site
+# Cuidare Vila Mariana — consulta de valores
 
 Experiência digital da Cuidare Vila Mariana em três páginas:
 
 | Rota | Função |
 | --- | --- |
-| `/` | Home institucional: hero, indicadores, diferenciais, tipos de atendimento, depoimentos, como funciona, chamada final |
-| `/experiencia/` | Jornada interativa em 7 etapas, com perguntas condicionais, resumo ao vivo e escultura 3D que responde às escolhas |
-| `/avaliacao/` | Resumo editável, solicitação de avaliação (Netlify Forms), continuação pelo WhatsApp e confirmação |
+| `/` | Capa com 3D, consulta em 4 etapas (atendimento, duração, frequência, detalhes), diferenciais e depoimentos |
+| `/valor/` | Mostra **somente** o valor da configuração escolhida (ou proposta personalizada, quando não há valor validado) |
+| `/detalhes/` | Resumo, detalhes do atendimento escolhido, dados de contato e continuação pelo WhatsApp |
 
-Não há tabela pública de preços. As propostas são personalizadas pela equipe comercial.
+Regra comercial: seleção antes do preço, **um preço por consulta** e nenhuma tabela pública comparando opções.
 
 ## Identidade visual
 
-Somente azul e branco, em todas as páginas, formulários, botões, cartões, progresso e na escultura 3D:
+Fundo escuro predominante, somente azul e branco:
 
 | Cor | Uso |
 | --- | --- |
-| `#082B59` azul-marinho | autoridade: cabeçalho, hero, rodapé, títulos |
-| `#0757B8` azul institucional | botões, estados selecionados, navegação |
-| `#1769E0` azul vivo | destaque sobre fundo escuro, foco, progresso |
-| `#EAF3FF` azul-céu | superfícies de apoio (resumo, faixas, chips) |
-| `#FFFFFF` branco | fundo principal |
+| `#061A35` azul-marinho profundo | fundo, autoridade |
+| `#0757B8` azul institucional | estados concluídos, superfícies, profundidade |
+| `#1769FF` azul elétrico | botões, seleção, brilhos, progresso |
+| `#DCEBFF` azul-claro | textos de apoio, reflexos, ícones |
+| `#FFFFFF` branco | textos principais |
 
-As cores ficam como variáveis no topo de `assets/css/site.css` (`--navy`, `--blue`, `--vivid`, `--sky`, `--white`).
-Logo: versão oficial branca sobre o azul-marinho (`assets/img/logo-white.png`).
+As cores ficam como variáveis no topo de `assets/css/site.css`. Logo: versão oficial branca
+(`assets/img/logo-white.png`), proporção original.
 
 ## Estrutura
 
 ```
-index.html, experiencia/, avaliacao/, 404.html
+index.html, valor/, detalhes/, 404.html
 assets/css/site.css        sistema visual (mobile first)
-assets/js/config.js        configuração pública (WhatsApp, formulários, análise, fotos)
+assets/js/config.js        configuração pública (WhatsApp, registro, preços, medição, fotos)
+assets/js/precos.js        tabela de preços (fonte única, modo local)
+assets/js/consulta.js      opções, perguntas condicionais, cálculo, resumo, mensagem do WhatsApp
 assets/js/core.js          base comum: links, origem da visita, consentimento, privacidade, 3D
-assets/js/jornada.js       perguntas, regras condicionais, prioridade e resumo
-assets/js/experiencia.js   motor da experiência
-assets/js/avaliacao.js     resumo, validação e envio
-assets/js/orb.js           escultura em WebGL (sem bibliotecas), com versão leve em CSS
+assets/js/cena.js          cena 3D em WebGL (corações e esferas de vidro), sem bibliotecas
+assets/js/home.js          capa e consulta em 4 etapas
+assets/js/valor.js         página do valor
+assets/js/detalhes.js      detalhes, formulário, WhatsApp e registro
 assets/fonts/              Newsreader + Manrope (SIL OFL), hospedadas localmente
-netlify/functions/         referência de precificação no servidor (desativada por padrão)
+netlify/functions/preco.mjs  cálculo no servidor (modo opcional)
+tools/gerar-html-unico.py  gera o site inteiro em um arquivo (dist/)
 _headers, _redirects, netlify.toml, robots.txt, sitemap.xml
-docs/INTEGRACOES.md        integrações, pendências e checklist de publicação
+docs/INTEGRACOES.md        preços, integrações, pendências e checklist de publicação
 ```
 
 Sem etapa de build e sem dependências de terceiros no navegador.
@@ -51,16 +54,16 @@ python3 -m http.server 8000
 # abra http://localhost:8000
 ```
 
-O envio do formulário só funciona publicado no Netlify, com o Forms ativo. Fora dele, o site mostra
-erro e oferece o WhatsApp, sem simular sucesso.
+O registro das solicitações (Netlify Forms) só funciona publicado no Netlify. Fora dele, o site
+informa que o registro não foi concluído e mantém a continuação pelo WhatsApp, sem simular sucesso.
 
 ## Arquivo único
 
 `python3 tools/gerar-html-unico.py` gera `dist/cuidare-vila-mariana.html`: as 3 páginas em um só arquivo,
-com CSS, fontes, logo e scripts embutidos (as páginas viram `?pagina=experiencia` e `?pagina=avaliacao`).
-Abre com duplo clique, sem internet. Para hospedar, prefira a versão em pastas (mais rápida).
+com CSS, fontes, logo e scripts embutidos (as páginas viram `?pagina=valor` e `?pagina=detalhes`).
+Abre com duplo clique, sem internet. Para hospedar, prefira a versão em pastas.
 
 ## Publicar
 
-Arraste a pasta do site (sem `docs/`) em *Netlify → Add new project → Deploy manually*, ou conecte o
-repositório. Antes de trocar o domínio, siga `docs/INTEGRACOES.md`.
+Arraste a pasta do site (sem `docs/` e `tools/`) em *Netlify → Add new project → Deploy manually*,
+ou conecte o repositório. Antes de trocar o domínio, siga `docs/INTEGRACOES.md`.

@@ -1,187 +1,174 @@
-# Cuidare Vila Mariana — integrações, configurações e pendências
+# Cuidare Vila Mariana — preços, integrações e pendências
 
-Este documento separa o que **já funciona**, o que **depende de credenciais ou contas** da Cuidare
-e o que **precisa de validação** antes da publicação definitiva. Nenhuma integração foi simulada:
-onde não há credencial, o site funciona sem ela e mostra uma alternativa honesta (WhatsApp).
+Este documento separa o que **já funciona**, o que **depende de contas ou confirmação** da Cuidare e o
+que **precisa de validação** antes da publicação definitiva. Nenhuma integração foi simulada.
 
-Toda configuração pública fica em `assets/js/config.js`. **Esse arquivo é público**: nunca coloque
-nele preços, tokens ou regras comerciais.
+Configuração pública: `assets/js/config.js`. Preços: `assets/js/precos.js`.
 
 ---
 
 ## 1. Publicação e validação (sem derrubar o site atual)
 
-1. Publique esta versão em um **projeto Netlify novo** (ex.: `cuidare-vm-nova`), arrastando a pasta
+1. Publique esta versão em um **projeto Netlify novo** (ex.: `cuidare-vm-consulta`), arrastando a pasta
    do `.zip` em *Add new project → Deploy manually*. O site atual continua no ar.
-2. Ative o **Netlify Forms** nesse projeto (seção 2) e faça uma solicitação de teste.
-3. Valide no celular e no computador o checklist da seção 12.
+2. Ative o **Netlify Forms** nesse projeto (seção 5) e faça uma solicitação de teste.
+3. Valide no celular e no computador o checklist da seção 13.
 4. Só então aponte o domínio definitivo para o projeto novo (*Domain management*).
-5. Ao definir o domínio, atualize `siteUrl` em `config.js` e os endereços em: `index.html`,
-   `experiencia/index.html` (tags `canonical`, `og:url`, `og:image`), `robots.txt` e `sitemap.xml`.
+5. Ao definir o domínio, atualize `siteUrl` em `config.js` e os endereços em `index.html`
+   (`canonical`, `og:url`, `og:image`, dados estruturados), `robots.txt` e `sitemap.xml`.
 
-> Para publicar por Git ou Netlify CLI, o arquivo `netlify.toml` já está pronto.
+Endereços do site anterior continuam funcionando (`_redirects`): `/experiencia/` leva à consulta e
+`/avaliacao/` leva aos detalhes.
 
-## 2. Solicitações de avaliação — Netlify Forms (funciona sem código extra)
+## 2. Regra comercial: um preço por consulta
 
-O formulário de `/avaliacao/` já está marcado para o Netlify Forms (`name="avaliacao"`,
-`data-netlify="true"`, campo-armadilha anti-robô `empresa`).
+- A página inicial **não mostra preços**: o visitante escolhe atendimento, duração, frequência e detalhes.
+- A página `/valor/` mostra **somente** o valor da combinação escolhida. Não há tabela, comparação nem
+  outras durações. A página `/detalhes/` repete apenas esse valor.
+- Sem valor validado para a combinação, o site **não inventa**: mostra “Proposta personalizada” e leva à
+  solicitação.
+- Testado automaticamente para as 72 combinações possíveis (47 com valor, 25 com proposta personalizada).
 
-**Para ativar:**
-1. Netlify → projeto → *Forms* → **Enable form detection**.
-2. Publique de novo (a detecção acontece na publicação).
-3. *Forms → avaliacao → Form notifications*: adicione o e-mail da equipe comercial.
-4. Faça um envio de teste e confira em *Forms → avaliacao*.
+## 3. Tabela de preços (`assets/js/precos.js`)
 
-Enquanto o Forms não estiver ativo, o envio **falha de forma honesta**: o site não mostra
-confirmação e oferece “Continuar pelo WhatsApp” com as respostas na mensagem.
+Valores aprovados pela Cuidare (lista enviada em 14/10/2026, com a diária de 12h diurna em R$ 297):
 
-**Campos recebidos** (legíveis para a equipe, sem a família repetir informações):
+| Duração | Segunda a sexta (22 dias) | Segunda a sábado (26 dias) | Todos os dias (30 dias) | Atendimento pontual (diária) |
+| --- | --- | --- | --- | --- |
+| 6 horas | R$ 3.997 | R$ 4.497 | R$ 5.197 | R$ 219 |
+| 8 horas | R$ 4.697 | R$ 5.197 | R$ 6.197 | R$ 259 |
+| 12 horas durante o dia | R$ 5.697 | R$ 6.297 | R$ 6.997 | R$ 297 |
+| 12 horas durante a noite | **a confirmar** | **a confirmar** | **a confirmar** | R$ 349 |
+
+- Valores mensais por mês; atendimento pontual por diária. Orçamento válido por 5 dias.
+- Plano de 24 horas não é oferecido.
+- “Ainda não sei” (duração) leva à proposta personalizada.
+
+**Pendências de confirmação (sem elas, o site mostra proposta personalizada ou omite):**
+
+| Item | Situação |
+| --- | --- |
+| 12 horas noturno mensal | O portfólio original trazia R$ 5.997 / 6.597 / 6.997, mas a lista nova não trouxe. Confirme e preencha em `precos.js → mensal['12h_noite']`. |
+| Tabela por tipo de atendimento | A mesma tabela vale para residência, hospital, pós-operatório e consultas (como no site anterior). Se algum tipo tiver valor diferente, avise. |
+| Diárias em fim de semana e feriado | O portfólio original tinha acréscimo; a lista nova não. O site não menciona acréscimo. Confirme. |
+| Adicional de alimentação | R$ 30 por dia quando a família não fornece (FAQ do portfólio). Aparece em “Condições a confirmar”. |
+
+Para alterar um valor: edite `precos.js`, mantendo os números sem ponto (ex.: `5697`).
+
+## 4. Preços fora do navegador (modo servidor, opcional)
+
+No modo local (padrão), a tabela fica em `precos.js`, que é público. Os mesmos valores já eram públicos
+no site anterior; a página continua mostrando um único valor por consulta. Se a tabela não deve ficar no
+código do navegador:
+
+1. Publique por **Git ou Netlify CLI** (publicações por arrastar não incluem funções).
+2. Em *Project configuration → Environment variables*, crie `CUIDARE_PRECOS` com o conteúdo de
+   `window.CUIDARE_PRECOS` em JSON.
+3. Em `config.js`: `precos.modo = 'servidor'`.
+4. Apague `assets/js/precos.js` e as linhas `<script src=".../precos.js">` das três páginas.
+
+A função `netlify/functions/preco.mjs` (`/api/preco`) devolve **apenas** o valor da combinação pedida.
+Se ela falhar, o site mostra proposta personalizada, sem inventar valor.
+
+## 5. Solicitações — WhatsApp + Netlify Forms
+
+Ao clicar em **Continuar pelo WhatsApp** (página 3), o site valida os dados e:
+
+1. Abre o WhatsApp comercial com a mensagem pronta (nome, e-mail se informado, WhatsApp, atendimento,
+   duração, frequência, bairro, início, necessidades, valor apresentado, observações e código).
+   A pessoa revisa e envia.
+2. Registra a solicitação no **Netlify Forms** (formulário `consulta`) e informa o resultado:
+   “registrada para a equipe” somente se o envio foi confirmado; caso contrário, avisa que o registro não
+   foi concluído e orienta a enviar a mensagem do WhatsApp.
+
+O site nunca afirma que a contratação foi concluída nem que uma visita foi agendada.
+
+**Para ativar o registro:** Netlify → projeto → *Forms* → **Enable form detection** → publicar de novo →
+*Forms → consulta → Form notifications* (e-mail da equipe comercial).
 
 | Campo | Conteúdo |
 | --- | --- |
-| `nome`, `whatsapp`, `periodo` | contato e melhor período |
-| `cuidado_para`, `local`, `necessidade`, `duracao`, `dias`, `inicio`, `bairro`, `situacao`, `observacoes` | respostas da experiência |
-| `resumo` | todas as respostas em texto, prontas para copiar |
-| `prioridade` | `alta` (o mais breve / 7 dias), `media` (próximas semanas), `baixa` (pesquisando) |
-| `origem`, `midia`, `campanha`, `utm_term`, `utm_content`, `gclid`, `fbclid` | origem da visita (UTM) |
-| `pagina_entrada`, `site_referencia` | primeira página e site de onde a pessoa veio |
-| `id_solicitacao` | código exibido à família (ex.: `CVM-8LYUHC-9T2L`); se ela tentar de novo após falha, o código se repete, permitindo deduplicar |
-| `consentimento` | `sim` (obrigatório para enviar) |
-| `enviado_em` | data/hora ISO |
+| `nome`, `whatsapp`, `email`, `observacoes` | dados de contato (e-mail e observações opcionais) |
+| `servico`, `duracao`, `frequencia`, `bairro`, `inicio`, `necessidades` | escolhas da consulta |
+| `valor_apresentado`, `versao_precos` | valor exibido e versão da tabela |
+| `prioridade` | `alta` (o mais breve / 7 dias), `media` (semanas), `baixa` (pesquisando) |
+| `resumo` | a mesma mensagem enviada ao WhatsApp |
+| `origem`, `midia`, `campanha`, `utm_term`, `utm_content`, `gclid`, `fbclid`, `pagina_entrada`, `site_referencia` | origem da visita |
+| `id_solicitacao` | código (ex.: `CVM-8LYUHC-9T2L`); repetido em nova tentativa, para deduplicar |
+| `consentimento`, `enviado_em` | `sim` (obrigatório) e data/hora |
 
-**Proteções já implementadas:** botão bloqueado durante o envio, envio único por solicitação,
-tempo limite de 15 s, mensagem de erro com alternativa, campo-armadilha anti-spam.
+Proteções: envio único por código, tempo limite, campo-armadilha anti-spam e botão para abrir o
+WhatsApp de novo se o navegador bloquear a nova aba.
 
-## 3. CRM e automações (depende de conta/credencial)
+## 6. CRM e automações (depende de conta)
 
-Para enviar também a um CRM (RD Station, HubSpot, Pipedrive…) ou automação (Make, Zapier):
+Em `config.js`: `lead.mode = 'both'` e `lead.webhookUrl = 'https://…'` (webhook que aceite `POST` JSON
+com CORS liberado). A URL fica pública: use um webhook que só **receba** dados.
+**WhatsApp Business API** (mensagens automáticas) exige conta Meta Business verificada e provedor oficial.
+**Não está implementado**: o site usa links `wa.me`.
 
-1. Crie no serviço um **webhook** que aceite `POST` com JSON.
-2. Em `config.js`: `lead.mode = 'both'` e `lead.webhookUrl = 'https://…'`.
-3. O site envia o mesmo conjunto de campos da tabela acima, em JSON.
+## 7. WhatsApp
 
-Observações:
-- O webhook precisa aceitar requisições do navegador (CORS liberado para o domínio do site).
-- A URL do webhook fica visível no código público. Use um webhook que só **receba** dados.
-  Para regras confidenciais, use uma função de servidor (seção 7).
-- **WhatsApp Business API** (mensagens automáticas, etiquetas, follow-up) exige conta Meta Business
-  verificada e um provedor oficial (BSP). **Não está implementado.** O site usa links `wa.me`,
-  que abrem a conversa com a mensagem pronta e a família revisa antes de enviar.
+Número: `5511916349800`, o mesmo do site anterior (`config.js → whatsapp`). Confirme que está ativo no
+WhatsApp Business e monitorado nos horários de atendimento.
 
-## 4. WhatsApp
+## 8. Medição (depende de conta)
 
-- Número: `5511916349800`, o mesmo do site anterior, em `config.js → whatsapp`.
-- O link `wa.me` foi validado no formato. **Confirme** que o número está ativo no WhatsApp
-  Business e que alguém o monitora nos horários de atendimento.
-- Mensagens pré-preenchidas:
-  - geral: “Olá! Vim pelo site da Cuidare Vila Mariana e gostaria de falar com a equipe.”
-  - na avaliação: resumo completo das respostas + nome e período (se preenchidos);
-  - após o envio: código da solicitação + resumo.
+Nada é carregado enquanto `analytics.gtmId` estiver vazio. Com o GTM preenchido, o site pede
+consentimento e só então envia eventos `cuidare_*`: `cta_click`, `step_complete` (só duração e
+frequência), `consulta_complete`, `price_view`, `details_view`, `lead_form_invalid`,
+`lead_submit_attempt/_success/_error`, `whatsapp_click`.
 
-## 5. Medição e análise (depende de conta)
+**Nunca são enviados:** nome, telefone, e-mail, bairro, observações, tipo de atendimento e necessidades.
 
-Nenhuma ferramenta de análise é carregada enquanto `analytics.gtmId` estiver vazio. Nesse estado
-não há cookies de terceiros nem aviso de cookies.
+## 9. Fotos reais (pendente: material da Cuidare)
 
-**Para ativar:** crie um contêiner no Google Tag Manager e preencha `analytics.gtmId` (`GTM-XXXX`).
-O site passa a mostrar um aviso de consentimento e **só carrega o GTM se a pessoa aceitar**.
-
-Eventos enviados ao `dataLayer` (após consentimento):
-
-| Evento | Quando | Parâmetros |
-| --- | --- | --- |
-| `cuidare_cta_click` | clique em CTA | `cta` (header, hero, journey, final) |
-| `cuidare_experience_start` / `_resume` / `_restart` | início/retomada da experiência | — |
-| `cuidare_step_complete` | cada etapa concluída | `step`, `step_id`, `value` (só para pessoa, duração, dias e início) |
-| `cuidare_experience_complete` | fim da experiência | `prioridade` |
-| `cuidare_review_view` | abertura da avaliação | `completo` |
-| `cuidare_lead_form_invalid` | tentativa com campos inválidos | `campos` |
-| `cuidare_lead_submit_attempt` / `_success` / `_error` | envio | `prioridade`, `origem` / `motivo` |
-| `cuidare_whatsapp_click` | clique em WhatsApp | `location`, `prioridade` |
-
-**Nunca são enviados a ferramentas de análise:** nome, telefone, bairro, observações, local do
-atendimento e tipo de necessidade (dados que podem revelar condição de saúde, sensíveis pela LGPD).
-
-Sugestão de conversões no GA4/Google Ads: `cuidare_lead_submit_success` (principal) e
-`cuidare_whatsapp_click` (secundária). Pixel da Meta, se usado, deve ser instalado **via GTM**,
-respeitando o mesmo consentimento.
-
-## 6. Qualificação comercial
-
-- **Alta intenção:** início “o mais breve possível” ou “nos próximos 7 dias” → `prioridade = alta`.
-- **Média:** “nas próximas semanas”.
-- **Pesquisa/planejamento:** “estou pesquisando” → `prioridade = baixa`.
-- O envio do formulário completo já indica intenção maior que um clique no WhatsApp; os dois são
-  medidos separadamente.
-- Sugestão de rotina: responder `alta` primeiro, no período escolhido pela família.
-
-## 7. Precificação no servidor (estrutura pronta, desativada)
-
-O site público **não mostra nem contém preços**. Para a equipe consultar um valor de **referência
-interna** de forma protegida, existe a função `netlify/functions/precificacao.mjs`:
-
-- Só funciona em publicações por **Git ou Netlify CLI** (publicações por arrastar não incluem funções).
-- Fica desativada até configurar, em *Project configuration → Environment variables*:
-  - `PRICING_ADMIN_TOKEN`: senha longa e aleatória, conhecida só pela equipe;
-  - `PRICING_RULES`: JSON com as regras, por exemplo:
-    ```json
-    { "versao": "2026-10", "itens": { "8h|seg_sex": { "valor": null, "observacao": "preencher" } } }
-    ```
-    As chaves combinam duração (`6h`, `8h`, `12h_dia`, `12h_noite`) e dias
-    (`seg_sex`, `seg_sab`, `todos`, `pontual`). Os valores são definidos pela Cuidare; nenhum foi criado aqui.
-- Consulta interna (exemplo):
-  `curl -X POST https://SEU-SITE/api/precificacao -H "Authorization: Bearer $TOKEN" -d '{"duracao":"8h","dias":"seg_sex"}'`
-- Sem token correto, a resposta é `401`. Sem configuração, `501`.
-
-## 8. Fotos reais (pendente: material da Cuidare)
-
-O briefing pede fotografias autênticas. **Não foram usadas fotos de banco nem imagens geradas por IA.**
-Enquanto não houver fotos, o site usa composições próprias (escultura 3D em azul e cartões tipográficos).
-As fotos devem combinar com a identidade azul e branca (evite filtros quentes, sépia ou fundos bege).
+As imagens enviadas como referência visual são montagens geradas por IA, com um logo de coração que
+não é o oficial nos uniformes, e em baixa resolução; por isso **não foram usadas**. Também não foram
+usadas fotos de banco de imagens. Cada cartão de atendimento usa uma composição visual própria até
+receber a foto real.
 
 Para incluir fotos, com **autorização de uso de imagem** de quem aparece:
-1. Salve em `assets/photos/` (WebP ou JPG, ~200–300 KB cada).
-2. Preencha em `config.js → photos`: `hero` (retrato ~1200×1500), `domicilio`, `hospital`,
-   `consultas`, `viagens` (~900×1200).
-3. As fotos entram automaticamente, com carregamento progressivo, no lugar das composições.
+1. Salve em `assets/photos/` (WebP ou JPG, ~900×700, até ~250 KB).
+2. Preencha em `config.js → photos`: `residencia`, `hospital`, `pos_operatorio`, `consultas`.
+3. As fotos entram automaticamente nos cartões. Prefira ambientes claros e uniformes azuis ou brancos.
 
-## 9. Identidade visual e logo
+## 10. Identidade visual e logo
 
-- Paleta exclusiva: `#082B59`, `#0757B8`, `#1769E0`, `#EAF3FF` e `#FFFFFF` (variáveis em `assets/css/site.css`).
-  Nenhum bege, creme, areia, verde, dourado ou marrom é usado, inclusive na escultura 3D e na imagem de compartilhamento.
-- **Logo:** o arquivo colorido disponível tem o subtítulo em cinza, que não combina com a paleta. Por isso o site
-  usa a **versão oficial branca** (`assets/img/logo-white.png`) sobre o azul-marinho, sem redesenhar a marca.
-  **Pendente:** enviar o logo em vetor (SVG ou PDF) e, se existir, uma versão oficial em azul para fundos brancos.
-- Imagem de compartilhamento (`assets/img/og-cover.jpg`, 1200×630) refeita em azul e branco.
+- Paleta exclusiva: `#061A35`, `#0757B8`, `#1769FF`, `#DCEBFF`, `#FFFFFF` (variáveis em `site.css`),
+  inclusive no 3D, no ícone e na imagem de compartilhamento. Sem verde, bege, creme, areia, marrom ou dourado.
+- **Logo:** versão oficial branca (`assets/img/logo-white.png`), proporção original. O logo de coração das
+  imagens de referência não é o oficial e não foi reproduzido. **Pendente:** logo em vetor (SVG ou PDF).
+- **E-mail institucional:** não incluído no rodapé por falta de confirmação. Informe o endereço oficial.
 
-## 10. Conteúdo que precisa da sua validação antes de publicar
+## 11. Conteúdo que precisa da sua validação
 
-| Item | Onde aparece | Fonte usada |
+| Item | Onde aparece | Fonte |
 | --- | --- | --- |
-| 7+ anos, 2.000+ famílias, 4,8/5, 99+ avaliações | Home e hero | Portfólio “Planos — Apresentação” |
-| “Faz parte da Cuidare Brasil, com mais de 10 anos e presença em todo o país” | Home | Portfólio |
-| Seleção, verificação, acompanhamento, faltas e trocas, vínculo trabalhista | Diferenciais | FAQ do portfólio |
-| “A visita e a avaliação são gratuitas, com horário agendado” | Como funciona | FAQ do portfólio |
-| “A proposta é validar o cuidador nos primeiros 5 dias” | Como funciona | FAQ do portfólio |
-| 5 depoimentos com nome | Depoimentos | Enviados pela Cuidare. **Confirme a autorização de cada pessoa** |
-| Link “Ver avaliações públicas” | Depoimentos | Busca no Google Maps. **Troque pelo link exato do perfil** em `config.js → reviewsUrl` |
-| Aviso de privacidade | Todas as páginas | Texto-base. **Revise com o jurídico**: incluir razão social/CNPJ e um canal formal (e-mail) para direitos do titular |
-| Opções da experiência (pós-operatório, Alzheimer/Parkinson, 12h noturno, atendimento pontual) | /experiencia | Briefing. **Confirme que a operação atende todos** |
+| 7+ anos, 2.000+ famílias, 4,8/5, 99+ avaliações | Capa | Portfólio “Planos — Apresentação” |
+| Cuidare Brasil, mais de 10 anos e presença em todo o país | Rodapé | Portfólio |
+| Itens incluídos, não incluídos, contratação, avaliação e condições | Página 3 | FAQ do portfólio |
+| Selos da capa (seleção e verificação, supervisão, avaliação gratuita) | Capa | FAQ do portfólio |
+| 5 depoimentos com nome | Capa | Enviados pela Cuidare. **Confirme a autorização de cada pessoa** |
+| Link “Ver avaliações públicas” | Capa | Busca no Google Maps. **Troque pelo link exato do perfil** em `config.js → reviewsUrl` |
+| Aviso de privacidade | Todas as páginas | Texto-base. **Revise com o jurídico** (razão social, CNPJ, canal formal) |
+| Necessidades (Alzheimer/Parkinson, pós-operatório, 12h noturno, pontual) | Consulta | Briefing. **Confirme que a operação atende todos** |
 
-## 11. O que mudou em relação ao site anterior
+## 12. O que mudou em relação à versão anterior
 
-- A tabela pública de preços foi **removida**; os valores também saíram do código do navegador.
-- Plano de 24 horas não é oferecido.
-- A página única virou 3 rotas: `/`, `/experiencia/`, `/avaliacao/` (mais `404.html`).
-- Links antigos como `/#planos` levam à home (sem erro).
+- Três páginas: `/` (capa + consulta), `/valor/` (somente o valor escolhido), `/detalhes/` (detalhes, dados e WhatsApp).
+- Volta a exibir preço, **um por consulta**, a partir de uma tabela única.
+- Visual escuro, azul e branco, com corações e esferas 3D em WebGL (versão leve em CSS nos aparelhos mais simples).
+- Formulário com nome completo, e-mail (opcional), WhatsApp e observações; continuação pelo WhatsApp.
 
-## 12. Checklist de validação (antes do domínio definitivo)
+## 13. Checklist de validação (antes do domínio definitivo)
 
-- [ ] Home abre bem no celular e no computador; CTA leva a `/experiencia/`.
-- [ ] Experiência completa; “Voltar”, editar respostas e voltar do navegador funcionam.
-- [ ] Na avaliação, “Editar” leva à etapa certa e volta ao resumo.
-- [ ] Envio de teste aparece em *Netlify → Forms* e chega por e-mail à equipe.
-- [ ] “Continuar pelo WhatsApp” abre a conversa com o resumo, no número correto.
-- [ ] Aviso de privacidade revisado.
-- [ ] Depoimentos autorizados e link de avaliações atualizado.
+- [ ] Capa abre bem no celular e no computador; “Consultar valores” leva à seleção.
+- [ ] Consulta completa; “Voltar”, indicador de etapas e voltar do navegador funcionam.
+- [ ] Página 2 mostra só o valor escolhido; “Alterar minhas escolhas” funciona.
+- [ ] Página 3: resumo confere, “Editar” leva à etapa certa e volta ao valor.
+- [ ] Envio de teste aparece em *Netlify → Forms → consulta* e chega por e-mail à equipe.
+- [ ] WhatsApp abre no número correto com a mensagem completa.
+- [ ] Pendências de preço (seção 3) confirmadas.
+- [ ] Aviso de privacidade revisado; depoimentos autorizados; link de avaliações atualizado.
 - [ ] (Se usar) GTM configurado, aviso de consentimento aparecendo, eventos chegando.
