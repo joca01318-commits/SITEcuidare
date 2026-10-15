@@ -114,10 +114,10 @@
       '<button type="button" class="privacy__close" data-close aria-label="Fechar">×</button>' +
       '<p class="eyebrow">Privacidade</p>' +
       '<h2 id="privacy-title">Aviso de privacidade</h2>' +
-      '<h3>Quais dados usamos</h3><p>Somente as escolhas desta consulta: tipo de atendimento, duração, frequência, bairro, previsão de início e, se você marcar, necessidades. O site não pede nome, telefone, e-mail, documentos nem dados clínicos.</p>' +
+      '<h3>Quais dados usamos</h3><p>Somente as escolhas desta consulta: tipo de atendimento, duração e frequência. O site não pede nome, telefone, e-mail, endereço, documentos nem dados clínicos.</p>' +
       '<h3>Para quê</h3><p>Para mostrar o valor da configuração escolhida e o resumo do atendimento.</p>' +
       '<h3>Onde ficam</h3><p>Apenas nesta aba do seu navegador. São apagadas ao fechá-la, e o site não registra dados pessoais.</p>' +
-      '<h3>Medição</h3><p>Ferramentas de análise só são ativadas se você autorizar e nunca recebem o bairro nem informações sobre a necessidade de cuidado.</p>' +
+      '<h3>Medição</h3><p>Ferramentas de análise só são ativadas se você autorizar e nunca recebem dados pessoais.</p>' +
       '<p class="privacy__who">Responsável: Cuidare Vila Mariana.</p>' +
       '</div>';
     document.body.appendChild(d);

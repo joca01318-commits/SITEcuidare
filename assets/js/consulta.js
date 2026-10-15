@@ -41,34 +41,16 @@
     { v: 'pontual', t: 'Atendimento pontual', d: 'Valor por diária' }
   ];
 
-  var INICIO = [
-    { v: 'breve', t: 'O mais breve possível' },
-    { v: '7dias', t: 'Nos próximos 7 dias' },
-    { v: 'semanas', t: 'Nas próximas semanas' },
-    { v: 'pesquisando', t: 'Estou pesquisando para me planejar' }
-  ];
-
-  var NECESSIDADES = [
-    { v: 'companhia', t: 'Companhia e supervisão' },
-    { v: 'atividades', t: 'Auxílio nas atividades diárias' },
-    { v: 'mobilidade', t: 'Apoio na mobilidade' },
-    { v: 'alzheimer_parkinson', t: 'Alzheimer ou Parkinson' },
-    { v: 'cirurgia', t: 'Recuperação após cirurgia' },
-    { v: 'outra', t: 'Outra necessidade' }
-  ];
-
   var STEPS = [
     { id: 'servico', label: 'Atendimento', title: 'Qual atendimento você procura?',
       help: 'Escolha uma opção. Em seguida, você define a duração e a frequência.' },
     { id: 'duracao', label: 'Duração', title: 'Quantas horas de cuidado por dia?',
       help: 'Escolha a duração desejada. Se ainda não souber, a equipe ajuda a definir.' },
     { id: 'frequencia', label: 'Frequência', title: 'Com que frequência?',
-      help: 'Os planos mensais consideram 22, 26 ou 30 dias. O atendimento pontual é cobrado por diária.' },
-    { id: 'detalhes', label: 'Informações', title: 'Para finalizar, só o essencial.',
-      help: 'Não pedimos documentos, endereço completo nem dados clínicos.' }
+      help: 'Os planos mensais consideram 22, 26 ou 30 dias. O atendimento pontual é cobrado por diária.' }
   ];
 
-  var LISTS = { servico: SERVICOS, duracao: DURACOES, frequencia: FREQUENCIAS, inicio: INICIO, necessidades: NECESSIDADES };
+  var LISTS = { servico: SERVICOS, duracao: DURACOES, frequencia: FREQUENCIAS };
 
   function find(list, v) { return list.filter(function (o) { return o.v === v; })[0]; }
   function labelOf(field, v) { var o = find(LISTS[field] || [], v); return o ? o.t : ''; }
@@ -91,33 +73,20 @@
   // Mantém só escolhas que continuam válidas depois de mudar uma anterior.
   function sanitize(a) {
     var out = Object.assign({}, a || {});
-    ['servico', 'duracao', 'frequencia', 'inicio'].forEach(function (k) {
+    ['servico', 'duracao', 'frequencia'].forEach(function (k) {
       if (out[k] && !find(optionsFor(k, out), out[k])) delete out[k];
     });
-    out.necessidades = (Array.isArray(out.necessidades) ? out.necessidades : []).filter(function (v) { return !!find(NECESSIDADES, v); });
-    if (typeof out.bairro !== 'string') delete out.bairro;
+    // campos da versão anterior (bairro, início, necessidades) não são mais usados
+    delete out.bairro; delete out.inicio; delete out.necessidades;
     return out;
   }
 
-  function stepDone(id, a) {
-    a = a || {};
-    if (id === 'detalhes') return !!(a.bairro && a.bairro.trim().length >= 2 && a.inicio);
-    return !!a[id];
-  }
+  function stepDone(id, a) { return !!(a || {})[id]; }
   function firstIncomplete(a) {
     for (var i = 0; i < STEPS.length; i++) if (!stepDone(STEPS[i].id, a)) return i;
     return -1;
   }
   function isComplete(a) { return firstIncomplete(a) === -1; }
-
-  // Prioridade comercial (não é exibida ao visitante).
-  function priority(a) {
-    var i = (a || {}).inicio;
-    if (i === 'breve' || i === '7dias') return 'alta';
-    if (i === 'semanas') return 'media';
-    if (i === 'pesquisando') return 'baixa';
-    return 'indefinida';
-  }
 
   /* ---------- Valor ---------- */
   function money(v) { return 'R$ ' + String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
@@ -174,14 +143,10 @@
   /* ---------- Resumo ---------- */
   function summaryRows(a) {
     a = a || {};
-    var nec = (a.necessidades || []).map(function (v) { return labelOf('necessidades', v); }).join(', ');
     return [
       { k: 'servico', step: 0, label: 'Atendimento', value: labelOf('servico', a.servico) },
       { k: 'duracao', step: 1, label: 'Duração', value: labelOf('duracao', a.duracao) },
-      { k: 'frequencia', step: 2, label: 'Frequência', value: labelOf('frequencia', a.frequencia) },
-      { k: 'bairro', step: 3, label: 'Bairro', value: (a.bairro || '').trim() },
-      { k: 'inicio', step: 3, label: 'Início', value: labelOf('inicio', a.inicio) },
-      { k: 'necessidades', step: 3, label: 'Necessidades', value: nec, optional: true }
+      { k: 'frequencia', step: 2, label: 'Frequência', value: labelOf('frequencia', a.frequencia) }
     ];
   }
 
@@ -196,9 +161,9 @@
   function clear() { try { sessionStorage.removeItem(KEY); } catch (e) { /* noop */ } }
 
   window.CuidareConsulta = {
-    KEY: KEY, STEPS: STEPS, SERVICOS: SERVICOS, DURACOES: DURACOES, FREQUENCIAS: FREQUENCIAS, INICIO: INICIO, NECESSIDADES: NECESSIDADES,
+    KEY: KEY, STEPS: STEPS, SERVICOS: SERVICOS, DURACOES: DURACOES, FREQUENCIAS: FREQUENCIAS,
     optionsFor: optionsFor, sanitize: sanitize, labelOf: labelOf, servico: servico,
-    stepDone: stepDone, firstIncomplete: firstIncomplete, isComplete: isComplete, priority: priority,
+    stepDone: stepDone, firstIncomplete: firstIncomplete, isComplete: isComplete,
     calcular: calcular, obterPreco: obterPreco, money: money, priceText: priceText,
     summaryRows: summaryRows,
     load: load, save: save, clear: clear

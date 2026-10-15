@@ -79,7 +79,7 @@ Nada é carregado enquanto `analytics.gtmId` estiver vazio. Com o GTM preenchido
 consentimento e só então envia eventos `cuidare_*`: `cta_click`, `step_complete` (só duração e
 frequência), `consulta_complete`, `price_view` e `details_view`.
 
-**Nunca são enviados:** bairro, tipo de atendimento e necessidades.
+**Nunca são enviados:** dados pessoais (o site não pede nenhum).
 
 ## 6. Fotos
 
@@ -108,11 +108,11 @@ textos, selos e ícones que vinham sobre a imagem. Para trocar por fotos reais, 
 | 7+ anos, 2.000+ famílias, 4,8/5, 99+ avaliações | Capa | Portfólio “Planos — Apresentação” |
 | Cuidare Brasil, mais de 10 anos e presença em todo o país | Rodapé | Portfólio |
 | Itens incluídos, não incluídos, contratação, avaliação e condições | Página 3 | FAQ do portfólio |
-| Selos da capa (seleção e verificação, supervisão, avaliação gratuita) | Capa | FAQ do portfólio |
+| Selos da capa (seleção e verificação, supervisão, faltas cobertas) | Capa | FAQ do portfólio |
 | 5 depoimentos com nome | Capa | Enviados pela Cuidare. **Confirme a autorização de cada pessoa** |
 | Link “Ver avaliações públicas” | Capa | Busca no Google Maps. **Troque pelo link exato do perfil** em `config.js → reviewsUrl` |
 | Aviso de privacidade | Todas as páginas | Texto-base (o site não registra dados pessoais). **Revise com o jurídico** |
-| Necessidades (Alzheimer/Parkinson, pós-operatório, 12h noturno, pontual) | Consulta | Briefing. **Confirme que a operação atende todos** |
+| Opções da consulta (pós-operatório, 12h noturno, atendimento pontual) | Consulta | Briefing. **Confirme que a operação atende todas** |
 
 ## 9. O que mudou em relação à versão anterior
 
@@ -122,6 +122,8 @@ textos, selos e ícones que vinham sobre a imagem. Para trocar por fotos reais, 
 - Títulos em Fredoka, abertura animada com o logo e entrada dos módulos em cascata.
 - Fotos na página do valor.
 - Sem formulário, telefone ou WhatsApp: a apresentação é enviada a quem já conversa com a equipe.
+- Consulta em 3 etapas (atendimento, duração, frequência), sem bairro, início ou necessidades, e sem
+  referências a avaliação gratuita ou agendamento (a pessoa já passou por isso).
 
 ## 10. Checklist de validação (antes do domínio definitivo)
 

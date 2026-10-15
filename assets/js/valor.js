@@ -31,7 +31,7 @@
 
   function trust() {
     return '<ul class="price__trust" data-stagger>' +
-      '<li><span class="ic">' + ICON('calendar') + '</span>Avaliação gratuita, com horário agendado</li>' +
+      '<li><span class="ic">' + ICON('shield') + '</span>Profissionais selecionados e verificados</li>' +
       '<li><span class="ic">' + ICON('swap') + '</span>Se o cuidador faltar, a Cuidare envia outro profissional</li>' +
       '<li><span class="ic">' + ICON('doc') + '</span>Sem vínculo trabalhista para a família</li></ul>';
   }
@@ -54,7 +54,7 @@
           '<p class="pcard__label">Valor correspondente</p>' +
           '<p class="pcard__price"><span class="pcard__v" data-valor>' + esc(p.valor) + '</span><span class="pcard__u">' + esc(p.unidade) + '</span></p>' +
           '<p class="pcard__d">' + esc(p.detalhe) + '</p>' +
-          '<p class="pcard__note">' + ICON('info') + '<span>Valor de tabela para esta configuração' + (r.validadeDias ? ', válido por ' + r.validadeDias + ' dias' : '') + '. A contratação é confirmada após a avaliação gratuita e a verificação de disponibilidade.</span></p>' +
+          '<p class="pcard__note">' + ICON('info') + '<span>Valor de tabela para esta configuração' + (r.validadeDias ? '. Orçamento válido por ' + r.validadeDias + ' dias' : '') + '.</span></p>' +
           '<span class="pcard__more">Ver detalhes deste atendimento' + ICON('arrow') + '</span></a>'
       : '<div class="pcard pcard--custom is-in" data-pcard>' +
           '<p class="pcard__k">Configuração escolhida</p>' + chips() +

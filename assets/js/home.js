@@ -77,20 +77,6 @@
     }).join('') + '</div>';
   }
 
-  function detailsHTML() {
-    var nec = a.necessidades || [];
-    return '<div class="fields">' +
-      '<div class="field" data-field="bairro"><label for="f-bairro">Bairro onde o atendimento vai acontecer</label>' +
-      '<input class="input" id="f-bairro" name="bairro" type="text" maxlength="60" autocomplete="address-level3" placeholder="Ex.: Vila Mariana" aria-describedby="h-bairro e-bairro" required value="' + esc(a.bairro || '') + '">' +
-      '<p class="hint" id="h-bairro">Apenas o bairro. Não precisamos do endereço.</p><p class="err" id="e-bairro">Informe o bairro para continuar.</p></div>' +
-      '<fieldset class="field" data-field="inicio" aria-describedby="e-inicio"><legend class="lbl">Quando o atendimento precisa começar?</legend><div class="pills">' +
-      K.INICIO.map(function (o) { return '<label class="pill"><input type="radio" name="inicio" value="' + o.v + '"' + (a.inicio === o.v ? ' checked' : '') + '><span>' + o.t + '</span></label>'; }).join('') +
-      '</div><p class="err" id="e-inicio">Escolha uma previsão de início.</p></fieldset>' +
-      '<fieldset class="field"><legend class="lbl">Alguma necessidade relevante? <span class="opt-l">(opcional, escolha quantas quiser)</span></legend><div class="pills">' +
-      K.NECESSIDADES.map(function (o) { return '<label class="pill"><input type="checkbox" name="necessidades" value="' + o.v + '"' + (nec.indexOf(o.v) > -1 ? ' checked' : '') + '><span>' + o.t + '</span></label>'; }).join('') +
-      '</div></fieldset></div>';
-  }
-
   function nextLabel(i) {
     if (i === N - 1) return 'Consultar meu valor';
     if (returnMode && K.isComplete(a)) return 'Salvar e ver o valor';
@@ -101,8 +87,7 @@
     var s = K.STEPS[i], body;
     if (s.id === 'servico') body = svcHTML();
     else if (s.id === 'duracao') body = tilesHTML('duracao');
-    else if (s.id === 'frequencia') body = tilesHTML('frequencia', true);
-    else body = detailsHTML();
+    else body = tilesHTML('frequencia', true);
     var last = i === N - 1;
     return '<form class="q" novalidate data-step="' + i + '">' +
       '<p class="q__kicker"><span>Etapa ' + ('0' + (i + 1)).slice(-2) + ' de 0' + N + '</span><span aria-hidden="true">·</span><span>' + s.label + '</span></p>' +
@@ -124,23 +109,17 @@
     var s = K.STEPS[current], h = '';
     if (s.id === 'duracao' && a.duracao === 'nao_sei') h = noteHTML('Sem problema. Siga para a frequência: na próxima tela, a equipe monta uma proposta personalizada com você.');
     if (s.id === 'frequencia' && a.frequencia === 'pontual') h = noteHTML('No atendimento pontual, o valor é por diária, para a duração escolhida.');
-    if (s.id === 'detalhes') {
-      var n = a.necessidades || [];
-      if (n.indexOf('alzheimer_parkinson') > -1 || n.indexOf('cirurgia') > -1) {
-        h = noteHTML('A indicação do profissional depende da avaliação das necessidades e das atribuições permitidas ao cuidador. Procedimentos de enfermagem são realizados somente por profissionais habilitados.');
-      }
-    }
     box.innerHTML = h;
   }
 
   /* Resumo lateral e chips (celular) */
-  function rowIcon(k) { return { servico: serviceIcon(a.servico), duracao: 'clock', frequencia: 'calendar', bairro: 'pin', inicio: 'clock', necessidades: 'heart' }[k]; }
+  function rowIcon(k) { return { servico: serviceIcon(a.servico), duracao: 'clock', frequencia: 'calendar' }[k]; }
   function renderAside(changed) {
     var rows = K.summaryRows(a);
     if (aside) {
       aside.className = 'cfg__aside aside';
       aside.innerHTML = '<h3 class="aside__t">Seu atendimento</h3><p class="aside__s">Suas escolhas aparecem aqui. Você pode alterar a qualquer momento.</p>' +
-        '<div class="sum">' + rows.filter(function (r) { return !r.optional || r.value; }).map(function (r) {
+        '<div class="sum">' + rows.map(function (r) {
           return '<div class="sum__row' + (r.k === changed ? ' is-new' : '') + '"><span class="sum__i">' + ICON(rowIcon(r.k)) + '</span>' +
             '<dl class="sum__txt"><dt>' + r.label + '</dt><dd' + (r.value ? '' : ' class="is-empty"') + '>' + (r.value ? esc(r.value) : 'A definir') + '</dd></dl>' +
             (r.value && current !== null ? '<button type="button" class="sum__edit" data-goto="' + r.step + '" aria-label="Alterar ' + r.label + '">Alterar</button>' : '') + '</div>';
@@ -148,7 +127,7 @@
         '<p class="aside__foot">' + ICON('lock') + '<span>O valor aparece na próxima tela, somente para a configuração escolhida.</span></p>';
     }
     if (mini) {
-      var chips = rows.filter(function (r) { return r.value && r.k !== 'necessidades'; });
+      var chips = rows.filter(function (r) { return r.value; });
       mini.hidden = !chips.length;
       mini.innerHTML = chips.map(function (r) {
         return '<button type="button" data-goto="' + r.step + '" aria-label="Alterar ' + r.label + ': ' + esc(r.value) + '">' + esc(r.value) + ICON('edit') + '</button>';
@@ -210,25 +189,10 @@
     else swap();
   }
 
-  function invalid(field, on) {
-    var f = $('[data-field="' + field + '"]', stage); if (!f) return;
-    f.classList.toggle('is-invalid', on);
-    var inp = $('input', f);
-    if (inp && inp.type === 'text') { if (on) inp.setAttribute('aria-invalid', 'true'); else inp.removeAttribute('aria-invalid'); }
-  }
-
   function next() {
     clearTimeout(autoTimer);
     var s = K.STEPS[current];
-    if (s.id === 'detalhes') {
-      var inp = $('#f-bairro', stage);
-      a.bairro = inp.value.trim();
-      var okB = a.bairro.length >= 2, okI = !!a.inicio;
-      invalid('bairro', !okB); invalid('inicio', !okI);
-      persist();
-      if (!okB) { inp.focus(); return; }
-      if (!okI) { var r = $('input[name="inicio"]', stage); if (r) r.focus(); return; }
-    } else if (!a[s.id]) {
+    if (!a[s.id]) {
       $('[data-extra]', stage).innerHTML = noteHTML('Escolha uma opção para continuar.', true);
       var first = $('input[type="radio"]', stage); if (first) first.focus();
       return;
@@ -246,7 +210,7 @@
   function finish() {
     var btn = $('[data-next]', stage); if (btn) btn.classList.add('is-loading');
     persist();
-    C.track('consulta_complete', { duracao: a.duracao, frequencia: a.frequencia, prioridade: K.priority(a) });
+    C.track('consulta_complete', { duracao: a.duracao, frequencia: a.frequencia });
     location.href = C.pageUrl('valor');
   }
 
@@ -256,26 +220,16 @@
 
     stage.addEventListener('change', function (e) {
       var t = e.target;
-      if (t.name === 'necessidades') {
-        a.necessidades = $$('input[name="necessidades"]:checked', stage).map(function (x) { return x.value; });
-        persist(); renderAside('necessidades'); renderExtra(); return;
-      }
-      if (t.name === 'inicio') { a.inicio = t.value; invalid('inicio', false); persist(); renderAside('inicio'); renderStepper(); return; }
       if (t.type !== 'radio' || K.STEPS[current].id !== t.name) return;
       a[t.name] = t.value;
       a = K.sanitize(a);
       persist();
       renderAside(t.name); renderStepper(); renderExtra();
-      var hold = t.name === 'duracao' && t.value === 'nao_sei';
+      var last = current === N - 1 && !returnMode;
+      var hold = (t.name === 'duracao' && t.value === 'nao_sei') || last;
       if (pointerPick && !hold) autoTimer = setTimeout(next, C.reduce ? 150 : 560);
+      if (last) { var nb = $('[data-next]', stage); if (nb) { nb.classList.remove('is-ready'); void nb.offsetWidth; nb.classList.add('is-ready'); } }
       pointerPick = false;
-    });
-
-    stage.addEventListener('input', function (e) {
-      if (e.target.id !== 'f-bairro') return;
-      a.bairro = e.target.value;
-      if (a.bairro.trim().length >= 2) invalid('bairro', false);
-      persist(); renderAside('bairro'); renderStepper();
     });
 
     stage.addEventListener('submit', function (e) { e.preventDefault(); next(); });

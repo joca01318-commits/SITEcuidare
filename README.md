@@ -4,14 +4,15 @@ Experiência digital da Cuidare Vila Mariana em três páginas:
 
 | Rota | Função |
 | --- | --- |
-| `/` | Capa com 3D, consulta em 4 etapas (atendimento, duração, frequência, detalhes), diferenciais e depoimentos |
+| `/` | Capa com 3D, consulta em 3 etapas (atendimento, duração, frequência), diferenciais e depoimentos |
 | `/valor/` | Mostra **somente** o valor da configuração escolhida (ou proposta personalizada, quando não há valor validado) |
 | `/detalhes/` | Resumo e detalhes do atendimento escolhido (incluído, contratação, avaliação, condições) |
 
 Regra comercial: seleção antes do preço, **um preço por consulta** e nenhuma tabela pública comparando opções.
 
-É uma apresentação de valores para quem **já está em conversa** com a equipe: o site não tem formulário,
-número de telefone nem botões de WhatsApp.
+É uma apresentação de valores para quem **já está em conversa** com a equipe e já passou pela avaliação:
+o site não tem formulário, telefone, botões de WhatsApp, etapa de bairro/início/necessidades nem
+referências a avaliação ou agendamento.
 
 ## Identidade visual
 
@@ -40,7 +41,7 @@ assets/js/precos.js        tabela de preços (fonte única, modo local)
 assets/js/consulta.js      opções, perguntas condicionais, cálculo e resumo
 assets/js/core.js          base comum: links, origem da visita, consentimento, privacidade, 3D
 assets/js/cena.js          cena 3D em WebGL (corações e esferas de vidro), sem bibliotecas
-assets/js/home.js          capa e consulta em 4 etapas
+assets/js/home.js          capa e consulta em 3 etapas
 assets/js/valor.js         página do valor
 assets/js/detalhes.js      resumo e detalhes do atendimento
 assets/fonts/              Fredoka (títulos) + Manrope (textos), SIL OFL, hospedadas localmente
