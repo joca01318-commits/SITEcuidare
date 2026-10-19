@@ -7,8 +7,9 @@
    - mensal: valor por mês. Segunda a sexta = 22 plantões, segunda a sábado = 26 plantões,
      segunda a segunda (todos os dias) = 30 plantões.
    - profissionais: quantos profissionais atendem cada plano mensal.
-   - diaria: avulso (dia útil), valor por diária.
-   - diariaFds: avulso em sábado, domingo ou feriado, valor por diária.
+   - diaria: valor por diária de segunda a sexta (acompanhamento hospitalar e consultas e exames).
+   - diariaFds: valor por diária em sábados, domingos e feriados (mesmos atendimentos).
+   Residência e pós-operatório usam os planos mensais.
    - null = sem valor validado. O site não inventa: encaminha para proposta personalizada.
 
    Para não publicar a tabela no navegador, use o modo "servidor"

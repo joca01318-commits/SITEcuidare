@@ -23,7 +23,7 @@
     return '<div class="pcard__cfg">' +
       '<span>' + ICON(s.icon || 'heart') + esc(K.labelOf('servico', a.servico)) + '</span>' +
       '<span>' + ICON('clock') + esc(K.labelOf('duracao', a.duracao)) + '</span>' +
-      '<span>' + ICON('calendar') + esc(K.labelOf('frequencia', a.frequencia)) + '</span></div>';
+      '<span>' + ICON('calendar') + (K.porDiaria(a) ? 'Por diária' : esc(K.labelOf('frequencia', a.frequencia))) + '</span></div>';
   }
 
   var detailsUrl = C.pageUrl('detalhes') + '#detalhes';
@@ -54,6 +54,7 @@
           '<p class="pcard__label">Valor correspondente</p>' +
           '<p class="pcard__price"><span class="pcard__v" data-valor>' + esc(p.valor) + '</span><span class="pcard__u">' + esc(p.unidade) + '</span></p>' +
           '<p class="pcard__d">' + esc(p.detalhe) + '</p>' +
+          (p.fds ? '<p class="pcard__alt"><span class="pcard__alt-l">' + esc(p.fds.label) + '</span><span class="pcard__alt-v">' + esc(p.fds.valor) + ' <small>' + esc(p.fds.unidade) + '</small></span></p>' : '') +
           '<p class="pcard__note">' + ICON('info') + '<span>Valor de tabela para esta configuração' + (r.validadeDias ? '. Orçamento válido por ' + r.validadeDias + ' dias' : '') + '.</span></p>' +
           '<span class="pcard__more">Ver detalhes deste atendimento' + ICON('arrow') + '</span></a>'
       : '<div class="pcard pcard--custom is-in" data-pcard>' +
@@ -76,7 +77,7 @@
       '<a class="price__change" href="' + changeUrl + '">' + ICON('edit') + 'Alterar minhas escolhas</a></div>' + rest + photo + '</div>';
 
     C.reveal(box);
-    C.track('price_view', { status: r.status, duracao: a.duracao, frequencia: a.frequencia });
+    C.track('price_view', { status: r.status, duracao: a.duracao, frequencia: a.frequencia || 'diaria' });
     if (scene) scene.pulse();
   }
 
@@ -86,7 +87,7 @@
     box.innerHTML = '<div class="price-empty">' +
       '<p class="eyebrow">Consulta de valores</p>' +
       '<h1 class="price__title" tabindex="-1">Primeiro, conte qual atendimento <em>você procura.</em></h1>' +
-      '<p class="price__lead">O valor aparece aqui depois que você escolhe o tipo de atendimento, a duração e a frequência.</p>' +
+      '<p class="price__lead">O valor aparece aqui depois que você escolhe o tipo de atendimento e a duração.</p>' +
       '<div class="price__actions"><a class="btn btn--primary btn--lg" href="' + C.pageUrl('') + '#consulta"><span>Começar a consulta</span><span class="btn__ico" aria-hidden="true">' + ICON('arrow') + '</span></a></div></div>';
   }
 
@@ -112,6 +113,8 @@
     }).then(function (inst) { scene = inst; if (scene) setTimeout(function () { scene.pulse(); }, 400); });
   }
 
-  if (!a.servico || !a.duracao || !a.frequencia) { empty(); return; }
+  if (!K.isComplete(a)) { empty(); return; }
+  var labels = K.journeyLabels(a);
+  C.journey(labels, labels.length - 2);
   K.obterPreco(a).then(render);
 })();

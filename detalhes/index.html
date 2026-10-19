@@ -28,7 +28,7 @@
       var v = 'empty';
       try {
         var a = (JSON.parse(sessionStorage.getItem('cuidare.consulta.v1') || 'null') || {}).a || {};
-        if (a.servico && a.duracao && a.frequencia) v = 'full';
+        if (a.servico && a.duracao && (a.frequencia || a.servico === 'hospital' || a.servico === 'consultas')) v = 'full';
       } catch (e) { v = 'full'; }
       document.documentElement.setAttribute('data-dt', v);
     })();

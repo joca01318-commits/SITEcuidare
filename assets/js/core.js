@@ -221,6 +221,21 @@
     });
   }
 
+  /* ---------- Indicador de etapas (páginas do valor e dos detalhes) ---------- */
+  function journey(labels, cur) {
+    var j = $('[data-jstep]');
+    if (j) j.innerHTML = labels.map(function (l, i) {
+      if (i < cur) return '<li class="is-done"><span class="n" aria-hidden="true"><svg><use href="#i-check"/></svg></span>' + l + '</li>';
+      if (i === cur) return '<li class="is-current" aria-current="step"><span class="n">' + (i + 1) + '</span>' + l + '</li>';
+      return '<li><span class="n">' + (i + 1) + '</span>' + l + '</li>';
+    }).join('');
+    var bar = $('.jbar');
+    if (bar && labels[cur]) {
+      bar.firstElementChild.textContent = 'Etapa ' + (cur + 1) + ' de ' + labels.length + ' · ' + (labels[cur] === 'Valor' ? 'Seu valor' : labels[cur]);
+      var fill = $('.jbar__track span', bar); if (fill) fill.style.width = Math.round((cur + 1) / labels.length * 100) + '%';
+    }
+  }
+
   /* ---------- Rastreio de cliques em CTAs ---------- */
   document.addEventListener('click', function (e) {
     var cta = e.target.closest('[data-track]');
@@ -238,6 +253,6 @@
 
   window.Cuidare = {
     cfg: CFG, $: $, $$: $$, store: store, reduce: reduce, finePointer: finePointer, lowPower: lowPower,
-    pageUrl: pageUrl, asset: function (p) { return /^(data:|https?:)/.test(p) ? p : root + p; }, track: track, reveal: reveal, split: split, intro: doc.classList.contains('intro-on'), cena: cena, esc: esc, photo: photo
+    pageUrl: pageUrl, asset: function (p) { return /^(data:|https?:)/.test(p) ? p : root + p; }, track: track, journey: journey, reveal: reveal, split: split, intro: doc.classList.contains('intro-on'), cena: cena, esc: esc, photo: photo
   };
 })();

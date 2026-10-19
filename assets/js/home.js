@@ -1,11 +1,10 @@
-/* Cuidare — página inicial: capa 3D, consulta em 4 etapas, trilho de diferenciais e depoimentos. */
+/* Cuidare — página inicial: capa 3D, consulta por etapas, trilho de diferenciais e depoimentos. */
 (function () {
   'use strict';
   var C = window.Cuidare, K = window.CuidareConsulta;
   if (!C || !K) return;
   var $ = C.$, $$ = C.$$, esc = C.esc;
   var ICON = function (id, cls) { return '<svg aria-hidden="true"' + (cls ? ' class="' + cls + '"' : '') + '><use href="#i-' + id + '"/></svg>'; };
-  var N = K.STEPS.length;
 
   /* ---------- Capa: cena 3D ---------- */
   var hero = $('[data-hero]');
@@ -47,8 +46,12 @@
   var returnMode = params.get('retorno') === '1';
   var state = K.load();
   var a = state.a;
-  var current = null, busy = false, autoTimer = 0, pointerPick = false;
+  var current = null, busy = false, autoTimer = 0, pointerPick = false, wasChecked = false;
+  var ADVANCE_MS = C.reduce ? 150 : 480;
 
+  // As etapas dependem do atendimento: hospital e consultas não têm a etapa de frequência.
+  function steps() { return K.stepsFor(a); }
+  function total() { return steps().length; }
   function persist() { state.a = a; K.save(state); }
 
   function serviceIcon(v) { var s = K.servico(v); return s ? s.icon : 'heart'; }
@@ -65,11 +68,11 @@
     }).join('') + '</div>';
   }
 
-  function tilesHTML(field, four) {
-    return '<div class="tiles' + (four ? ' tiles--4' : '') + '" role="radiogroup" aria-labelledby="q-title">' + K.optionsFor(field, a).map(function (o, k) {
-      var head;
-      if (field === 'duracao') head = '<span class="tile__n">' + (o.icon ? ICON(o.icon) : '') + o.n + '</span>';
-      else head = '<span class="tile__i">' + ICON(o.v === 'pontual' ? 'clock' : o.v === 'pontual_fds' ? 'sun' : 'calendar') + '</span>';
+  function tilesHTML(field) {
+    return '<div class="tiles" role="radiogroup" aria-labelledby="q-title">' + K.optionsFor(field, a).map(function (o, k) {
+      var head = field === 'duracao'
+        ? '<span class="tile__n">' + (o.icon ? ICON(o.icon) : '') + o.n + '</span>'
+        : '<span class="tile__i">' + ICON('calendar') + '</span>';
       return '<label class="tile" style="--i:' + k + '"><input type="radio" name="' + field + '" value="' + o.v + '"' + (a[field] === o.v ? ' checked' : '') + '>' +
         (o.tag ? '<span class="tile__tag">' + o.tag + '</span>' : '') +
         '<span class="tile__check" aria-hidden="true">' + ICON('check') + '</span>' + head +
@@ -77,57 +80,46 @@
     }).join('') + '</div>';
   }
 
-  function nextLabel(i) {
-    if (i === N - 1) return 'Consultar meu valor';
-    if (returnMode && K.isComplete(a)) return 'Salvar e ver o valor';
-    return 'Continuar';
-  }
-
   function stepHTML(i) {
-    var s = K.STEPS[i], body;
-    if (s.id === 'servico') body = svcHTML();
-    else if (s.id === 'duracao') body = tilesHTML('duracao');
-    else body = tilesHTML('frequencia');
-    var last = i === N - 1;
+    var s = steps()[i], n = total();
+    var body = s.id === 'servico' ? svcHTML() : tilesHTML(s.id);
+    // Sem botão "Continuar": tocar em uma opção já avança. Só o "Voltar" fica.
     return '<form class="q" novalidate data-step="' + i + '">' +
-      '<p class="q__kicker"><span>Etapa ' + ('0' + (i + 1)).slice(-2) + ' de 0' + N + '</span><span aria-hidden="true">·</span><span>' + s.label + '</span></p>' +
+      '<p class="q__kicker"><span>Etapa ' + ('0' + (i + 1)).slice(-2) + ' de ' + ('0' + n).slice(-2) + '</span><span aria-hidden="true">·</span><span>' + s.label + '</span></p>' +
       '<h3 class="q__title" id="q-title" tabindex="-1">' + s.title + '</h3>' +
       '<p class="q__help">' + s.help + '</p>' +
       '<div class="q__body">' + body + '</div>' +
       '<div data-extra aria-live="polite"></div>' +
-      '<div class="q__actions">' +
-      (i > 0 ? '<button type="button" class="q__back" data-act="back">' + ICON('arrow') + 'Voltar</button>' : '') +
-      '<button type="submit" class="btn btn--primary' + (last ? ' btn--lg' : '') + '" data-next><span>' + nextLabel(i) + '</span>' +
-      (last ? '<span class="btn__ico" aria-hidden="true">' + ICON('arrow') + '</span>' : ICON('arrow')) + '</button>' +
-      '</div></form>';
+      (i > 0 ? '<div class="q__actions"><button type="button" class="q__back" data-act="back">' + ICON('arrow') + 'Voltar</button></div>' : '') +
+      '</form>';
   }
 
   function noteHTML(text, warn) { return '<p class="note' + (warn ? ' note--warn' : '') + '">' + ICON('info') + '<span>' + text + '</span></p>'; }
 
   function renderExtra() {
     var box = $('[data-extra]', stage); if (!box) return;
-    var s = K.STEPS[current], h = '';
-    if (s.id === 'duracao' && a.duracao === 'nao_sei') h = noteHTML('Sem problema. Siga para a frequência: na próxima tela, a equipe monta uma proposta personalizada com você.');
-    if (s.id === 'frequencia' && (a.frequencia === 'pontual' || a.frequencia === 'pontual_fds')) h = noteHTML('Na diária avulsa, o valor é por dia de atendimento, para a duração escolhida.');
+    var s = steps()[current], h = '';
+    if (s && s.id === 'duracao' && K.porDiaria(a)) h = noteHTML('Em ' + esc(K.labelOf('servico', a.servico).toLowerCase()) + ', o valor é por diária: de segunda a sexta e em sábados, domingos e feriados.');
     box.innerHTML = h;
   }
 
   /* Resumo lateral e chips (celular) */
-  function rowIcon(k) { return { servico: serviceIcon(a.servico), duracao: 'clock', frequencia: 'calendar' }[k]; }
+  function rowIcon(k) { return { servico: serviceIcon(a.servico), duracao: 'clock', frequencia: 'calendar', modalidade: 'calendar' }[k]; }
   function renderAside(changed) {
     var rows = K.summaryRows(a);
     if (aside) {
       aside.className = 'cfg__aside aside';
       aside.innerHTML = '<h3 class="aside__t">Seu atendimento</h3><p class="aside__s">Suas escolhas aparecem aqui. Você pode alterar a qualquer momento.</p>' +
         '<div class="sum">' + rows.map(function (r) {
+          var value = r.fixed ? (a.servico ? r.value : '') : r.value;
           return '<div class="sum__row' + (r.k === changed ? ' is-new' : '') + '"><span class="sum__i">' + ICON(rowIcon(r.k)) + '</span>' +
-            '<dl class="sum__txt"><dt>' + r.label + '</dt><dd' + (r.value ? '' : ' class="is-empty"') + '>' + (r.value ? esc(r.value) : 'A definir') + '</dd></dl>' +
-            (r.value && current !== null ? '<button type="button" class="sum__edit" data-goto="' + r.step + '" aria-label="Alterar ' + r.label + '">Alterar</button>' : '') + '</div>';
+            '<dl class="sum__txt"><dt>' + r.label + '</dt><dd' + (value ? '' : ' class="is-empty"') + '>' + (value ? esc(value) : 'A definir') + '</dd></dl>' +
+            (value && !r.fixed && current !== null ? '<button type="button" class="sum__edit" data-goto="' + r.step + '" aria-label="Alterar ' + r.label + '">Alterar</button>' : '') + '</div>';
         }).join('') + '</div>' +
         '<p class="aside__foot">' + ICON('lock') + '<span>O valor aparece na próxima tela, somente para a configuração escolhida.</span></p>';
     }
     if (mini) {
-      var chips = rows.filter(function (r) { return r.value; });
+      var chips = rows.filter(function (r) { return r.value && !r.fixed; });
       mini.hidden = !chips.length;
       mini.innerHTML = chips.map(function (r) {
         return '<button type="button" data-goto="' + r.step + '" aria-label="Alterar ' + r.label + ': ' + esc(r.value) + '">' + esc(r.value) + ICON('edit') + '</button>';
@@ -135,14 +127,15 @@
     }
   }
 
-  function reachable(i) { var fi = K.firstIncomplete(a); return fi === -1 || i <= fi; }
+  function reachable(i) { var fi = K.firstIncomplete(a); return i < total() && (fi === -1 || i <= fi); }
   function renderStepper() {
     if (!stepper) return;
-    stepper.innerHTML = K.STEPS.map(function (s, i) {
+    var st = steps();
+    stepper.innerHTML = st.map(function (s, i) {
       var cur = i === current, done = !cur && K.stepDone(s.id, a);
       return '<li class="' + (cur ? 'is-current' : done ? 'is-done' : '') + '"><button type="button" data-goto="' + i + '"' + (cur ? ' aria-current="step"' : '') + (!cur && reachable(i) ? '' : ' disabled') + '>' +
         '<span class="stepper__n" aria-hidden="true">' + (done ? ICON('check') : i + 1) + '</span><span class="stepper__t">' + s.label + '</span>' + (done ? '<span class="sr-only">, concluída</span>' : '') + '</button></li>';
-    }).join('') + '<li><span class="stepper__b"><span class="stepper__n" aria-hidden="true">' + (N + 1) + '</span><span class="stepper__t">Seu valor</span></span></li>';
+    }).join('') + '<li><span class="stepper__b"><span class="stepper__n" aria-hidden="true">' + (st.length + 1) + '</span><span class="stepper__t">Seu valor</span></span></li>';
   }
 
   /* Navegação entre etapas */
@@ -191,7 +184,9 @@
 
   function next() {
     clearTimeout(autoTimer);
-    var s = K.STEPS[current];
+    if (busy) { autoTimer = setTimeout(next, 120); return; } // durante a troca de tela, tenta de novo em seguida
+    var s = steps()[current];
+    if (!s) return;
     if (!a[s.id]) {
       $('[data-extra]', stage).innerHTML = noteHTML('Escolha uma opção para continuar.', true);
       var first = $('input[type="radio"]', stage); if (first) first.focus();
@@ -199,37 +194,49 @@
     }
     persist();
     C.track('step_complete', { step: current + 1, step_id: s.id, value: (s.id === 'duracao' || s.id === 'frequencia') ? a[s.id] : undefined });
-    if (current === N - 1 || (returnMode && K.isComplete(a))) {
-      var fi = K.firstIncomplete(a);
-      if (fi === -1) return finish();
-      return go(fi, fi > current ? 1 : -1);
-    }
+    var fi = K.firstIncomplete(a);
+    if (fi === -1 && (current >= total() - 1 || returnMode)) return finish();
+    if (fi > -1 && (returnMode || current >= total() - 1)) return go(fi, fi > current ? 1 : -1);
     go(current + 1, 1);
   }
 
   function finish() {
-    var btn = $('[data-next]', stage); if (btn) btn.classList.add('is-loading');
     persist();
-    C.track('consulta_complete', { duracao: a.duracao, frequencia: a.frequencia });
+    stage.classList.add('is-leaving');
+    C.track('consulta_complete', { duracao: a.duracao, frequencia: a.frequencia || 'diaria' });
     location.href = C.pageUrl('valor');
   }
 
+  function advanceSoon() { clearTimeout(autoTimer); autoTimer = setTimeout(next, ADVANCE_MS); }
+
   if (stage) {
-    stage.addEventListener('pointerdown', function (e) { pointerPick = !!e.target.closest('.svc__card, .tile'); });
-    stage.addEventListener('keydown', function () { pointerPick = false; });
+    // Toque ou clique numa opção avança sozinho (inclusive se ela já estava marcada).
+    stage.addEventListener('pointerdown', function (e) {
+      var card = e.target.closest('.svc__card, .tile');
+      pointerPick = !!card;
+      var inp = card && $('input', card);
+      wasChecked = !!(inp && inp.checked);
+    });
+    stage.addEventListener('click', function (e) {
+      var t = e.target;
+      if (t.type !== 'radio' || !pointerPick) return;
+      if (wasChecked) { pointerPick = false; wasChecked = false; advanceSoon(); }
+    });
+    // Teclado: setas escolhem, Enter avança.
+    stage.addEventListener('keydown', function (e) {
+      pointerPick = false;
+      if (e.key === 'Enter' && e.target.type === 'radio') { e.preventDefault(); next(); }
+    });
 
     stage.addEventListener('change', function (e) {
-      var t = e.target;
-      if (t.type !== 'radio' || K.STEPS[current].id !== t.name) return;
+      var t = e.target, s = steps()[current];
+      if (t.type !== 'radio' || !s || s.id !== t.name) return;
       a[t.name] = t.value;
       a = K.sanitize(a);
       persist();
       renderAside(t.name); renderStepper(); renderExtra();
-      var last = current === N - 1 && !returnMode;
-      var hold = (t.name === 'duracao' && t.value === 'nao_sei') || last;
-      if (pointerPick && !hold) autoTimer = setTimeout(next, C.reduce ? 150 : 560);
-      if (last) { var nb = $('[data-next]', stage); if (nb) { nb.classList.remove('is-ready'); void nb.offsetWidth; nb.classList.add('is-ready'); } }
-      pointerPick = false;
+      if (pointerPick) advanceSoon();
+      pointerPick = false; wasChecked = false;
     });
 
     stage.addEventListener('submit', function (e) { e.preventDefault(); next(); });
@@ -245,14 +252,19 @@
       if (el.getAttribute('data-act') === 'back' && current > 0) go(current - 1, -1);
     });
 
+    function clampStep(i) {
+      var fi = K.firstIncomplete(a), last = total() - 1;
+      return Math.max(0, Math.min(i, fi === -1 ? last : fi, last));
+    }
+
     window.addEventListener('popstate', function (e) {
       var st = e.state && typeof e.state.etapa === 'number' ? e.state.etapa : 0;
-      if (st !== current) go(Math.min(st, Math.max(0, K.firstIncomplete(a) === -1 ? N - 1 : K.firstIncomplete(a))), st < current ? -1 : 1, { fromPop: true });
+      if (st !== current) go(clampStep(st), st < current ? -1 : 1, { fromPop: true });
     });
 
     // Etapa inicial: ?etapa=N (edição a partir das páginas 2 e 3) ou a primeira pendente.
     var want = parseInt(params.get('etapa'), 10), fi0 = K.firstIncomplete(a), start = 0;
-    if (want >= 1 && want <= N) start = Math.min(want - 1, fi0 === -1 ? N - 1 : fi0);
+    if (want >= 1) start = clampStep(want - 1);
     else if (fi0 > 0) start = fi0;
     try { history.replaceState({ etapa: start }, ''); } catch (err) { /* file:// */ }
     go(start, 1);

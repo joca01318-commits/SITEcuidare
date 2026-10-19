@@ -10,7 +10,7 @@
   var price = { status: 'incompleto' };
 
   function editUrl(step) { return C.pageUrl('', '?etapa=' + (step + 1) + '&retorno=1') + '#consulta'; }
-  function hasConfig() { return !!(a.servico && a.duracao && a.frequencia); }
+  function hasConfig() { return K.isComplete(a); }
   function mensal() { return K.isMensal(a); }
 
   /* ---------- Sem consulta ---------- */
@@ -22,7 +22,7 @@
   }
 
   /* ---------- Resumo ---------- */
-  function rowIcon(k) { return { servico: (K.servico(a.servico) || {}).icon || 'heart', duracao: 'clock', frequencia: 'calendar' }[k]; }
+  function rowIcon(k) { return { servico: (K.servico(a.servico) || {}).icon || 'heart', duracao: 'clock', frequencia: 'calendar', modalidade: 'calendar' }[k]; }
 
   function renderSummary() {
     var p = K.priceText(price, a), ok = price.status === 'ok';
@@ -30,12 +30,13 @@
     $('[data-dt-sum]').innerHTML = '<h2 class="aside__t">Resumo do seu atendimento</h2>' +
       '<div class="sum">' + rows.map(function (r) {
         return '<div class="sum__row"><span class="sum__i">' + ICON(rowIcon(r.k)) + '</span><dl class="sum__txt"><dt>' + r.label + '</dt><dd' + (r.value ? '' : ' class="is-empty"') + '>' + (r.value ? esc(r.value) : 'A definir') + '</dd></dl>' +
-          '<a class="sum__edit" href="' + editUrl(r.step) + '" aria-label="Editar ' + r.label + '">Editar</a></div>';
+          (r.fixed ? '' : '<a class="sum__edit" href="' + editUrl(r.step) + '" aria-label="Editar ' + r.label + '">Editar</a>') + '</div>';
       }).join('') + '</div>' +
       '<div class="dt__price" data-dt-price>' +
       '<p class="pcard__label">' + (ok ? 'Valor correspondente' : 'Valor') + '</p>' +
       (ok
-        ? '<p class="pcard__price"><span class="pcard__v">' + esc(p.valor) + '</span><span class="pcard__u">' + esc(p.unidade) + '</span></p><p class="pcard__d">' + esc(p.detalhe) + '</p>'
+        ? '<p class="pcard__price"><span class="pcard__v">' + esc(p.valor) + '</span><span class="pcard__u">' + esc(p.unidade) + '</span></p><p class="pcard__d">' + esc(p.detalhe) + '</p>' +
+          (p.fds ? '<p class="pcard__alt"><span class="pcard__alt-l">' + esc(p.fds.label) + '</span><span class="pcard__alt-v">' + esc(p.fds.valor) + ' <small>' + esc(p.fds.unidade) + '</small></span></p>' : '')
         : '<p class="pcard__price"><span class="pcard__v" style="font-size:2rem">Proposta personalizada</span></p><p class="pcard__d">Definido com a equipe, a partir da sua necessidade.</p>') +
       '</div>' +
       '<p class="aside__foot">' + ICON('info') + '<span>' + (ok ? 'Valor de tabela para esta configuração' + (price.validadeDias ? '. Orçamento válido por ' + price.validadeDias + ' dias' : '') + '.' : 'Sem valor de tabela para esta combinação. A equipe envia a proposta.') + '</span></p>';
@@ -126,6 +127,8 @@
 
   /* ---------- Início ---------- */
   if (!hasConfig()) { empty(); return; }
+  var labels = K.journeyLabels(a);
+  C.journey(labels, labels.length - 1);
   K.obterPreco(a).then(function (r) {
     price = r;
     renderSummary();
