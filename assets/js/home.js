@@ -69,7 +69,7 @@
     return '<div class="tiles' + (four ? ' tiles--4' : '') + '" role="radiogroup" aria-labelledby="q-title">' + K.optionsFor(field, a).map(function (o, k) {
       var head;
       if (field === 'duracao') head = '<span class="tile__n">' + (o.icon ? ICON(o.icon) : '') + o.n + '</span>';
-      else head = '<span class="tile__i">' + ICON(o.v === 'pontual' ? 'clock' : 'calendar') + '</span>';
+      else head = '<span class="tile__i">' + ICON(o.v === 'pontual' ? 'clock' : o.v === 'pontual_fds' ? 'sun' : 'calendar') + '</span>';
       return '<label class="tile" style="--i:' + k + '"><input type="radio" name="' + field + '" value="' + o.v + '"' + (a[field] === o.v ? ' checked' : '') + '>' +
         (o.tag ? '<span class="tile__tag">' + o.tag + '</span>' : '') +
         '<span class="tile__check" aria-hidden="true">' + ICON('check') + '</span>' + head +
@@ -87,7 +87,7 @@
     var s = K.STEPS[i], body;
     if (s.id === 'servico') body = svcHTML();
     else if (s.id === 'duracao') body = tilesHTML('duracao');
-    else body = tilesHTML('frequencia', true);
+    else body = tilesHTML('frequencia');
     var last = i === N - 1;
     return '<form class="q" novalidate data-step="' + i + '">' +
       '<p class="q__kicker"><span>Etapa ' + ('0' + (i + 1)).slice(-2) + ' de 0' + N + '</span><span aria-hidden="true">·</span><span>' + s.label + '</span></p>' +
@@ -108,7 +108,7 @@
     var box = $('[data-extra]', stage); if (!box) return;
     var s = K.STEPS[current], h = '';
     if (s.id === 'duracao' && a.duracao === 'nao_sei') h = noteHTML('Sem problema. Siga para a frequência: na próxima tela, a equipe monta uma proposta personalizada com você.');
-    if (s.id === 'frequencia' && a.frequencia === 'pontual') h = noteHTML('No atendimento pontual, o valor é por diária, para a duração escolhida.');
+    if (s.id === 'frequencia' && (a.frequencia === 'pontual' || a.frequencia === 'pontual_fds')) h = noteHTML('Na diária avulsa, o valor é por dia de atendimento, para a duração escolhida.');
     box.innerHTML = h;
   }
 

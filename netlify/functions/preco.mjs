@@ -8,6 +8,7 @@
 // A resposta traz SOMENTE o valor da combinação pedida. Detalhes: docs/INTEGRACOES.md, seção 7.
 
 const FREQ_DIAS = { seg_sex: 22, seg_sab: 26, todos: 30 };
+const DIARIA = { pontual: 'diaria', pontual_fds: 'diariaFds' };
 const ID = /^[a-z0-9_]{1,24}$/;
 
 const json = (body, status = 200) =>
@@ -22,18 +23,20 @@ export function calcular(tabela, a) {
   if (!tabela) return { status: 'sob_consulta', motivo: 'indisponivel' };
   if (!(tabela.servicos || []).includes(a.servico)) return { status: 'sob_consulta', motivo: 'servico' };
   if (a.duracao === 'nao_sei') return { status: 'sob_consulta', motivo: 'duracao' };
-  let valor, modalidade, dias;
-  if (a.frequencia === 'pontual') {
+  let valor, modalidade, dias, prof;
+  if (DIARIA[a.frequencia]) {
     modalidade = 'diaria';
-    valor = tabela.diaria?.[a.duracao];
+    valor = tabela[DIARIA[a.frequencia]]?.[a.duracao];
   } else {
     modalidade = 'mensal';
     valor = tabela.mensal?.[a.duracao]?.[a.frequencia];
     dias = FREQ_DIAS[a.frequencia];
+    prof = tabela.profissionais?.[a.duracao]?.[a.frequencia];
   }
   if (typeof valor !== 'number' || !Number.isFinite(valor) || valor <= 0) return { status: 'sob_consulta', motivo: 'sem_preco' };
   const r = { status: 'ok', valor, modalidade, versao: tabela.versao || '', validadeDias: tabela.validadeDias || 0 };
   if (dias) r.dias = dias;
+  if (prof) r.profissionais = prof;
   return r;
 }
 

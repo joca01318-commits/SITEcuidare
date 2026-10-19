@@ -6,7 +6,7 @@ Experiência digital da Cuidare Vila Mariana em três páginas:
 | --- | --- |
 | `/` | Capa com 3D, consulta em 3 etapas (atendimento, duração, frequência), diferenciais e depoimentos |
 | `/valor/` | Mostra **somente** o valor da configuração escolhida (ou proposta personalizada, quando não há valor validado) |
-| `/detalhes/` | Resumo e detalhes do atendimento escolhido (incluído, contratação, avaliação, condições) |
+| `/detalhes/` | Resumo e detalhes do atendimento escolhido (cuidado e rotina, saúde e segurança, suporte, contratação, condições) |
 
 Regra comercial: seleção antes do preço, **um preço por consulta** e nenhuma tabela pública comparando opções.
 

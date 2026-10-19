@@ -31,14 +31,16 @@
     { v: '8h', t: '8 horas por dia', n: '8h', d: 'Mais tempo de acompanhamento durante o dia.' },
     { v: '12h_dia', t: '12 horas durante o dia', n: '12h', icon: 'sun', d: 'Cuidado prolongado no período diurno.' },
     { v: '12h_noite', t: '12 horas durante a noite', n: '12h', icon: 'moon', d: 'Cuidado prolongado no período noturno.' },
+    { v: '24h', t: '24 horas por dia', n: '24h', d: 'Cobertura integral para uma rotina que exige presença contínua.' },
     { v: 'nao_sei', t: 'Ainda não sei', n: '?', d: 'A equipe ajuda a definir a duração ideal.' }
   ];
 
   var FREQUENCIAS = [
-    { v: 'seg_sex', t: 'Segunda a sexta', d: '22 dias por mês', dias: 22 },
-    { v: 'seg_sab', t: 'Segunda a sábado', d: '26 dias por mês', dias: 26 },
-    { v: 'todos', t: 'Todos os dias', d: '30 dias por mês', dias: 30 },
-    { v: 'pontual', t: 'Atendimento pontual', d: 'Valor por diária' }
+    { v: 'seg_sex', t: 'Segunda a sexta', d: 'Plano mensal · 22 plantões', dias: 22 },
+    { v: 'seg_sab', t: 'Segunda a sábado', d: 'Plano mensal · 26 plantões', dias: 26 },
+    { v: 'todos', t: 'Segunda a segunda', d: 'Plano mensal · 30 plantões', dias: 30 },
+    { v: 'pontual', t: 'Diária avulsa', d: 'Um dia útil · valor por diária', diaria: 'diaria' },
+    { v: 'pontual_fds', t: 'Diária no fim de semana ou feriado', d: 'Sábado, domingo ou feriado', diaria: 'diariaFds' }
   ];
 
   var STEPS = [
@@ -47,7 +49,7 @@
     { id: 'duracao', label: 'Duração', title: 'Quantas horas de cuidado por dia?',
       help: 'Escolha a duração desejada. Se ainda não souber, a equipe ajuda a definir.' },
     { id: 'frequencia', label: 'Frequência', title: 'Com que frequência?',
-      help: 'Os planos mensais consideram 22, 26 ou 30 dias. O atendimento pontual é cobrado por diária.' }
+      help: 'Planos mensais de 22, 26 ou 30 plantões, ou uma diária avulsa.' }
   ];
 
   var LISTS = { servico: SERVICOS, duracao: DURACOES, frequencia: FREQUENCIAS };
@@ -64,7 +66,7 @@
       list = list.filter(function (o) { return ['6h', '8h', 'nao_sei'].indexOf(o.v) > -1; });
     }
     if (field === 'frequencia' && a.servico === 'consultas') {
-      list = ['pontual', 'seg_sex', 'seg_sab', 'todos'].map(function (v) { return find(FREQUENCIAS, v); });
+      list = ['pontual', 'pontual_fds', 'seg_sex', 'seg_sab', 'todos'].map(function (v) { return find(FREQUENCIAS, v); });
       list[0] = Object.assign({}, list[0], { tag: 'Mais comum para consultas' });
     }
     return list;
@@ -99,32 +101,40 @@
     if (!tabela) return { status: 'sob_consulta', motivo: 'indisponivel' };
     if ((tabela.servicos || []).indexOf(a.servico) < 0) return { status: 'sob_consulta', motivo: 'servico' };
     if (a.duracao === 'nao_sei') return { status: 'sob_consulta', motivo: 'duracao' };
-    var valor, modalidade, dias;
-    if (a.frequencia === 'pontual') {
+    var f = find(FREQUENCIAS, a.frequencia) || {};
+    var valor, modalidade, dias, prof;
+    if (f.diaria) {
       modalidade = 'diaria';
-      valor = tabela.diaria && tabela.diaria[a.duracao];
+      valor = tabela[f.diaria] && tabela[f.diaria][a.duracao];
     } else {
       modalidade = 'mensal';
       var linha = tabela.mensal && tabela.mensal[a.duracao];
       valor = linha && linha[a.frequencia];
-      dias = (find(FREQUENCIAS, a.frequencia) || {}).dias;
+      dias = f.dias;
+      var pl = tabela.profissionais && tabela.profissionais[a.duracao];
+      prof = pl && pl[a.frequencia];
     }
     if (typeof valor !== 'number' || !isFinite(valor) || valor <= 0) return { status: 'sob_consulta', motivo: 'sem_preco' };
     var r = { status: 'ok', valor: valor, modalidade: modalidade, versao: tabela.versao || '', validadeDias: tabela.validadeDias || 0 };
     if (dias) r.dias = dias;
+    if (prof) r.profissionais = prof;
     return r;
   }
 
   // Textos do valor para exibição e mensagens.
+  function isMensal(a) { var f = find(FREQUENCIAS, (a || {}).frequencia); return !!(f && !f.diaria); }
+
   function priceText(r, a) {
     if (!r || r.status !== 'ok') return { valor: '', unidade: '', detalhe: '', linha: 'Proposta personalizada (valor definido com a equipe)' };
-    var freq = labelOf('frequencia', (a || {}).frequencia).toLowerCase();
+    a = a || {};
     var unidade = r.modalidade === 'diaria' ? 'por diária' : 'por mês';
+    var prof = r.profissionais ? ' · ' + r.profissionais + (r.profissionais > 1 ? ' profissionais' : ' profissional') : '';
     var detalhe = r.modalidade === 'diaria'
-      ? 'Atendimento pontual · ' + labelOf('duracao', a.duracao)
-      : r.dias + ' dias de atendimento (' + freq + ')';
-    return { valor: money(r.valor), unidade: unidade, detalhe: detalhe, linha: money(r.valor) + ' ' + unidade + (r.dias ? ' (' + r.dias + ' dias)' : '') };
+      ? (a.frequencia === 'pontual_fds' ? 'Sábado, domingo ou feriado' : 'Diária avulsa em dia útil') + ' · ' + labelOf('duracao', a.duracao)
+      : r.dias + ' plantões (' + labelOf('frequencia', a.frequencia).toLowerCase() + ')' + prof;
+    return { valor: money(r.valor), unidade: unidade, detalhe: detalhe, linha: money(r.valor) + ' ' + unidade + (r.dias ? ' (' + r.dias + ' plantões)' : '') };
   }
+
 
   function obterPreco(a) {
     var cfg = (window.CUIDARE_CONFIG || {}).precos || {};
@@ -164,7 +174,7 @@
     KEY: KEY, STEPS: STEPS, SERVICOS: SERVICOS, DURACOES: DURACOES, FREQUENCIAS: FREQUENCIAS,
     optionsFor: optionsFor, sanitize: sanitize, labelOf: labelOf, servico: servico,
     stepDone: stepDone, firstIncomplete: firstIncomplete, isComplete: isComplete,
-    calcular: calcular, obterPreco: obterPreco, money: money, priceText: priceText,
+    calcular: calcular, obterPreco: obterPreco, money: money, priceText: priceText, isMensal: isMensal,
     summaryRows: summaryRows,
     load: load, save: save, clear: clear
   };

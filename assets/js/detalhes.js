@@ -11,7 +11,7 @@
 
   function editUrl(step) { return C.pageUrl('', '?etapa=' + (step + 1) + '&retorno=1') + '#consulta'; }
   function hasConfig() { return !!(a.servico && a.duracao && a.frequencia); }
-  function mensal() { return a.frequencia && a.frequencia !== 'pontual'; }
+  function mensal() { return K.isMensal(a); }
 
   /* ---------- Sem consulta ---------- */
   function empty() {
@@ -51,38 +51,63 @@
     var s = K.servico(a.servico) || {};
     var dias = price.validadeDias || 5;
 
-    var incluido = [
-      'Cuidador(a) ou técnico(a) de enfermagem selecionado(a) para o perfil do atendimento, com documentos, cursos, referências e entrevista presencial verificados.',
-      'Auxílio na rotina, com companhia, segurança e atenção, respeitando as limitações de quem recebe o cuidado.',
+    // Textos da "Descrição dos serviços ofertados pela Cuidare" (Proposta Personalizada de Cuidados, 2026).
+    var onde = {
+      residencia: 'Acompanhamento e assistência de um cuidador no domicílio do assistido.',
+      hospital: 'Acompanhamento e assistência de um cuidador durante a internação.',
+      pos_operatorio: 'Acompanhamento e assistência de um cuidador durante a recuperação.',
+      consultas: 'Acompanhamento e assistência de um cuidador em consultas e exames.'
+    }[a.servico] || 'Acompanhamento e assistência de um cuidador.';
+
+    var rotina = [
+      onde,
+      'Auxiliar o assistido nas atividades diárias: alimentação, higiene pessoal, lazer etc.',
+      'Troca da roupa de cama do paciente.',
+      'Favorecer sua inclusão social.',
+      'Estimular a autonomia, autoestima e segurança pessoal.',
+      'Evolução diária do assistido.'
+    ];
+
+    var saude = [
+      'Profissionais com satisfatório conhecimento em Saúde Mental.',
+      'Seguir as orientações dos terapeutas e da família (psiquiatra, geriatra, psicólogo, fisioterapeuta etc.).',
+      'Auxiliar na segurança, integridade física e psíquica nas ocorrências de agitação psicomotora (crises) do assistido.',
+      'Auxiliar na prevenção de crises e consequentes danos, traumas e riscos à saúde física e psíquica.',
+      'Administração e checagem de medicação.',
+      'Nos casos de pacientes diagnosticados com Diabetes Mellitus: verificação da glicemia.',
+      'Verificação de sinais vitais (pressão arterial, temperatura, frequência cardíaca e frequência respiratória).'
+    ];
+
+    var suporte = [
+      'Profissionais treinados e capacitados periodicamente, com documentos, cursos, referências e entrevista presencial verificados.',
+      'A Cuidare responde de forma técnica, gerencial e legal pela equipe contratada.',
       'Substituição do profissional em caso de falta.',
       'Troca do cuidador, se não houver adaptação.'
     ];
-    if (mensal()) incluido.push('Acompanhamento da supervisão: visita mensal, relatórios do suporte ou grupo com a equipe.');
-    incluido.push('Transporte do cuidador: responsabilidade da Cuidare.', 'Contratação pela Cuidare, sem vínculo trabalhista para a família.');
-
-    var naoInclui = [
-      'Procedimentos invasivos.',
-      'Faxina, culinária e lavanderia dos demais moradores.',
-      'Procedimentos de enfermagem são realizados somente por profissionais habilitados. O cuidador auxilia com os medicamentos conforme as orientações.'
-    ];
+    if (mensal()) suporte.push('Acompanhamento da supervisão: visita mensal, relatórios do suporte ou grupo com a equipe.');
+    suporte.push('Transporte do cuidador: responsabilidade da Cuidare.');
 
     var contratacao = [
       'Orçamento válido por ' + dias + ' dias.',
       'Pagamento por boleto, Pix ou transferência, antes do início do atendimento.',
       'Início do atendimento, com validação do cuidador nos primeiros 5 dias.'
     ];
+    if (mensal()) contratacao.push('Cancelamento sem multa, com aviso de 30 dias.');
 
-    var condicoes = ['Disponibilidade de profissional para o período e o início desejados.'];
-    if (price.status === 'ok') condicoes.push('O valor apresentado é o de tabela para a configuração escolhida.');
-    else condicoes.push('O valor desta configuração é definido na proposta personalizada.');
-    condicoes.push('Alimentação do cuidador: responsabilidade da família. Se não for possível, há adicional de R$ 30 por dia.');
-    if (mensal()) condicoes.push('Cancelamento sem multa, com aviso de 30 dias.');
+    var condicoes = [
+      'Não fazem parte das atribuições dos cuidadores serviços como faxina residencial, culinária e lavanderia para os demais residentes do local. Fazem parte a limpeza concorrente e o preparo de refeições simples (quando o assistido não corre risco; a prioridade sempre será o cuidado com o assistido).',
+      'O cuidador não realiza procedimentos invasivos.',
+      'É de responsabilidade do contratante a alimentação básica dos cuidadores.',
+      'O contratante não possui qualquer vínculo empregatício com os profissionais contratados.',
+      price.status === 'ok' ? 'O valor apresentado é o de tabela para a configuração escolhida, sujeito à disponibilidade de profissional.' : 'O valor desta configuração é definido na proposta personalizada.'
+    ];
 
     $('[data-dt-info]').innerHTML =
-      card('shield', 'O que está incluído', incluido) +
-      card('info', 'O que não está incluído', naoInclui, 'ticks--no') +
+      card('heart', 'Cuidado e rotina do assistido', rotina) +
+      card('shield', 'Saúde, segurança e orientações', saude) +
+      card('users', 'Suporte da Cuidare', suporte) +
       card('doc', 'Como funciona a contratação', contratacao, 'ticks--steps') +
-      card('calendar', 'Condições', condicoes, '', true);
+      card('info', 'Condições do serviço', condicoes, '', true);
 
     var title = s.t || 'seu atendimento';
     var cut = title.lastIndexOf(' ');

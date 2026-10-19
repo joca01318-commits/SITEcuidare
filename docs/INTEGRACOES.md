@@ -34,29 +34,32 @@ Endereços do site anterior continuam funcionando (`_redirects`): `/experiencia/
 
 ## 3. Tabela de preços (`assets/js/precos.js`)
 
-Valores aprovados pela Cuidare (lista enviada em 14/10/2026, com a diária de 12h diurna em R$ 297):
+Valores do PDF **“Proposta Personalizada de Cuidados”** (Orçamento de serviço de cuidadores de pessoas,
+valores 2026), enviado pela Cuidare em 19/10/2026:
 
-| Duração | Segunda a sexta (22 dias) | Segunda a sábado (26 dias) | Todos os dias (30 dias) | Atendimento pontual (diária) |
-| --- | --- | --- | --- | --- |
-| 6 horas | R$ 3.997 | R$ 4.497 | R$ 5.197 | R$ 219 |
-| 8 horas | R$ 4.697 | R$ 5.197 | R$ 6.197 | R$ 259 |
-| 12 horas durante o dia | R$ 5.697 | R$ 6.297 | R$ 6.997 | R$ 297 |
-| 12 horas durante a noite | **a confirmar** | **a confirmar** | **a confirmar** | R$ 349 |
+| Plano | Segunda a sexta (22 plantões) | Segunda a sábado (26 plantões) | Segunda a segunda (30 plantões) | Avulso (dia útil) | Sábado, domingo ou feriado |
+| --- | --- | --- | --- | --- | --- |
+| 6 horas | R$ 4.767 · 1 profissional | R$ 5.637 · 2 profissionais | R$ 6.507 · 2 profissionais | R$ 237 | R$ 247 |
+| 8 horas | R$ 5.137 · 1 profissional | R$ 6.067 · 2 profissionais | R$ 7.007 · 2 profissionais | R$ 257 | R$ 267 |
+| 12 horas diurno | R$ 5.867 · 2 profissionais | R$ 6.937 · 2 profissionais | R$ 8.007 · 2 profissionais | R$ 297 | R$ 307 |
+| 12 horas noturno | R$ 6.057 · 2 profissionais | R$ 7.157 · 2 profissionais | R$ 8.257 · 2 profissionais | R$ 307 | R$ 317 |
+| 24 horas | R$ 10.837 · 2 profissionais | R$ 12.807 · 3 profissionais | R$ 14.777 · 4 profissionais | R$ 587 | R$ 597 |
 
-- Valores mensais por mês; atendimento pontual por diária. Orçamento válido por 5 dias.
-- Plano de 24 horas não é oferecido.
-- “Ainda não sei” (duração) leva à proposta personalizada.
+- Planos mensais por mês; avulsos por diária. Orçamento válido por 5 dias.
+- Na consulta, “Diária avulsa” e “Diária no fim de semana ou feriado” são opções separadas de frequência,
+  para que cada consulta mostre um único valor.
+- “Ainda não sei” (duração) leva à proposta personalizada. Em “Consultas e exames”, as durações são 6 e 8 horas.
+- Conferido automaticamente: as 105 combinações do site batem com o PDF.
 
-**Pendências de confirmação (sem elas, o site mostra proposta personalizada ou omite):**
+**Para confirmar:**
 
 | Item | Situação |
 | --- | --- |
-| 12 horas noturno mensal | O portfólio original trazia R$ 5.997 / 6.597 / 6.997, mas a lista nova não trouxe. Confirme e preencha em `precos.js → mensal['12h_noite']`. |
-| Tabela por tipo de atendimento | A mesma tabela vale para residência, hospital, pós-operatório e consultas (como no site anterior). Se algum tipo tiver valor diferente, avise. |
-| Diárias em fim de semana e feriado | O portfólio original tinha acréscimo; a lista nova não. O site não menciona acréscimo. Confirme. |
-| Adicional de alimentação | R$ 30 por dia quando a família não fornece (FAQ do portfólio). Aparece em “Condições a confirmar”. |
+| Tabela por tipo de atendimento | A mesma tabela vale para residência, hospital, pós-operatório e consultas. Se algum tipo tiver valor diferente, avise. |
+| Plano de 24 horas | Incluído porque está no PDF (o briefing anterior pedia para não oferecer 24 horas). Para tirar, apague a linha `'24h'` de `precos.js` e a opção em `consulta.js → DURACOES`. |
+| Camada oculta do PDF | O arquivo tem, por baixo das tabelas, um texto antigo com outros valores (ex.: 6h por R$ 4.637). O site usa os valores visíveis nas páginas. |
 
-Para alterar um valor: edite `precos.js`, mantendo os números sem ponto (ex.: `5697`).
+Para alterar um valor: edite `precos.js`, mantendo os números sem ponto (ex.: `5867`).
 
 ## 4. Preços fora do navegador (modo servidor, opcional)
 
@@ -107,9 +110,10 @@ textos, selos e ícones que vinham sobre a imagem. Para trocar por fotos reais, 
 | --- | --- | --- |
 | 7+ anos, 2.000+ famílias, 4,8/5, 99+ avaliações | Capa | Portfólio “Planos — Apresentação” |
 | Cuidare Brasil, mais de 10 anos e presença em todo o país | Rodapé | Portfólio |
-| Itens incluídos, não incluídos, contratação, avaliação e condições | Página 3 | FAQ do portfólio |
+| Cuidado e rotina, saúde e segurança, condições do serviço | Página 3 | PDF “Proposta Personalizada de Cuidados” |
+| Suporte da Cuidare e contratação (faltas, troca, supervisão, pagamento, cancelamento) | Página 3 | FAQ do portfólio |
 | Selos da capa (seleção e verificação, supervisão, faltas cobertas) | Capa | FAQ do portfólio |
-| 5 depoimentos com nome | Capa | Enviados pela Cuidare. **Confirme a autorização de cada pessoa** |
+| 9 depoimentos com nome | Capa | Enviados pela Cuidare e PDF “Proposta Personalizada”. **Confirme a autorização de cada pessoa** |
 | Link “Ver avaliações públicas” | Capa | Busca no Google Maps. **Troque pelo link exato do perfil** em `config.js → reviewsUrl` |
 | Aviso de privacidade | Todas as páginas | Texto-base (o site não registra dados pessoais). **Revise com o jurídico** |
 | Opções da consulta (pós-operatório, 12h noturno, atendimento pontual) | Consulta | Briefing. **Confirme que a operação atende todas** |
