@@ -39,7 +39,6 @@ window.CUIDARE_CONFIG = {
   photos: {
     residencia: 'assets/photos/residencia.webp',
     hospital: 'assets/photos/hospital.webp',
-    pos_operatorio: 'assets/photos/pos_operatorio.webp',
     consultas: 'assets/photos/consultas.webp'
   }
 };

@@ -4,17 +4,19 @@ Experiência digital da Cuidare Vila Mariana em três páginas:
 
 | Rota | Função |
 | --- | --- |
-| `/` | Capa com 3D, consulta rápida (atendimento, duração e, nos planos mensais, frequência), diferenciais e depoimentos |
-| `/valor/` | Mostra **somente** o valor da configuração escolhida (ou proposta personalizada, quando não há valor validado) |
+| `/` | Capa com 3D, consulta rápida (atendimento e, na residência, duração e frequência), diferenciais e depoimentos |
+| `/valor/` | Residência: **somente** o valor da configuração escolhida. Hospital e consultas: a tabela de valores por dia desse atendimento |
 | `/detalhes/` | Resumo e detalhes do atendimento escolhido (cuidado e rotina, saúde e segurança, suporte, contratação, condições) |
 
-Regra comercial: seleção antes do preço, **um preço por consulta** e nenhuma tabela pública comparando opções.
+Regra comercial: seleção antes do preço; a página inicial não mostra valores.
 
-- **Residência e pós-operatório:** plano mensal (atendimento → duração → frequência).
-- **Acompanhamento hospitalar e consultas e exames:** por diária, sem etapa de frequência
-  (atendimento → duração). A página do valor mostra a diária de segunda a sexta e a de sábados,
-  domingos e feriados para a duração escolhida, sem valores mensais.
+- **Cuidados em residência:** plano mensal (atendimento → duração → frequência), um valor por consulta.
+- **Acompanhamento hospitalar e consultas e exames:** tocar no cartão já abre a **tabela de valores por
+  dia** desse atendimento (durações nas linhas; segunda a sexta e sábados, domingos e feriados nas
+  colunas), sem valores mensais. Hospital: 12h diurno, 12h noturno e 24h. Consultas: 6h, 8h, 12h diurno,
+  12h noturno e 24h.
 - Tocar em uma opção já avança para a próxima etapa; não há botão “Continuar”, só “Voltar”.
+- O atendimento pós-operatório foi retirado da consulta.
 
 É uma apresentação de valores para quem **já está em conversa** com a equipe e já passou pela avaliação:
 o site não tem formulário, telefone, botões de WhatsApp, etapa de bairro/início/necessidades nem

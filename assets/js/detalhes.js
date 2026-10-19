@@ -32,14 +32,15 @@
         return '<div class="sum__row"><span class="sum__i">' + ICON(rowIcon(r.k)) + '</span><dl class="sum__txt"><dt>' + r.label + '</dt><dd' + (r.value ? '' : ' class="is-empty"') + '>' + (r.value ? esc(r.value) : 'A definir') + '</dd></dl>' +
           (r.fixed ? '' : '<a class="sum__edit" href="' + editUrl(r.step) + '" aria-label="Editar ' + r.label + '">Editar</a>') + '</div>';
       }).join('') + '</div>' +
-      '<div class="dt__price" data-dt-price>' +
-      '<p class="pcard__label">' + (ok ? 'Valor correspondente' : 'Valor') + '</p>' +
-      (ok
-        ? '<p class="pcard__price"><span class="pcard__v">' + esc(p.valor) + '</span><span class="pcard__u">' + esc(p.unidade) + '</span></p><p class="pcard__d">' + esc(p.detalhe) + '</p>' +
-          (p.fds ? '<p class="pcard__alt"><span class="pcard__alt-l">' + esc(p.fds.label) + '</span><span class="pcard__alt-v">' + esc(p.fds.valor) + ' <small>' + esc(p.fds.unidade) + '</small></span></p>' : '')
+      '<div class="dt__price' + (ok && p.tabela ? ' dt__price--tabela' : '') + '" data-dt-price>' +
+      '<p class="pcard__label">' + (ok && p.tabela ? 'Valores por dia' : ok ? 'Valor correspondente' : 'Valor') + '</p>' +
+      (ok && p.tabela
+        ? C.tabelaDiarias(p, K.labelOf('servico', a.servico), true)
+        : ok
+        ? '<p class="pcard__price"><span class="pcard__v">' + esc(p.valor) + '</span><span class="pcard__u">' + esc(p.unidade) + '</span></p><p class="pcard__d">' + esc(p.detalhe) + '</p>'
         : '<p class="pcard__price"><span class="pcard__v" style="font-size:2rem">Proposta personalizada</span></p><p class="pcard__d">Definido com a equipe, a partir da sua necessidade.</p>') +
       '</div>' +
-      '<p class="aside__foot">' + ICON('info') + '<span>' + (ok ? 'Valor de tabela para esta configuração' + (price.validadeDias ? '. Orçamento válido por ' + price.validadeDias + ' dias' : '') + '.' : 'Sem valor de tabela para esta combinação. A equipe envia a proposta.') + '</span></p>';
+      '<p class="aside__foot">' + ICON('info') + '<span>' + (ok ? (p.tabela ? 'Valores de tabela por dia de atendimento' : 'Valor de tabela para esta configuração') + (price.validadeDias ? '. Orçamento válido por ' + price.validadeDias + ' dias' : '') + '.' : 'Sem valor de tabela para esta combinação. A equipe envia a proposta.') + '</span></p>';
   }
 
   /* ---------- Informações do serviço (somente o pertinente à escolha) ---------- */
@@ -56,7 +57,6 @@
     var onde = {
       residencia: 'Acompanhamento e assistência de um cuidador no domicílio do assistido.',
       hospital: 'Acompanhamento e assistência de um cuidador durante a internação.',
-      pos_operatorio: 'Acompanhamento e assistência de um cuidador durante a recuperação.',
       consultas: 'Acompanhamento e assistência de um cuidador em consultas e exames.'
     }[a.servico] || 'Acompanhamento e assistência de um cuidador.';
 
@@ -100,7 +100,7 @@
       'O cuidador não realiza procedimentos invasivos.',
       'É de responsabilidade do contratante a alimentação básica dos cuidadores.',
       'O contratante não possui qualquer vínculo empregatício com os profissionais contratados.',
-      price.status === 'ok' ? 'O valor apresentado é o de tabela para a configuração escolhida, sujeito à disponibilidade de profissional.' : 'O valor desta configuração é definido na proposta personalizada.'
+      price.status === 'ok' ? (price.modalidade === 'diaria' ? 'Os valores apresentados são os de tabela por dia de atendimento, sujeitos à disponibilidade de profissional.' : 'O valor apresentado é o de tabela para a configuração escolhida, sujeito à disponibilidade de profissional.') : 'O valor desta configuração é definido na proposta personalizada.'
     ];
 
     $('[data-dt-info]').innerHTML =
@@ -121,7 +121,7 @@
 
   function renderEnd() {
     $('[data-dt-end]').innerHTML =
-      '<a class="btn btn--glass btn--lg" href="' + C.pageUrl('valor') + '">' + ICON('arrow').replace('<svg', '<svg style="transform:scaleX(-1)"') + '<span>Voltar ao valor</span></a>' +
+      '<a class="btn btn--glass btn--lg" href="' + C.pageUrl('valor') + '">' + ICON('arrow').replace('<svg', '<svg style="transform:scaleX(-1)"') + '<span>' + (K.porDiaria(a) ? 'Voltar aos valores' : 'Voltar ao valor') + '</span></a>' +
       '<a class="price__change" href="' + editUrl(0) + '">' + ICON('edit') + 'Alterar minhas escolhas</a>';
   }
 
@@ -134,7 +134,7 @@
     renderSummary();
     renderInfo();
     renderEnd();
-    C.track('details_view', { status: r.status, duracao: a.duracao, frequencia: a.frequencia });
+    C.track('details_view', { status: r.status, servico: a.servico, duracao: a.duracao || 'tabela', frequencia: a.frequencia || 'diaria' });
     if (location.hash) { var t = $(location.hash); if (t) t.scrollIntoView(); }
   });
 })();

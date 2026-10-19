@@ -197,6 +197,30 @@
 
   function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
+  /* ---------- Tabela de diárias (hospital e consultas), páginas 2 e 3 ---------- */
+  // p = CuidareConsulta.priceText(...) de um atendimento por diária. Uma linha por duração,
+  // separada pelo horário (dia, noite, 24 horas), com o valor de segunda a sexta e o de fim de semana.
+  function tabelaDiarias(p, servicoNome, compact) {
+    var ic = function (id) { return '<svg aria-hidden="true"><use href="#i-' + id + '"/></svg>'; };
+    var cab = p.cab || {};
+    var cell = function (v, k) {
+      return '<td class="ptab__td' + (k ? ' ptab__td--fds' : '') + '"><span class="ptab__c" style="--c:' + (k ? 2 : 1) + '">' +
+        (v ? '<span class="ptab__v">' + esc(v) + '</span><span class="ptab__u">por dia</span>' : '<span class="ptab__u">Sob consulta</span>') + '</span></td>';
+    };
+    return '<div class="ptab' + (compact ? ' ptab--compact' : '') + '" data-ptab>' +
+      '<table class="ptab__t"><caption class="sr-only">Valores por dia' + (servicoNome ? ' de ' + esc(servicoNome.toLowerCase()) : '') + ', conforme a duração e o dia da semana</caption>' +
+      '<thead><tr><th scope="col" class="ptab__th ptab__th--dur">' + esc(cab.duracao || 'Duração') + '</th>' +
+      '<th scope="col" class="ptab__th"><span class="ptab__hi">' + ic('calendar') + '</span><span>' + esc(cab.util || 'Segunda a sexta') + '</span></th>' +
+      '<th scope="col" class="ptab__th ptab__th--fds"><span class="ptab__hi">' + ic('calendar') + '</span><span>' + esc(cab.fds || 'Sábados, domingos e feriados') + '</span></th></tr></thead>' +
+      '<tbody>' + (p.linhas || []).map(function (l, k) {
+        var badge = l.icon === '24' ? '<b aria-hidden="true">24</b>' : ic(l.icon);
+        return '<tr class="ptab__row ptab__row--' + esc(l.periodo) + '" style="--i:' + k + '">' +
+          '<th scope="row" class="ptab__dur"><span class="ptab__c" style="--c:0"><span class="ptab__ic ptab__ic--' + esc(l.periodo) + '">' + badge + '</span>' +
+          '<span class="ptab__dt"><span class="ptab__h">' + esc(l.h) + '</span>' + (l.sub ? '<span class="ptab__sub">' + esc(l.sub) + '</span>' : '') + '</span></span></th>' +
+          cell(l.valor, 0) + cell(l.fds, 1) + '</tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+
   /* ---------- Cena 3D (WebGL), sob demanda ---------- */
   function cena(canvas, opts) {
     if (!canvas || lowPower || !window.WebGLRenderingContext) return Promise.resolve(null);
@@ -253,6 +277,6 @@
 
   window.Cuidare = {
     cfg: CFG, $: $, $$: $$, store: store, reduce: reduce, finePointer: finePointer, lowPower: lowPower,
-    pageUrl: pageUrl, asset: function (p) { return /^(data:|https?:)/.test(p) ? p : root + p; }, track: track, journey: journey, reveal: reveal, split: split, intro: doc.classList.contains('intro-on'), cena: cena, esc: esc, photo: photo
+    pageUrl: pageUrl, asset: function (p) { return /^(data:|https?:)/.test(p) ? p : root + p; }, track: track, journey: journey, reveal: reveal, split: split, intro: doc.classList.contains('intro-on'), cena: cena, esc: esc, photo: photo, tabelaDiarias: tabelaDiarias
   };
 })();

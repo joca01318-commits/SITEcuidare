@@ -49,7 +49,7 @@
   var current = null, busy = false, autoTimer = 0, pointerPick = false, wasChecked = false;
   var ADVANCE_MS = C.reduce ? 150 : 480;
 
-  // As etapas dependem do atendimento: hospital e consultas não têm a etapa de frequência.
+  // As etapas dependem do atendimento: hospital e consultas vão direto à tabela de valores por dia.
   function steps() { return K.stepsFor(a); }
   function total() { return steps().length; }
   function persist() { state.a = a; K.save(state); }
@@ -97,10 +97,7 @@
   function noteHTML(text, warn) { return '<p class="note' + (warn ? ' note--warn' : '') + '">' + ICON('info') + '<span>' + text + '</span></p>'; }
 
   function renderExtra() {
-    var box = $('[data-extra]', stage); if (!box) return;
-    var s = steps()[current], h = '';
-    if (s && s.id === 'duracao' && K.porDiaria(a)) h = noteHTML('Em ' + esc(K.labelOf('servico', a.servico).toLowerCase()) + ', o valor é por diária: de segunda a sexta e em sábados, domingos e feriados.');
-    box.innerHTML = h;
+    var box = $('[data-extra]', stage); if (box) box.innerHTML = '';
   }
 
   /* Resumo lateral e chips (celular) */
@@ -116,7 +113,7 @@
             '<dl class="sum__txt"><dt>' + r.label + '</dt><dd' + (value ? '' : ' class="is-empty"') + '>' + (value ? esc(value) : 'A definir') + '</dd></dl>' +
             (value && !r.fixed && current !== null ? '<button type="button" class="sum__edit" data-goto="' + r.step + '" aria-label="Alterar ' + r.label + '">Alterar</button>' : '') + '</div>';
         }).join('') + '</div>' +
-        '<p class="aside__foot">' + ICON('lock') + '<span>O valor aparece na próxima tela, somente para a configuração escolhida.</span></p>';
+        '<p class="aside__foot">' + ICON('lock') + '<span>' + (K.porDiaria(a) ? 'A tabela de valores por dia aparece na próxima tela.' : 'O valor aparece na próxima tela, somente para a configuração escolhida.') + '</span></p>';
     }
     if (mini) {
       var chips = rows.filter(function (r) { return r.value && !r.fixed; });
@@ -203,7 +200,7 @@
   function finish() {
     persist();
     stage.classList.add('is-leaving');
-    C.track('consulta_complete', { duracao: a.duracao, frequencia: a.frequencia || 'diaria' });
+    C.track('consulta_complete', { servico: a.servico, duracao: a.duracao || 'tabela', frequencia: a.frequencia || 'diaria' });
     location.href = C.pageUrl('valor');
   }
 
@@ -256,6 +253,19 @@
       var fi = K.firstIncomplete(a), last = total() - 1;
       return Math.max(0, Math.min(i, fi === -1 ? last : fi, last));
     }
+
+    // Voltar do valor com o botão do celular: o navegador pode restaurar esta página da memória
+    // ainda "saindo" (sem aceitar toques). Destrava e mostra de novo a etapa com as escolhas salvas.
+    window.addEventListener('pageshow', function (e) {
+      if (!e.persisted) return;
+      clearTimeout(autoTimer);
+      busy = false; pointerPick = false; wasChecked = false;
+      stage.classList.remove('is-leaving');
+      state = K.load(); a = state.a;
+      var keep = current === null ? 0 : current;
+      current = null;
+      go(clampStep(keep), 1);
+    });
 
     window.addEventListener('popstate', function (e) {
       var st = e.state && typeof e.state.etapa === 'number' ? e.state.etapa : 0;

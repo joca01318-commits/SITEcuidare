@@ -23,18 +23,24 @@ dados pessoais.
 Endereços do site anterior continuam funcionando (`_redirects`): `/experiencia/` leva à consulta e
 `/avaliacao/` leva aos detalhes.
 
-## 2. Regra comercial: um preço por consulta
+## 2. Regra comercial
 
-- A página inicial **não mostra preços**: o visitante escolhe o atendimento e a duração e, nos planos
-  mensais (residência e pós-operatório), a frequência. Tocar em uma opção já avança; só existe “Voltar”.
-- A página `/valor/` mostra **somente** o valor da combinação escolhida. Não há tabela, comparação nem
-  outras durações. A página `/detalhes/` repete apenas esse valor.
-- **Acompanhamento hospitalar e consultas e exames** são cobrados por diária: não têm etapa de frequência
-  nem valores mensais. Para a duração escolhida, a página mostra a diária de segunda a sexta e a de
-  sábados, domingos e feriados (as duas linhas da tabela para aquela duração).
+- A página inicial **não mostra preços**. Tocar em uma opção já avança; só existe “Voltar”.
+- **Cuidados em residência:** o visitante escolhe duração e frequência, e a página `/valor/` mostra
+  **somente** o valor mensal dessa combinação (sem tabela nem comparação). A página `/detalhes/` repete
+  apenas esse valor.
+- **Acompanhamento hospitalar e consultas e exames:** tocar no cartão leva direto à **tabela de valores
+  por dia** desse atendimento, sem outras etapas e sem valores mensais. Linhas: as durações, com ícone de
+  dia, noite ou 24 horas. Colunas: segunda a sexta e sábados, domingos e feriados. A página `/detalhes/`
+  repete a mesma tabela.
+  - Hospital (“Plantão”): 12 horas diurno, 12 horas noturno e 24 horas.
+  - Consultas e exames (“Duração do atendimento”): 6 horas, 8 horas, 12 horas diurno, 12 horas noturno e 24 horas.
+- O atendimento **pós-operatório foi retirado** (cartão, foto, textos e opções). Uma consulta antiga salva
+  com ele é descartada e o visitante escolhe de novo.
 - Sem valor validado para a combinação, o site **não inventa**: mostra “Proposta personalizada” e leva à
   solicitação.
-- Testado automaticamente para as 45 combinações possíveis (37 com valor, 8 com proposta personalizada).
+- Testado automaticamente: as 18 combinações da residência (15 com valor, 3 com proposta personalizada)
+  e as tabelas de hospital e consultas.
 
 ## 3. Tabela de preços (`assets/js/precos.js`)
 
@@ -50,19 +56,20 @@ valores 2026), enviado pela Cuidare em 19/10/2026:
 | 24 horas | R$ 10.837 · 2 profissionais | R$ 12.807 · 3 profissionais | R$ 14.777 · 4 profissionais | R$ 587 | R$ 597 |
 
 - Orçamento válido por 5 dias.
-- **Residência e pós-operatório:** usam só os planos mensais (colunas de 22, 26 e 30 plantões).
-- **Acompanhamento hospitalar e consultas e exames:** usam só as diárias (duas últimas colunas). A consulta
-  não pergunta a frequência e mostra as duas diárias da duração escolhida.
-- As antigas opções “Diária avulsa” e “Diária no fim de semana ou feriado” foram retiradas de todos os
-  atendimentos. Uma consulta antiga salva com essas opções é descartada e o visitante escolhe de novo.
-- “Ainda não sei” (duração) leva à proposta personalizada. Em “Consultas e exames”, as durações são 6 e 8 horas.
-- Conferido automaticamente: as 45 combinações do site batem com o PDF.
+- **Residência:** usa só os planos mensais (colunas de 22, 26 e 30 plantões). “Ainda não sei” (duração)
+  leva à proposta personalizada.
+- **Acompanhamento hospitalar e consultas e exames:** usam só as diárias (duas últimas colunas), na tabela
+  por dia descrita na seção 2. As antigas opções “Diária avulsa” e “Diária no fim de semana ou feriado”
+  foram retiradas.
+- Uma duração sem valor validado não aparece na tabela; sem valor de fim de semana, a célula mostra
+  “Sob consulta”.
+- Conferido automaticamente: todos os valores do site batem com o PDF e com a proposta comercial.
 
 **Para confirmar:**
 
 | Item | Situação |
 | --- | --- |
-| Tabela por tipo de atendimento | Residência e pós-operatório usam os planos mensais; hospital e consultas usam as diárias. Se algum tipo tiver valor diferente, avise. |
+| Tabela por tipo de atendimento | Residência usa os planos mensais; hospital e consultas usam as diárias da proposta comercial geral de cuidadores. **Confirme que essas diárias valem para o acompanhamento hospitalar e para consultas e exames.** Se algum tipo tiver valor diferente, avise. |
 | Plano de 24 horas | Incluído porque está no PDF (o briefing anterior pedia para não oferecer 24 horas). Para tirar, apague a linha `'24h'` de `precos.js` e a opção em `consulta.js → DURACOES`. |
 | Camada oculta do PDF | O arquivo tem, por baixo das tabelas, um texto antigo com outros valores (ex.: 6h por R$ 4.637). O site usa os valores visíveis nas páginas. |
 
@@ -81,7 +88,7 @@ código do navegador:
 4. Apague `assets/js/precos.js` e as linhas `<script src=".../precos.js">` das três páginas.
 
 A função `netlify/functions/preco.mjs` (`/api/preco`) devolve **apenas** o valor da combinação pedida
-(para hospital e consultas, as duas diárias da duração; a frequência não é pedida).
+(para hospital e consultas, as linhas da tabela por dia; só o atendimento é pedido).
 Se ela falhar, o site mostra proposta personalizada, sem inventar valor.
 
 ## 5. Medição (depende de conta)
@@ -101,7 +108,7 @@ ampliadas). **Recomendado:** trocar por fotos reais da equipe, com autorização
 `config.js → fotosValor` (retrato ~900×1000 e paisagem ~900×800).
 
 **Cartões de atendimento (página inicial):** usam fotos recortadas da imagem de referência enviada pela
-Cuidare (`assets/photos/residencia.webp`, `hospital.webp`, `pos_operatorio.webp`, `consultas.webp`), sem os
+Cuidare (`assets/photos/residencia.webp`, `hospital.webp`, `consultas.webp`), sem os
 textos, selos e ícones que vinham sobre a imagem. Para trocar por fotos reais, substitua esses arquivos
 (~900×700) ou altere os caminhos em `config.js → photos`; deixe vazio para voltar à composição visual.
 
@@ -124,7 +131,7 @@ textos, selos e ícones que vinham sobre a imagem. Para trocar por fotos reais, 
 | 9 depoimentos com nome | Capa | Enviados pela Cuidare e PDF “Proposta Personalizada”. **Confirme a autorização de cada pessoa** |
 | Link “Ver avaliações públicas” | Capa | Busca no Google Maps. **Troque pelo link exato do perfil** em `config.js → reviewsUrl` |
 | Aviso de privacidade | Todas as páginas | Texto-base (o site não registra dados pessoais). **Revise com o jurídico** |
-| Opções da consulta (pós-operatório, 12h noturno, 24h) | Consulta | Briefing e PDF. **Confirme que a operação atende todas** |
+| Opções da consulta (12h noturno e 24h no hospital e em consultas) | Consulta | Proposta comercial. **Confirme que a operação atende todas** |
 
 ## 9. O que mudou em relação à versão anterior
 
@@ -134,18 +141,19 @@ textos, selos e ícones que vinham sobre a imagem. Para trocar por fotos reais, 
 - Títulos em Fredoka, abertura animada com o logo e entrada dos módulos em cascata.
 - Fotos na página do valor.
 - Sem formulário, telefone ou WhatsApp: a apresentação é enviada a quem já conversa com a equipe.
-- Consulta curta (atendimento, duração e, nos planos mensais, frequência), sem bairro, início ou
+- Consulta curta (atendimento e, na residência, duração e frequência), sem bairro, início ou
   necessidades, e sem referências a avaliação gratuita ou agendamento (a pessoa já passou por isso).
 - Tocar em uma opção avança sozinho (também ao tocar de novo na opção já marcada); sem botão “Continuar”.
-- Hospital e consultas por diária (segunda a sexta e sábados, domingos e feriados), sem valores mensais;
-  residência e pós-operatório só com planos mensais. Opções “Diária avulsa” e “Diária no fim de semana
-  ou feriado” retiradas.
+- Hospital e consultas: tabela de valores por dia (durações × segunda a sexta / sábados, domingos e
+  feriados), com entrada 3D linha a linha e inclinação ao passar o mouse; sem valores mensais.
+- Pós-operatório retirado. Voltar com o botão do celular não trava mais a consulta.
 
 ## 10. Checklist de validação (antes do domínio definitivo)
 
 - [ ] Capa abre bem no celular e no computador; “Consultar valores” leva à seleção.
 - [ ] Consulta completa tocando nas opções (sem “Continuar”); “Voltar”, indicador de etapas e voltar do navegador funcionam.
-- [ ] Hospital e consultas: duas etapas e duas diárias; residência e pós-operatório: três etapas e valor mensal.
+- [ ] Hospital e consultas: tocar no cartão abre a tabela por dia; residência: três etapas e valor mensal.
+- [ ] Voltar do valor com o botão do celular: a consulta continua respondendo ao toque.
 - [ ] Página 2 mostra só o valor escolhido; “Alterar minhas escolhas” funciona.
 - [ ] Página 3: resumo confere, “Editar” leva à etapa certa e volta ao valor; “Voltar ao valor” funciona.
 - [ ] Pendências de preço (seção 3) confirmadas.

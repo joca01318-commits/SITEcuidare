@@ -8,8 +8,11 @@
 // A resposta traz SOMENTE o valor da combinação pedida. Detalhes: docs/INTEGRACOES.md, seção 7.
 
 const FREQ_DIAS = { seg_sex: 22, seg_sab: 26, todos: 30 };
-// Hospital e consultas: valor por diária (sem frequência). Demais: planos mensais.
-const POR_DIARIA = ['hospital', 'consultas'];
+// Hospital e consultas: tabela de diárias com as durações de cada atendimento. Residência: planos mensais.
+const POR_DIARIA = {
+  hospital: ['12h_dia', '12h_noite', '24h'],
+  consultas: ['6h', '8h', '12h_dia', '12h_noite', '24h']
+};
 const ID = /^[a-z0-9_]{1,24}$/;
 
 const json = (body, status = 200) =>
@@ -20,20 +23,24 @@ const json = (body, status = 200) =>
 
 // Mesmas regras de calcular() em assets/js/consulta.js.
 export function calcular(tabela, a) {
-  const diaria = POR_DIARIA.includes(a.servico);
-  if (!a.servico || !a.duracao || (!diaria && !a.frequencia)) return { status: 'incompleto' };
+  const diaria = Object.hasOwn(POR_DIARIA, a.servico || '');
+  if (!a.servico || (!diaria && (!a.duracao || !a.frequencia))) return { status: 'incompleto' };
   if (!tabela) return { status: 'sob_consulta', motivo: 'indisponivel' };
   if (!(tabela.servicos || []).includes(a.servico)) return { status: 'sob_consulta', motivo: 'servico' };
-  if (a.duracao === 'nao_sei') return { status: 'sob_consulta', motivo: 'duracao' };
   const ok = (v) => typeof v === 'number' && Number.isFinite(v) && v > 0;
   const r = { status: 'ok', versao: tabela.versao || '', validadeDias: tabela.validadeDias || 0 };
   if (diaria) {
-    const util = tabela.diaria?.[a.duracao], fds = tabela.diariaFds?.[a.duracao];
-    if (!ok(util)) return { status: 'sob_consulta', motivo: 'sem_preco' };
-    r.modalidade = 'diaria'; r.valor = util;
-    if (ok(fds)) r.valorFds = fds;
+    const linhas = [];
+    for (const d of POR_DIARIA[a.servico]) {
+      const util = tabela.diaria?.[d], fds = tabela.diariaFds?.[d];
+      if (!ok(util)) continue;
+      linhas.push(ok(fds) ? { duracao: d, valor: util, valorFds: fds } : { duracao: d, valor: util });
+    }
+    if (!linhas.length) return { status: 'sob_consulta', motivo: 'sem_preco' };
+    r.modalidade = 'diaria'; r.linhas = linhas;
     return r;
   }
+  if (a.duracao === 'nao_sei') return { status: 'sob_consulta', motivo: 'duracao' };
   const valor = tabela.mensal?.[a.duracao]?.[a.frequencia];
   if (!ok(valor)) return { status: 'sob_consulta', motivo: 'sem_preco' };
   r.modalidade = 'mensal'; r.valor = valor;
@@ -53,7 +60,7 @@ export default async (req) => {
   const a = {};
   for (const k of ['servico', 'duracao', 'frequencia']) {
     const v = q.get(k) || '';
-    if (k === 'frequencia' && !v && POR_DIARIA.includes(a.servico)) continue;
+    if (k !== 'servico' && Object.hasOwn(POR_DIARIA, a.servico)) continue; // tabela de diárias: só o atendimento
     if (!ID.test(v)) return json({ erro: 'parametro_invalido', campo: k }, 400);
     a[k] = v;
   }

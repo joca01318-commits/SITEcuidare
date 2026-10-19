@@ -7,9 +7,10 @@
    - mensal: valor por mês. Segunda a sexta = 22 plantões, segunda a sábado = 26 plantões,
      segunda a segunda (todos os dias) = 30 plantões.
    - profissionais: quantos profissionais atendem cada plano mensal.
-   - diaria: valor por diária de segunda a sexta (acompanhamento hospitalar e consultas e exames).
-   - diariaFds: valor por diária em sábados, domingos e feriados (mesmos atendimentos).
-   Residência e pós-operatório usam os planos mensais.
+   - diaria: valor por dia de segunda a sexta (acompanhamento hospitalar e consultas e exames).
+   - diariaFds: valor por dia em sábados, domingos e feriados (mesmos atendimentos).
+   Residência usa os planos mensais. Hospital e consultas mostram a tabela de diárias
+   (hospital: 12h diurno, 12h noturno e 24h; consultas: 6h, 8h, 12h diurno, 12h noturno e 24h).
    - null = sem valor validado. O site não inventa: encaminha para proposta personalizada.
 
    Para não publicar a tabela no navegador, use o modo "servidor"
@@ -19,7 +20,7 @@ window.CUIDARE_PRECOS = {
   validadeDias: 5,
 
   // Tipos de atendimento cobertos por esta tabela (a tabela é a mesma para todos).
-  servicos: ['residencia', 'hospital', 'pos_operatorio', 'consultas'],
+  servicos: ['residencia', 'hospital', 'consultas'],
 
   mensal: {
     '6h':        { seg_sex: 4767,  seg_sab: 5637,  todos: 6507 },
