@@ -29,12 +29,12 @@ Endereços do site anterior continuam funcionando (`_redirects`): `/experiencia/
 - **Cuidados em residência:** o visitante escolhe duração e frequência, e a página `/valor/` mostra
   **somente** o valor mensal dessa combinação (sem tabela nem comparação). A página `/detalhes/` repete
   apenas esse valor.
-- **Acompanhamento hospitalar e consultas e exames:** tocar no cartão leva direto à **tabela de valores
+- **Acompanhamento hospitalar e atendimento por dia (antes “Consultas e exames”):** tocar no cartão leva direto à **tabela de valores
   por dia** desse atendimento, sem outras etapas e sem valores mensais. Linhas: as durações, com ícone de
   dia, noite ou 24 horas. Colunas: segunda a sexta e sábados, domingos e feriados. A página `/detalhes/`
   repete a mesma tabela.
   - Hospital (“Plantão”): 12 horas diurno, 12 horas noturno e 24 horas.
-  - Consultas e exames (“Duração do atendimento”): 6 horas, 8 horas, 12 horas diurno, 12 horas noturno e 24 horas.
+  - Atendimento por dia (“Duração do atendimento”): 6 horas, 8 horas, 12 horas diurno, 12 horas noturno e 24 horas.
 - O atendimento **pós-operatório foi retirado** (cartão, foto, textos e opções). Uma consulta antiga salva
   com ele é descartada e o visitante escolhe de novo.
 - Sem valor validado para a combinação, o site **não inventa**: mostra “Proposta personalizada” e leva à
@@ -58,7 +58,7 @@ valores 2026), enviado pela Cuidare em 19/10/2026:
 - Orçamento válido por 5 dias.
 - **Residência:** usa só os planos mensais (colunas de 22, 26 e 30 plantões). “Ainda não sei” (duração)
   leva à proposta personalizada.
-- **Acompanhamento hospitalar e consultas e exames:** usam só as diárias (duas últimas colunas), na tabela
+- **Acompanhamento hospitalar e atendimento por dia (antes “Consultas e exames”):** usam só as diárias (duas últimas colunas), na tabela
   por dia descrita na seção 2. As antigas opções “Diária avulsa” e “Diária no fim de semana ou feriado”
   foram retiradas.
 - Uma duração sem valor validado não aparece na tabela; sem valor de fim de semana, a célula mostra
@@ -69,7 +69,7 @@ valores 2026), enviado pela Cuidare em 19/10/2026:
 
 | Item | Situação |
 | --- | --- |
-| Tabela por tipo de atendimento | Residência usa os planos mensais; hospital e consultas usam as diárias da proposta comercial geral de cuidadores. **Confirme que essas diárias valem para o acompanhamento hospitalar e para consultas e exames.** Se algum tipo tiver valor diferente, avise. |
+| Tabela por tipo de atendimento | Residência usa os planos mensais; hospital e consultas usam as diárias da proposta comercial geral de cuidadores. **Confirme que essas diárias valem para o acompanhamento hospitalar e para o atendimento por dia.** Se algum tipo tiver valor diferente, avise. |
 | Plano de 24 horas | Incluído porque está no PDF (o briefing anterior pedia para não oferecer 24 horas). Para tirar, apague a linha `'24h'` de `precos.js` e a opção em `consulta.js → DURACOES`. |
 | Camada oculta do PDF | O arquivo tem, por baixo das tabelas, um texto antigo com outros valores (ex.: 6h por R$ 4.637). O site usa os valores visíveis nas páginas. |
 

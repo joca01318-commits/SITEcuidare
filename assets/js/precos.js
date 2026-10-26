@@ -7,7 +7,7 @@
    - mensal: valor por mês. Segunda a sexta = 22 plantões, segunda a sábado = 26 plantões,
      segunda a segunda (todos os dias) = 30 plantões.
    - profissionais: quantos profissionais atendem cada plano mensal.
-   - diaria: valor por dia de segunda a sexta (acompanhamento hospitalar e consultas e exames).
+   - diaria: valor por dia de segunda a sexta (acompanhamento hospitalar e atendimento por dia).
    - diariaFds: valor por dia em sábados, domingos e feriados (mesmos atendimentos).
    Residência usa os planos mensais. Hospital e consultas mostram a tabela de diárias
    (hospital: 12h diurno, 12h noturno e 24h; consultas: 6h, 8h, 12h diurno, 12h noturno e 24h).

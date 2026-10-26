@@ -11,7 +11,7 @@ Experiência digital da Cuidare Vila Mariana em três páginas:
 Regra comercial: seleção antes do preço; a página inicial não mostra valores.
 
 - **Cuidados em residência:** plano mensal (atendimento → duração → frequência), um valor por consulta.
-- **Acompanhamento hospitalar e consultas e exames:** tocar no cartão já abre a **tabela de valores por
+- **Acompanhamento hospitalar e atendimento por dia (antes “Consultas e exames”):** tocar no cartão já abre a **tabela de valores por
   dia** desse atendimento (durações nas linhas; segunda a sexta e sábados, domingos e feriados nas
   colunas), sem valores mensais. Hospital: 12h diurno, 12h noturno e 24h. Consultas: 6h, 8h, 12h diurno,
   12h noturno e 24h.

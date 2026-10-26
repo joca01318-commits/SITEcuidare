@@ -17,7 +17,7 @@
       d: 'Presença de um(a) cuidador(a) durante a internação, no período contratado.',
       tags: ['Internação', 'Presença', 'Atenção'],
       intro: 'Um(a) cuidador(a) acompanhando a internação no período contratado, com companhia e atenção à rotina do paciente.' },
-    { v: 'consultas', t: 'Consultas e exames', s: 'Consultas', icon: 'calendar',
+    { v: 'consultas', t: 'Atendimento por dia', s: 'Por dia', icon: 'calendar',
       diaria: ['6h', '8h', '12h_dia', '12h_noite', '24h'], linhaLabel: 'Duração do atendimento',
       d: 'Acompanhamento em consultas médicas e exames.',
       tags: ['Consultas', 'Exames', 'Companhia'],
@@ -41,7 +41,7 @@
 
   var STEPS = [
     { id: 'servico', label: 'Atendimento', title: 'Qual atendimento você procura?',
-      help: 'Toque em uma opção para avançar. Em hospital e em consultas e exames, a tabela de valores por dia aparece em seguida.' },
+      help: 'Toque em uma opção para avançar. Em acompanhamento hospitalar e atendimento por dia, a tabela de valores por dia aparece em seguida.' },
     { id: 'duracao', label: 'Duração', title: 'Quantas horas de cuidado por dia?',
       help: 'Toque na duração desejada. Se ainda não souber, a equipe ajuda a definir.' },
     { id: 'frequencia', label: 'Frequência', title: 'Com que frequência?',
