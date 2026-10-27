@@ -44,16 +44,18 @@ Endereços do site anterior continuam funcionando (`_redirects`): `/experiencia/
 
 ## 3. Tabela de preços (`assets/js/precos.js`)
 
-Valores do PDF **“Proposta Personalizada de Cuidados”** (Orçamento de serviço de cuidadores de pessoas,
-valores 2026), enviado pela Cuidare em 19/10/2026:
+Valores da tabela **“Planos Cuidare Vila Mariana”**, com os valores da proposta da Cuidare Mogi das Cruzes
+(apresentação 2026-01), enviada pela Cuidare em 27/10/2026:
 
-| Plano | Segunda a sexta (22 plantões) | Segunda a sábado (26 plantões) | Segunda a segunda (30 plantões) | Diária de segunda a sexta | Diária em sábado, domingo ou feriado |
+| Plano | Segunda a sexta (mês) | Segunda a sábado (mês) | Todos os dias (mês) | Diária em dia útil | Diária em fim de semana/feriado |
 | --- | --- | --- | --- | --- | --- |
-| 6 horas | R$ 4.767 · 1 profissional | R$ 5.637 · 2 profissionais | R$ 6.507 · 2 profissionais | R$ 237 | R$ 247 |
-| 8 horas | R$ 5.137 · 1 profissional | R$ 6.067 · 2 profissionais | R$ 7.007 · 2 profissionais | R$ 257 | R$ 267 |
-| 12 horas diurno | R$ 5.867 · 2 profissionais | R$ 6.937 · 2 profissionais | R$ 8.007 · 2 profissionais | R$ 297 | R$ 307 |
-| 12 horas noturno | R$ 6.057 · 2 profissionais | R$ 7.157 · 2 profissionais | R$ 8.257 · 2 profissionais | R$ 307 | R$ 317 |
-| 24 horas | R$ 10.837 · 2 profissionais | R$ 12.807 · 3 profissionais | R$ 14.777 · 4 profissionais | R$ 587 | R$ 597 |
+| 6 horas | R$ 3.700 | R$ 4.150 | R$ 4.600 | R$ 220 | R$ 230 |
+| 8 horas | R$ 4.600 | R$ 5.100 | R$ 5.850 | R$ 250 | R$ 260 |
+| 12 horas diurno | R$ 5.500 | R$ 6.200 | R$ 6.700 | R$ 280 | R$ 290 |
+| 12 horas noturno | R$ 5.900 | R$ 6.500 | R$ 6.800 | R$ 290 | R$ 300 |
+| 24 horas | R$ 9.900 | R$ 11.700 | R$ 13.300 | R$ 530 | R$ 550 |
+
+A nova tabela não informa quantos profissionais atendem cada plano, então o site deixou de mostrar esse número.
 
 - Orçamento válido por 5 dias.
 - **Residência:** usa só os planos mensais (colunas de 22, 26 e 30 plantões). “Ainda não sei” (duração)
@@ -63,7 +65,7 @@ valores 2026), enviado pela Cuidare em 19/10/2026:
   foram retiradas.
 - Uma duração sem valor validado não aparece na tabela; sem valor de fim de semana, a célula mostra
   “Sob consulta”.
-- Conferido automaticamente: todos os valores do site batem com o PDF e com a proposta comercial.
+- Conferido automaticamente: todos os valores do site batem com a tabela acima.
 
 **Para confirmar:**
 
@@ -71,7 +73,7 @@ valores 2026), enviado pela Cuidare em 19/10/2026:
 | --- | --- |
 | Tabela por tipo de atendimento | Residência usa os planos mensais; hospital e consultas usam as diárias da proposta comercial geral de cuidadores. **Confirme que essas diárias valem para o acompanhamento hospitalar e para o atendimento por dia.** Se algum tipo tiver valor diferente, avise. |
 | Plano de 24 horas | Incluído porque está no PDF (o briefing anterior pedia para não oferecer 24 horas). Para tirar, apague a linha `'24h'` de `precos.js` e a opção em `consulta.js → DURACOES`. |
-| Camada oculta do PDF | O arquivo tem, por baixo das tabelas, um texto antigo com outros valores (ex.: 6h por R$ 4.637). O site usa os valores visíveis nas páginas. |
+| Origem dos valores | Os valores vêm da proposta da Cuidare Mogi das Cruzes. **Confirme que valem para a Vila Mariana** antes de enviar a clientes. |
 
 Para alterar um valor: edite `precos.js`, mantendo os números sem ponto (ex.: `5867`).
 
