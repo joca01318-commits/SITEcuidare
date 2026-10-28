@@ -8,9 +8,8 @@
 // A resposta traz SOMENTE o valor da combinação pedida. Detalhes: docs/INTEGRACOES.md, seção 7.
 
 const FREQ_DIAS = { seg_sex: 22, seg_sab: 26, todos: 30 };
-// Hospital e consultas: tabela de diárias com as durações de cada atendimento. Residência: planos mensais.
+// Atendimento por dia (consultas): tabela de diárias. Residência e hospital: planos mensais.
 const POR_DIARIA = {
-  hospital: ['12h_dia', '12h_noite', '24h'],
   consultas: ['6h', '8h', '12h_dia', '12h_noite', '24h']
 };
 const ID = /^[a-z0-9_]{1,24}$/;

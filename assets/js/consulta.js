@@ -13,7 +13,7 @@
       tags: ['Rotina', 'Companhia', 'Segurança'],
       intro: 'Um(a) cuidador(a) na sua casa, no período contratado, auxiliando na rotina com companhia, segurança e atenção, respeitando as limitações de quem recebe o cuidado.' },
     { v: 'hospital', t: 'Acompanhamento hospitalar', s: 'No hospital', icon: 'hospital',
-      diaria: ['12h_dia', '12h_noite', '24h'], linhaLabel: 'Plantão',
+      duracoes: ['12h_dia', '12h_noite', '24h', 'nao_sei'],
       d: 'Presença de um(a) cuidador(a) durante a internação, no período contratado.',
       tags: ['Internação', 'Presença', 'Atenção'],
       intro: 'Um(a) cuidador(a) acompanhando a internação no período contratado, com companhia e atenção à rotina do paciente.' },
@@ -41,7 +41,7 @@
 
   var STEPS = [
     { id: 'servico', label: 'Atendimento', title: 'Qual atendimento você procura?',
-      help: 'Toque em uma opção para avançar. Em acompanhamento hospitalar e atendimento por dia, a tabela de valores por dia aparece em seguida.' },
+      help: 'Toque em uma opção para avançar. Em atendimento por dia, a tabela de valores por dia aparece em seguida.' },
     { id: 'duracao', label: 'Duração', title: 'Quantas horas de cuidado por dia?',
       help: 'Toque na duração desejada. Se ainda não souber, a equipe ajuda a definir.' },
     { id: 'frequencia', label: 'Frequência', title: 'Com que frequência?',
@@ -54,8 +54,8 @@
   function labelOf(field, v) { var o = find(LISTS[field] || [], v); return o ? o.t : ''; }
   function servico(v) { return find(SERVICOS, v); }
 
-  // Hospital e consultas: tabela de diárias (todas as durações do atendimento), sem outras etapas.
-  // Residência: planos mensais (duração e frequência).
+  // Atendimento por dia: tabela de diárias (todas as durações), sem outras etapas.
+  // Residência e hospital: planos mensais (duração e frequência); hospital com plantões de 12h e 24h.
   function porDiaria(a) { var s = servico((a || {}).servico); return !!(s && s.diaria); }
   function isMensal(a) { return !!(a && a.servico && !porDiaria(a)); }
   function stepsFor(a) { return porDiaria(a) ? STEPS.slice(0, 1) : STEPS; }
@@ -66,7 +66,10 @@
   // Opções disponíveis conforme as escolhas anteriores (perguntas condicionais).
   function optionsFor(field, a) {
     a = a || {};
-    return (LISTS[field] || []).slice();
+    var list = (LISTS[field] || []).slice();
+    var s = servico(a.servico);
+    if (field === 'duracao' && s && s.duracoes) list = list.filter(function (o) { return s.duracoes.indexOf(o.v) > -1; });
+    return list;
   }
 
   // Mantém só escolhas que continuam válidas depois de mudar uma anterior.

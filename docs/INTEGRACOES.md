@@ -29,11 +29,11 @@ Endereços do site anterior continuam funcionando (`_redirects`): `/experiencia/
 - **Cuidados em residência:** o visitante escolhe duração e frequência, e a página `/valor/` mostra
   **somente** o valor mensal dessa combinação (sem tabela nem comparação). A página `/detalhes/` repete
   apenas esse valor.
-- **Acompanhamento hospitalar e atendimento por dia (antes “Consultas e exames”):** tocar no cartão leva direto à **tabela de valores
+- **Atendimento por dia (antes “Consultas e exames”):** tocar no cartão leva direto à **tabela de valores
   por dia** desse atendimento, sem outras etapas e sem valores mensais. Linhas: as durações, com ícone de
   dia, noite ou 24 horas. Colunas: segunda a sexta e sábados, domingos e feriados. A página `/detalhes/`
   repete a mesma tabela.
-  - Hospital (“Plantão”): 12 horas diurno, 12 horas noturno e 24 horas.
+  - O acompanhamento hospitalar passou a usar os planos mensais (12h diurnas, 12h noturnas e 24h).
   - Atendimento por dia (“Duração do atendimento”): 6 horas, 8 horas, 12 horas diurno, 12 horas noturno e 24 horas.
 - O atendimento **pós-operatório foi retirado** (cartão, foto, textos e opções). Uma consulta antiga salva
   com ele é descartada e o visitante escolhe de novo.
@@ -44,38 +44,33 @@ Endereços do site anterior continuam funcionando (`_redirects`): `/experiencia/
 
 ## 3. Tabela de preços (`assets/js/precos.js`)
 
-Valores da tabela **“Planos Cuidare Vila Mariana”**, com os valores da proposta da Cuidare Mogi das Cruzes
-(apresentação 2026-01), enviada pela Cuidare em 27/10/2026:
+Valores enviados pela Cuidare em 28/10/2026.
 
-| Plano | Segunda a sexta (mês) | Segunda a sábado (mês) | Todos os dias (mês) | Diária em dia útil | Diária em fim de semana/feriado |
-| --- | --- | --- | --- | --- | --- |
-| 6 horas | R$ 3.700 | R$ 4.150 | R$ 4.600 | R$ 220 | R$ 230 |
-| 8 horas | R$ 4.600 | R$ 5.100 | R$ 5.850 | R$ 250 | R$ 260 |
-| 12 horas diurno | R$ 5.500 | R$ 6.200 | R$ 6.700 | R$ 280 | R$ 290 |
-| 12 horas noturno | R$ 5.900 | R$ 6.500 | R$ 6.800 | R$ 290 | R$ 300 |
-| 24 horas | R$ 9.900 | R$ 11.700 | R$ 13.300 | R$ 530 | R$ 550 |
+**1. Planos mensais, cuidados em residência ou hospital**
 
-A nova tabela não informa quantos profissionais atendem cada plano, então o site deixou de mostrar esse número.
+| Plano | Segunda a sexta | Segunda a sábado | Todos os dias |
+| --- | --- | --- | --- |
+| 6 horas | R$ 4.297 | R$ 5.097 | R$ 5.797 |
+| 8 horas | R$ 4.797 | R$ 5.697 | R$ 5.997 |
+| 12 horas diurnas | R$ 5.497 | R$ 6.497 | R$ 6.997 |
+| 12 horas noturnas | R$ 5.897 | R$ 6.897 | R$ 7.897 |
+| 24 horas | R$ 10.897 | R$ 12.897 | R$ 14.797 |
 
-- Orçamento válido por 5 dias.
-- **Residência:** usa só os planos mensais (colunas de 22, 26 e 30 plantões). “Ainda não sei” (duração)
-  leva à proposta personalizada.
-- **Acompanhamento hospitalar e atendimento por dia (antes “Consultas e exames”):** usam só as diárias (duas últimas colunas), na tabela
-  por dia descrita na seção 2. As antigas opções “Diária avulsa” e “Diária no fim de semana ou feriado”
-  foram retiradas.
-- Uma duração sem valor validado não aparece na tabela; sem valor de fim de semana, a célula mostra
-  “Sob consulta”.
-- Conferido automaticamente: todos os valores do site batem com a tabela acima.
+**2. Planos avulsos, atendimento por dia**
 
-**Para confirmar:**
+| Duração | Segunda a sexta | Sábados, domingos e feriados |
+| --- | --- | --- |
+| 6 horas | R$ 237 | R$ 247 |
+| 8 horas | R$ 267 | R$ 277 |
+| 12 horas diurnas | R$ 297 | R$ 317 |
+| 12 horas noturnas | R$ 317 | R$ 337 |
+| 24 horas | R$ 597 | R$ 617 |
 
-| Item | Situação |
-| --- | --- |
-| Tabela por tipo de atendimento | Residência usa os planos mensais; hospital e consultas usam as diárias da proposta comercial geral de cuidadores. **Confirme que essas diárias valem para o acompanhamento hospitalar e para o atendimento por dia.** Se algum tipo tiver valor diferente, avise. |
-| Plano de 24 horas | Incluído porque está no PDF (o briefing anterior pedia para não oferecer 24 horas). Para tirar, apague a linha `'24h'` de `precos.js` e a opção em `consulta.js → DURACOES`. |
-| Origem dos valores | Os valores vêm da proposta da Cuidare Mogi das Cruzes. **Confirme que valem para a Vila Mariana** antes de enviar a clientes. |
-
-Para alterar um valor: edite `precos.js`, mantendo os números sem ponto (ex.: `5867`).
+- Residência e hospital: duração e frequência, um valor mensal por consulta. O hospital oferece 12h
+  diurnas, 12h noturnas e 24h (e “Ainda não sei”).
+- Atendimento por dia: tocar no cartão abre a tabela de valores por dia.
+- O site não mostra número de profissionais por plano (a tabela não informa).
+- Orçamento válido por 5 dias (texto mantido da proposta anterior; confirme).
 
 ## 4. Preços fora do navegador (modo servidor, opcional)
 

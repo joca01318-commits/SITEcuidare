@@ -49,7 +49,7 @@
   var current = null, busy = false, autoTimer = 0, pointerPick = false, wasChecked = false;
   var ADVANCE_MS = C.reduce ? 150 : 480;
 
-  // As etapas dependem do atendimento: hospital e consultas vão direto à tabela de valores por dia.
+  // As etapas dependem do atendimento: o atendimento por dia vai direto à tabela de valores por dia.
   function steps() { return K.stepsFor(a); }
   function total() { return steps().length; }
   function persist() { state.a = a; K.save(state); }

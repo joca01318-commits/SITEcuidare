@@ -1,47 +1,47 @@
 /* Cuidare Vila Mariana — tabela de preços (fonte única)
    ---------------------------------------------------------------
-   Valores da tabela "Planos Cuidare Vila Mariana" (valores da proposta da Cuidare Mogi das Cruzes,
-   apresentação 2026-01), enviada pela Cuidare em 27/10/2026.
+   Valores enviados pela Cuidare em 28/10/2026: planos mensais (residência ou hospital)
+   e planos avulsos (atendimento por dia).
    O site mostra ao visitante SOMENTE o valor da configuração escolhida.
 
    - mensal: valor por mês. Segunda a sexta = 22 plantões, segunda a sábado = 26 plantões,
      segunda a segunda (todos os dias) = 30 plantões.
-   - diaria: valor por dia de segunda a sexta (acompanhamento hospitalar e atendimento por dia).
-   - diariaFds: valor por dia em sábados, domingos e feriados (mesmos atendimentos).
-   Residência usa os planos mensais. Hospital e consultas mostram a tabela de diárias
-   (hospital: 12h diurno, 12h noturno e 24h; consultas: 6h, 8h, 12h diurno, 12h noturno e 24h).
+   - diaria: valor por dia de segunda a sexta (atendimento por dia).
+   - diariaFds: valor por dia em sábados, domingos e feriados (atendimento por dia).
+   Residência e hospital usam os planos mensais (hospital: 12h diurno, 12h noturno e 24h).
+   O atendimento por dia mostra a tabela de diárias (6h, 8h, 12h diurno, 12h noturno e 24h).
    - null = sem valor validado. O site não inventa: encaminha para proposta personalizada.
 
    Para não publicar a tabela no navegador, use o modo "servidor"
    (config.js -> precos.modo) e veja docs/INTEGRACOES.md, seção 4. */
 window.CUIDARE_PRECOS = {
-  versao: '2026-10-27',
+  versao: '2026-10-28',
   validadeDias: 5,
 
   // Tipos de atendimento cobertos por esta tabela.
   servicos: ['residencia', 'hospital', 'consultas'],
 
   mensal: {
-    '6h':        { seg_sex: 3700, seg_sab: 4150,  todos: 4600 },
-    '8h':        { seg_sex: 4600, seg_sab: 5100,  todos: 5850 },
-    '12h_dia':   { seg_sex: 5500, seg_sab: 6200,  todos: 6700 },
-    '12h_noite': { seg_sex: 5900, seg_sab: 6500,  todos: 6800 },
-    '24h':       { seg_sex: 9900, seg_sab: 11700, todos: 13300 }
+    '6h':        { seg_sex: 4297,  seg_sab: 5097,  todos: 5797 },
+    '8h':        { seg_sex: 4797,  seg_sab: 5697,  todos: 5997 },
+    '12h_dia':   { seg_sex: 5497,  seg_sab: 6497,  todos: 6997 },
+    '12h_noite': { seg_sex: 5897,  seg_sab: 6897,  todos: 7897 },
+    '24h':       { seg_sex: 10897, seg_sab: 12897, todos: 14797 }
   },
 
   diaria: {
-    '6h': 220,
-    '8h': 250,
-    '12h_dia': 280,
-    '12h_noite': 290,
-    '24h': 530
+    '6h': 237,
+    '8h': 267,
+    '12h_dia': 297,
+    '12h_noite': 317,
+    '24h': 597
   },
 
   diariaFds: {
-    '6h': 230,
-    '8h': 260,
-    '12h_dia': 290,
-    '12h_noite': 300,
-    '24h': 550
+    '6h': 247,
+    '8h': 277,
+    '12h_dia': 317,
+    '12h_noite': 337,
+    '24h': 617
   }
 };
