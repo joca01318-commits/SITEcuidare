@@ -5,48 +5,35 @@
 //  2. Em Project configuration -> Environment variables, crie CUIDARE_PRECOS com o
 //     mesmo conteúdo de window.CUIDARE_PRECOS (assets/js/precos.js), em JSON.
 //  3. Em assets/js/config.js: precos.modo = 'servidor'. Depois, apague precos.js do site.
-// A resposta traz SOMENTE o valor da combinação pedida. Detalhes: docs/INTEGRACOES.md, seção 7.
+// A resposta traz a tabela do plano pedido (?servico=residencia ou ?servico=consultas). Detalhes: docs/INTEGRACOES.md, seção 7.
 
-const FREQ_DIAS = { seg_sex: 22, seg_sab: 26, todos: 30 };
-// Atendimento por dia (consultas): tabela de diárias. Residência e hospital: planos mensais.
-const POR_DIARIA = {
-  consultas: ['6h', '8h', '12h_dia', '12h_noite', '24h']
+// Mesmas regras de calcular() em assets/js/consulta.js: a tabela completa do plano pedido.
+const PLANOS = {
+  residencia: { modalidade: 'mensal', cols: ['seg_sex', 'seg_sab', 'todos'] },
+  consultas: { modalidade: 'diaria', cols: ['util', 'fds'] }
 };
+const DURACOES = ['6h', '8h', '12h_dia', '12h_noite', '24h'];
 const ID = /^[a-z0-9_]{1,24}$/;
 
 const json = (body, status = 200) =>
-  new Response(JSON.stringify(body), {
-    status,
-    headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' }
-  });
+  new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
 
-// Mesmas regras de calcular() em assets/js/consulta.js.
 export function calcular(tabela, a) {
-  const diaria = Object.hasOwn(POR_DIARIA, a.servico || '');
-  if (!a.servico || (!diaria && (!a.duracao || !a.frequencia))) return { status: 'incompleto' };
+  const p = Object.hasOwn(PLANOS, a.servico || '') ? PLANOS[a.servico] : null;
+  if (!p) return { status: 'incompleto' };
   if (!tabela) return { status: 'sob_consulta', motivo: 'indisponivel' };
   if (!(tabela.servicos || []).includes(a.servico)) return { status: 'sob_consulta', motivo: 'servico' };
   const ok = (v) => typeof v === 'number' && Number.isFinite(v) && v > 0;
-  const r = { status: 'ok', versao: tabela.versao || '', validadeDias: tabela.validadeDias || 0 };
-  if (diaria) {
-    const linhas = [];
-    for (const d of POR_DIARIA[a.servico]) {
-      const util = tabela.diaria?.[d], fds = tabela.diariaFds?.[d];
-      if (!ok(util)) continue;
-      linhas.push(ok(fds) ? { duracao: d, valor: util, valorFds: fds } : { duracao: d, valor: util });
-    }
-    if (!linhas.length) return { status: 'sob_consulta', motivo: 'sem_preco' };
-    r.modalidade = 'diaria'; r.linhas = linhas;
-    return r;
+  const linhas = [];
+  for (const d of DURACOES) {
+    const valores = p.cols.map((c) => {
+      const v = p.modalidade === 'mensal' ? tabela.mensal?.[d]?.[c] : (c === 'fds' ? tabela.diariaFds : tabela.diaria)?.[d];
+      return ok(v) ? v : null;
+    });
+    if (valores[0] !== null) linhas.push({ duracao: d, valores });
   }
-  if (a.duracao === 'nao_sei') return { status: 'sob_consulta', motivo: 'duracao' };
-  const valor = tabela.mensal?.[a.duracao]?.[a.frequencia];
-  if (!ok(valor)) return { status: 'sob_consulta', motivo: 'sem_preco' };
-  r.modalidade = 'mensal'; r.valor = valor;
-  if (FREQ_DIAS[a.frequencia]) r.dias = FREQ_DIAS[a.frequencia];
-  const prof = tabela.profissionais?.[a.duracao]?.[a.frequencia];
-  if (prof) r.profissionais = prof;
-  return r;
+  if (!linhas.length) return { status: 'sob_consulta', motivo: 'sem_preco' };
+  return { status: 'ok', modalidade: p.modalidade, linhas, versao: tabela.versao || '', validadeDias: tabela.validadeDias || 0 };
 }
 
 export default async (req) => {
@@ -55,14 +42,9 @@ export default async (req) => {
   if (!raw) return json({ status: 'sob_consulta', motivo: 'indisponivel' }, 501);
   let tabela;
   try { tabela = JSON.parse(raw); } catch { return json({ status: 'sob_consulta', motivo: 'indisponivel' }, 500); }
-  const q = new URL(req.url).searchParams;
-  const a = {};
-  for (const k of ['servico', 'duracao', 'frequencia']) {
-    const v = q.get(k) || '';
-    if (k !== 'servico' && Object.hasOwn(POR_DIARIA, a.servico)) continue; // tabela de diárias: só o atendimento
-    if (!ID.test(v)) return json({ erro: 'parametro_invalido', campo: k }, 400);
-    a[k] = v;
-  }
+  const servico = new URL(req.url).searchParams.get('servico') || '';
+  if (!ID.test(servico)) return json({ erro: 'parametro_invalido', campo: 'servico' }, 400);
+  const a = { servico };
   return json(calcular(tabela, a));
 };
 

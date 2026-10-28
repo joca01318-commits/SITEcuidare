@@ -59,12 +59,16 @@
   /* Telas */
   function svcHTML() {
     return '<div class="svc" role="radiogroup" aria-labelledby="q-title">' + K.optionsFor('servico', a).map(function (o, k) {
+      // O cartão (área de toque) fica parado; só o conteúdo interno se inclina em 3D,
+      // para o cartão não "fugir" do mouse ao rolar a página.
       return '<label class="svc__card" style="--i:' + k + '"><input type="radio" name="servico" value="' + o.v + '"' + (a.servico === o.v ? ' checked' : '') + '>' +
+        '<span class="svc__in" data-tilt="7"><span class="svc__glare" aria-hidden="true"></span>' +
         '<span class="svc__visual" data-photo="' + o.v + '" style="--a:' + (190 + k * 25) + 'deg">' +
         '<span class="svc__tag svc__tag--1">' + o.tags[0] + '</span><span class="svc__tag svc__tag--2">' + o.tags[1] + '</span><span class="svc__tag svc__tag--3">' + o.tags[2] + '</span>' +
         '<span class="svc__icon">' + ICON(o.icon) + '</span></span>' +
-        '<span class="svc__body"><span class="svc__t">' + o.t + '</span><span class="svc__d">' + o.d + '</span></span>' +
-        '<span class="svc__check" aria-hidden="true">' + ICON('check') + '</span></label>';
+        '<span class="svc__body"><span class="svc__k">' + o.s + '</span><span class="svc__t">' + o.t + '</span><span class="svc__d">' + o.d + '</span>' +
+        '<span class="svc__go">Ver tabela de valores' + ICON('arrow') + '</span></span>' +
+        '<span class="svc__check" aria-hidden="true">' + ICON('check') + '</span></span></label>';
     }).join('') + '</div>';
   }
 
@@ -83,6 +87,8 @@
   function stepHTML(i) {
     var s = steps()[i], n = total();
     var body = s.id === 'servico' ? svcHTML() : tilesHTML(s.id);
+    // Uma escolha só (o plano): sem título de etapa; o título fica no topo da seção.
+    if (n === 1) return '<form class="q q--solo" novalidate data-step="0"><div class="q__body">' + body + '</div><div data-extra aria-live="polite"></div></form>';
     // Sem botão "Continuar": tocar em uma opção já avança. Só o "Voltar" fica.
     return '<form class="q" novalidate data-step="' + i + '">' +
       '<p class="q__kicker"><span>Etapa ' + ('0' + (i + 1)).slice(-2) + ' de ' + ('0' + n).slice(-2) + '</span><span aria-hidden="true">·</span><span>' + s.label + '</span></p>' +
@@ -150,6 +156,7 @@
       stage.innerHTML = stepHTML(i);
       var el = $('.q', stage);
       $$('[data-photo]', el).forEach(C.photo);
+      C.tilt(el);
       renderExtra();
       var enter = function (cls) {
         el.classList.add(cls);

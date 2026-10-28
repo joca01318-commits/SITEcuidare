@@ -71,7 +71,7 @@ def page_parts(rel):
 
 def main():
     css = read('assets/css/site.css')
-    for font in ('fredoka-wght.woff2', 'manrope-wght.woff2'):
+    for font in ('baloo2-wght.woff2', 'nunito-wght.woff2'):
         css = css.replace('url("../fonts/%s")' % font, 'url("%s")' % data_uri('assets/fonts/' + font, 'font/woff2'))
     css = css.replace('url("../img/logo-white-320.png")', 'url("%s")' % data_uri('assets/img/logo-white-320.png', 'image/png'))
     if '../fonts/' in css or '../img/' in css:

@@ -4,18 +4,15 @@ Experiência digital da Cuidare Vila Mariana em três páginas:
 
 | Rota | Função |
 | --- | --- |
-| `/` | Capa com 3D, consulta rápida (atendimento e, na residência, duração e frequência), diferenciais e depoimentos |
-| `/valor/` | Residência: **somente** o valor da configuração escolhida. Hospital e consultas: a tabela de valores por dia desse atendimento |
+| `/` | Capa com 3D, os dois planos, Quem Somos e depoimentos |
+| `/valor/` | Tabela de valores do plano escolhido, com abas para trocar de plano |
 | `/detalhes/` | Resumo e detalhes do atendimento escolhido (cuidado e rotina, saúde e segurança, suporte, contratação, condições) |
 
-Regra comercial: seleção antes do preço; a página inicial não mostra valores.
+Dois planos, cada um com a tabela completa de valores:
 
-- **Cuidados em residência e acompanhamento hospitalar:** plano mensal (atendimento → duração → frequência), um valor por consulta. Hospital: 12h diurnas, 12h noturnas e 24h.
-- **Atendimento por dia (antes “Consultas e exames”):** tocar no cartão já abre a **tabela de valores por
-  dia** desse atendimento (durações nas linhas; segunda a sexta e sábados, domingos e feriados nas
-  colunas), sem valores mensais: 6h, 8h, 12h diurno, 12h noturno e 24h.
-- Tocar em uma opção já avança para a próxima etapa; não há botão “Continuar”, só “Voltar”.
-- O atendimento pós-operatório foi retirado da consulta.
+- **Planos Mensais:** durações × segunda a sexta / segunda a sábado / todos os dias.
+- **Planos Diários:** durações × segunda a sexta / sábados, domingos e feriados.
+- Tocar em um plano abre a tabela; na tabela, as abas trocam de plano. Sem etapas e sem “Continuar”.
 
 É uma apresentação de valores para quem **já está em conversa** com a equipe e já passou pela avaliação:
 o site não tem formulário, telefone, botões de WhatsApp, etapa de bairro/início/necessidades nem
@@ -34,8 +31,8 @@ Fundo escuro predominante, somente azul e branco:
 | `#FFFFFF` branco | textos principais |
 
 As cores ficam como variáveis no topo de `assets/css/site.css`. Logo: versão oficial branca
-(`assets/img/logo-white.png`), proporção original. Títulos em Fredoka (arredondada, estilo animação),
-textos em Manrope. Abertura animada com o logo na primeira página da visita, títulos entrando palavra
+(`assets/img/logo-white.png`), proporção original. Títulos em Baloo 2 (arredondada, estilo animação),
+textos em Nunito. Abertura animada com o logo na primeira página da visita, títulos entrando palavra
 por palavra e módulos em cascata (tudo desligado com “reduzir movimento” no aparelho).
 
 ## Estrutura
@@ -51,8 +48,8 @@ assets/js/cena.js          cena 3D em WebGL (corações e esferas de vidro), sem
 assets/js/home.js          capa e consulta (avança ao tocar na opção)
 assets/js/valor.js         página do valor
 assets/js/detalhes.js      resumo e detalhes do atendimento
-assets/fonts/              Fredoka (títulos) + Manrope (textos), SIL OFL, hospedadas localmente
-assets/photos/             fotos da página do valor
+assets/fonts/              Baloo 2 (títulos) + Nunito (textos), SIL OFL, hospedadas localmente
+assets/photos/             ilustrações dos dois planos
 netlify/functions/preco.mjs  cálculo no servidor (modo opcional)
 tools/gerar-html-unico.py  gera o site inteiro em um arquivo (dist/)
 _headers, _redirects, netlify.toml, robots.txt, sitemap.xml

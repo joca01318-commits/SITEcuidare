@@ -1,7 +1,7 @@
-Fredoka e Manrope — SIL Open Font License 1.1
+Baloo 2 e Nunito — SIL Open Font License 1.1
 
-Copyright 2016 The Fredoka Project Authors (https://github.com/hafontia/Fredoka-One)
-Copyright 2018 The Manrope Project Authors (https://github.com/sharanda/manrope)
+Copyright 2019 The Baloo 2 Project Authors (https://github.com/EkType/Baloo2)
+Copyright 2014 The Nunito Project Authors (https://github.com/googlefonts/nunito)
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:

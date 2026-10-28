@@ -175,7 +175,7 @@
     if (reduce || !('IntersectionObserver' in window)) { els.forEach(function (el) { el.classList.add('is-in'); }); return; }
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
-    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    }, { threshold: 0.01, rootMargin: '0px 0px 12% 0px' });
     els.forEach(function (el) { io.observe(el); });
   }
 
@@ -197,36 +197,83 @@
 
   function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
-  /* ---------- Tabela de diárias (hospital e consultas), páginas 2 e 3 ---------- */
-  // p = CuidareConsulta.priceText(...) de um atendimento por diária. Uma linha por duração,
-  // separada pelo horário (dia, noite, 24 horas), com o valor de segunda a sexta e o de fim de semana.
-  function tabelaDiarias(p, servicoNome, compact) {
+  /* ---------- Tabela de valores do plano (páginas 2 e 3) ---------- */
+  // p = CuidareConsulta.priceText(...). Uma linha por duração (ícone de dia, noite ou 24 horas)
+  // e uma coluna por período: 3 nos Planos Mensais, 2 nos Planos Diários.
+  function tabela(p, nome, compact) {
     var ic = function (id) { return '<svg aria-hidden="true"><use href="#i-' + id + '"/></svg>'; };
-    var cab = p.cab || {};
-    var cell = function (v, k) {
-      return '<td class="ptab__td' + (k ? ' ptab__td--fds' : '') + '"><span class="ptab__c" style="--c:' + (k ? 2 : 1) + '">' +
-        (v ? '<span class="ptab__v">' + esc(v) + '</span><span class="ptab__u">por dia</span>' : '<span class="ptab__u">Sob consulta</span>') + '</span></td>';
-    };
-    return '<div class="ptab' + (compact ? ' ptab--compact' : '') + '" data-ptab>' +
-      '<table class="ptab__t"><caption class="sr-only">Valores por dia' + (servicoNome ? ' de ' + esc(servicoNome.toLowerCase()) : '') + ', conforme a duração e o dia da semana</caption>' +
-      '<thead><tr><th scope="col" class="ptab__th ptab__th--dur">' + esc(cab.duracao || 'Duração') + '</th>' +
-      '<th scope="col" class="ptab__th"><span class="ptab__hi">' + ic('calendar') + '</span><span>' + esc(cab.util || 'Segunda a sexta') + '</span></th>' +
-      '<th scope="col" class="ptab__th ptab__th--fds"><span class="ptab__hi">' + ic('calendar') + '</span><span>' + esc(cab.fds || 'Sábados, domingos e feriados') + '</span></th></tr></thead>' +
+    var cols = p.cols || [];
+    return '<div class="ptab ptab--c' + cols.length + (compact ? ' ptab--compact' : '') + '" data-ptab>' +
+      '<table class="ptab__t"><caption class="sr-only">Valores ' + esc(p.unidade || '') + (nome ? ' dos ' + esc(nome) : '') + ', conforme a duração e os dias</caption>' +
+      '<thead><tr><th scope="col" class="ptab__th ptab__th--dur">' + esc(p.linhaLabel || 'Duração') + '</th>' +
+      cols.map(function (c, k) {
+        return '<th scope="col" class="ptab__th' + (k === cols.length - 1 ? ' ptab__th--last' : '') + '"><span class="ptab__hi">' + ic('calendar') + '</span><span class="ptab__hl">' + esc(c) + '</span><span class="ptab__hu">' + esc(p.unidade || '') + '</span></th>';
+      }).join('') + '</tr></thead>' +
       '<tbody>' + (p.linhas || []).map(function (l, k) {
         var badge = l.icon === '24' ? '<b aria-hidden="true">24</b>' : ic(l.icon);
         return '<tr class="ptab__row ptab__row--' + esc(l.periodo) + '" style="--i:' + k + '">' +
           '<th scope="row" class="ptab__dur"><span class="ptab__c" style="--c:0"><span class="ptab__ic ptab__ic--' + esc(l.periodo) + '">' + badge + '</span>' +
           '<span class="ptab__dt"><span class="ptab__h">' + esc(l.h) + '</span>' + (l.sub ? '<span class="ptab__sub">' + esc(l.sub) + '</span>' : '') + '</span></span></th>' +
-          cell(l.valor, 0) + cell(l.fds, 1) + '</tr>';
+          (l.valores || []).map(function (v, j) {
+            return '<td class="ptab__td' + (j === cols.length - 1 ? ' ptab__td--last' : '') + '"><span class="ptab__c" style="--c:' + (j + 1) + '">' +
+              (v ? '<span class="ptab__v">' + esc(v) + '</span>' : '<span class="ptab__u">Sob consulta</span>') + '</span></td>';
+          }).join('') + '</tr>';
       }).join('') + '</tbody></table></div>';
+  }
+
+  /* ---------- Interações 3D: inclinação com brilho ---------- */
+  // [data-tilt]: segue o mouse; no celular, o dedo enquanto toca e a inclinação do aparelho
+  // (quando o navegador permite sem pedir autorização). Desligado com "reduzir movimento".
+  function tilt(scope) {
+    if (reduce) return;
+    $$('[data-tilt]', scope).forEach(function (el) {
+      if (el.hasAttribute('data-tilt-on')) return;
+      el.setAttribute('data-tilt-on', '');
+      var max = parseFloat(el.getAttribute('data-tilt')) || 8, raf = 0, rx = 0, ry = 0, gx = 50, gy = 30;
+      var apply = function () {
+        raf = 0;
+        el.style.setProperty('--rx', rx.toFixed(2) + 'deg'); el.style.setProperty('--ry', ry.toFixed(2) + 'deg');
+        el.style.setProperty('--gx', gx.toFixed(1) + '%'); el.style.setProperty('--gy', gy.toFixed(1) + '%');
+      };
+      var at = function (x, y) {
+        var b = el.getBoundingClientRect(); if (!b.width) return;
+        var px = Math.max(0, Math.min(1, (x - b.left) / b.width)), py = Math.max(0, Math.min(1, (y - b.top) / b.height));
+        ry = (px - 0.5) * max * 2; rx = -(py - 0.5) * max * 2; gx = px * 100; gy = py * 100;
+        el.classList.add('is-tilting');
+        if (!raf) raf = requestAnimationFrame(apply);
+      };
+      var rest = function () { rx = 0; ry = 0; gx = 50; gy = 30; el.classList.remove('is-tilting'); if (!raf) raf = requestAnimationFrame(apply); };
+      el.addEventListener('pointermove', function (e) { if (e.pointerType === 'mouse' || e.pointerType === 'pen') at(e.clientX, e.clientY); });
+      el.addEventListener('pointerleave', rest);
+      el.addEventListener('touchmove', function (e) { var t = e.touches[0]; if (t) at(t.clientX, t.clientY); }, { passive: true });
+      el.addEventListener('touchend', rest, { passive: true });
+      el.addEventListener('touchcancel', rest, { passive: true });
+    });
+  }
+  // Celular: inclinação suave de todos os [data-tilt] visíveis conforme o aparelho se move.
+  if (!reduce && !finePointer && 'DeviceOrientationEvent' in window && typeof DeviceOrientationEvent.requestPermission !== 'function') {
+    var oraf = 0, ob = 0, og = 0;
+    window.addEventListener('deviceorientation', function (e) {
+      if (e.beta == null) return;
+      ob = Math.max(-1, Math.min(1, (e.beta - 45) / 30)); og = Math.max(-1, Math.min(1, (e.gamma || 0) / 25));
+      if (oraf) return;
+      oraf = requestAnimationFrame(function () {
+        oraf = 0;
+        $$('[data-tilt]:not(.is-tilting)').forEach(function (el) {
+          var m = (parseFloat(el.getAttribute('data-tilt')) || 8) * 0.6;
+          el.style.setProperty('--rx', (-ob * m).toFixed(2) + 'deg'); el.style.setProperty('--ry', (og * m).toFixed(2) + 'deg');
+          el.style.setProperty('--gx', (50 + og * 40).toFixed(1) + '%'); el.style.setProperty('--gy', (30 + ob * 30).toFixed(1) + '%');
+        });
+      });
+    }, { passive: true });
   }
 
   /* ---------- Cena 3D (WebGL), sob demanda ---------- */
   function cena(canvas, opts) {
     if (!canvas || lowPower || !window.WebGLRenderingContext) return Promise.resolve(null);
-    // Celulares: 3D só em aparelhos com folga de processamento; nos demais fica a versão leve em CSS.
+    // Celulares: 3D nos aparelhos com 4 núcleos ou mais (qualidade ajustada sozinha); nos demais, versão leve em CSS.
     var phone = !finePointer || window.innerWidth < 760;
-    if (phone && !((navigator.deviceMemory || 4) >= 4 && (navigator.hardwareConcurrency || 4) >= 6)) return Promise.resolve(null);
+    if (phone && !((navigator.deviceMemory || 4) >= 2 && (navigator.hardwareConcurrency || 4) >= 4)) return Promise.resolve(null);
     return new Promise(function (resolve) {
       function start() {
         if (!window.CuidareCena) return resolve(null);
@@ -273,10 +320,11 @@
   consentBanner();
   reveal();
   photos();
+  tilt();
   requestAnimationFrame(function () { doc.classList.add('is-loaded'); });
 
   window.Cuidare = {
     cfg: CFG, $: $, $$: $$, store: store, reduce: reduce, finePointer: finePointer, lowPower: lowPower,
-    pageUrl: pageUrl, asset: function (p) { return /^(data:|https?:)/.test(p) ? p : root + p; }, track: track, journey: journey, reveal: reveal, split: split, intro: doc.classList.contains('intro-on'), cena: cena, esc: esc, photo: photo, tabelaDiarias: tabelaDiarias
+    pageUrl: pageUrl, asset: function (p) { return /^(data:|https?:)/.test(p) ? p : root + p; }, track: track, journey: journey, reveal: reveal, split: split, intro: doc.classList.contains('intro-on'), cena: cena, esc: esc, photo: photo, tabela: tabela, tilt: tilt
   };
 })();

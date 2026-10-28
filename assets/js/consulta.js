@@ -1,157 +1,101 @@
 /* Cuidare — consulta de valores (compartilhado pelas 3 páginas).
-   Opções, perguntas condicionais, estado da consulta e cálculo do valor da
-   configuração escolhida.
+   Dois planos, cada um com a sua tabela de valores:
+   - Planos Mensais: durações nas linhas; segunda a sexta, segunda a sábado e todos os dias nas colunas.
+   - Planos Diários: durações nas linhas; segunda a sexta e sábados, domingos e feriados nas colunas.
    Os valores ficam em precos.js (modo local) ou no servidor (modo servidor). */
 (function () {
   'use strict';
 
   var KEY = 'cuidare.consulta.v1';
 
+  // As chaves 'residencia' e 'consultas' foram mantidas para não perder consultas já salvas.
   var SERVICOS = [
-    { v: 'residencia', t: 'Cuidados em residência', s: 'Em casa', icon: 'home',
-      d: 'Apoio na rotina no conforto de casa, com companhia, segurança e atenção.',
-      tags: ['Rotina', 'Companhia', 'Segurança'],
-      intro: 'Um(a) cuidador(a) na sua casa, no período contratado, auxiliando na rotina com companhia, segurança e atenção, respeitando as limitações de quem recebe o cuidado.' },
-    { v: 'hospital', t: 'Acompanhamento hospitalar', s: 'No hospital', icon: 'hospital',
-      duracoes: ['12h_dia', '12h_noite', '24h', 'nao_sei'],
-      d: 'Presença de um(a) cuidador(a) durante a internação, no período contratado.',
-      tags: ['Internação', 'Presença', 'Atenção'],
-      intro: 'Um(a) cuidador(a) acompanhando a internação no período contratado, com companhia e atenção à rotina do paciente.' },
-    { v: 'consultas', t: 'Atendimento por dia', s: 'Por dia', icon: 'calendar',
-      diaria: ['6h', '8h', '12h_dia', '12h_noite', '24h'], linhaLabel: 'Duração do atendimento',
-      d: 'Acompanhamento em consultas médicas e exames.',
-      tags: ['Consultas', 'Exames', 'Companhia'],
-      intro: 'Um(a) cuidador(a) acompanhando consultas médicas e exames, com companhia e atenção durante todo o período contratado.' }
+    { v: 'residencia', t: 'Planos Mensais', s: 'Mensal', icon: 'home', modalidade: 'mensal',
+      d: 'Cuidados contínuos com segurança, rotina e tranquilidade para toda a família.',
+      tags: ['Rotina', 'Segurança', 'Tranquilidade'],
+      cols: [{ k: 'seg_sex', t: 'Segunda a sexta' }, { k: 'seg_sab', t: 'Segunda a sábado' }, { k: 'todos', t: 'Todos os dias' }],
+      unidade: 'por mês', linhaLabel: 'Plano',
+      intro: 'Um(a) cuidador(a) com rotina fixa ao longo do mês, em casa ou durante uma internação, com companhia, segurança e atenção.' },
+    { v: 'consultas', t: 'Planos Diários', s: 'Diário', icon: 'clock', modalidade: 'diaria',
+      d: 'Cuidado por dia, com flexibilidade e segurança para as suas necessidades.',
+      tags: ['Flexibilidade', 'Segurança', 'Por dia'],
+      cols: [{ k: 'util', t: 'Segunda a sexta' }, { k: 'fds', t: 'Sábados, domingos e feriados' }],
+      unidade: 'por dia', linhaLabel: 'Duração',
+      intro: 'Um(a) cuidador(a) somente nos dias em que você precisar, com companhia, segurança e atenção durante todo o período contratado.' }
   ];
 
   var DURACOES = [
-    { v: '6h', t: '6 horas por dia', n: '6h', h: '6 horas', p: 'dia', d: 'Presença diária para organizar a rotina.' },
-    { v: '8h', t: '8 horas por dia', n: '8h', h: '8 horas', p: 'dia', d: 'Mais tempo de acompanhamento durante o dia.' },
-    { v: '12h_dia', t: '12 horas durante o dia', n: '12h', h: '12 horas', sub: 'diurno', p: 'dia', icon: 'sun', d: 'Cuidado prolongado no período diurno.' },
-    { v: '12h_noite', t: '12 horas durante a noite', n: '12h', h: '12 horas', sub: 'noturno', p: 'noite', icon: 'moon', d: 'Cuidado prolongado no período noturno.' },
-    { v: '24h', t: '24 horas por dia', n: '24h', h: '24 horas', sub: 'dia e noite', p: 'integral', d: 'Cobertura integral para uma rotina que exige presença contínua.' },
-    { v: 'nao_sei', t: 'Ainda não sei', n: '?', d: 'A equipe ajuda a definir a duração ideal.' }
-  ];
-
-  var FREQUENCIAS = [
-    { v: 'seg_sex', t: 'Segunda a sexta', d: 'Plano mensal · 22 plantões', dias: 22 },
-    { v: 'seg_sab', t: 'Segunda a sábado', d: 'Plano mensal · 26 plantões', dias: 26 },
-    { v: 'todos', t: 'Segunda a segunda', d: 'Plano mensal · 30 plantões', dias: 30 }
+    { v: '6h', t: '6 horas', h: '6 horas', p: 'dia' },
+    { v: '8h', t: '8 horas', h: '8 horas', p: 'dia' },
+    { v: '12h_dia', t: '12 horas diurnas', h: '12 horas', sub: 'diurnas', p: 'dia', icon: 'sun' },
+    { v: '12h_noite', t: '12 horas noturnas', h: '12 horas', sub: 'noturnas', p: 'noite', icon: 'moon' },
+    { v: '24h', t: '24 horas', h: '24 horas', sub: 'dia e noite', p: 'integral' }
   ];
 
   var STEPS = [
-    { id: 'servico', label: 'Atendimento', title: 'Qual atendimento você procura?',
-      help: 'Toque em uma opção para avançar. Em atendimento por dia, a tabela de valores por dia aparece em seguida.' },
-    { id: 'duracao', label: 'Duração', title: 'Quantas horas de cuidado por dia?',
-      help: 'Toque na duração desejada. Se ainda não souber, a equipe ajuda a definir.' },
-    { id: 'frequencia', label: 'Frequência', title: 'Com que frequência?',
-      help: 'Planos mensais de 22, 26 ou 30 plantões. Toque em uma opção para ver o valor.' }
+    { id: 'servico', label: 'Plano', title: 'Qual plano você procura?',
+      help: 'Toque em um plano para ver a tabela de valores.' }
   ];
 
-  var LISTS = { servico: SERVICOS, duracao: DURACOES, frequencia: FREQUENCIAS };
-
   function find(list, v) { return list.filter(function (o) { return o.v === v; })[0]; }
-  function labelOf(field, v) { var o = find(LISTS[field] || [], v); return o ? o.t : ''; }
+  function labelOf(field, v) { var o = find(field === 'servico' ? SERVICOS : field === 'duracao' ? DURACOES : [], v); return o ? o.t : ''; }
   function servico(v) { return find(SERVICOS, v); }
 
-  // Atendimento por dia: tabela de diárias (todas as durações), sem outras etapas.
-  // Residência e hospital: planos mensais (duração e frequência); hospital com plantões de 12h e 24h.
-  function porDiaria(a) { var s = servico((a || {}).servico); return !!(s && s.diaria); }
-  function isMensal(a) { return !!(a && a.servico && !porDiaria(a)); }
-  function stepsFor(a) { return porDiaria(a) ? STEPS.slice(0, 1) : STEPS; }
-  function journeyLabels(a) {
-    return porDiaria(a) ? ['Atendimento', 'Valores', 'Detalhes'] : stepsFor(a).map(function (s) { return s.label; }).concat(['Valor', 'Detalhes']);
-  }
+  function porDiaria(a) { var s = servico((a || {}).servico); return !!(s && s.modalidade === 'diaria'); }
+  function isMensal(a) { var s = servico((a || {}).servico); return !!(s && s.modalidade === 'mensal'); }
+  function stepsFor() { return STEPS; }
+  function journeyLabels() { return ['Plano', 'Valores', 'Detalhes']; }
+  function optionsFor(field) { return field === 'servico' ? SERVICOS.slice() : []; }
 
-  // Opções disponíveis conforme as escolhas anteriores (perguntas condicionais).
-  function optionsFor(field, a) {
-    a = a || {};
-    var list = (LISTS[field] || []).slice();
-    var s = servico(a.servico);
-    if (field === 'duracao' && s && s.duracoes) list = list.filter(function (o) { return s.duracoes.indexOf(o.v) > -1; });
-    return list;
-  }
-
-  // Mantém só escolhas que continuam válidas depois de mudar uma anterior.
+  // Mantém só um plano válido (consultas antigas de hospital ou pós-operatório são descartadas).
   function sanitize(a) {
-    var out = Object.assign({}, a || {});
-    ['servico', 'duracao', 'frequencia'].forEach(function (k) {
-      if (out[k] && !find(optionsFor(k, out), out[k])) delete out[k];
-    });
-    if (porDiaria(out)) { delete out.duracao; delete out.frequencia; }
-    // campos da versão anterior (bairro, início, necessidades) não são mais usados
-    delete out.bairro; delete out.inicio; delete out.necessidades;
+    var out = {};
+    if (a && servico(a.servico)) out.servico = a.servico;
     return out;
   }
 
   function stepDone(id, a) { return !!(a || {})[id]; }
-  function firstIncomplete(a) {
-    var st = stepsFor(a);
-    for (var i = 0; i < st.length; i++) if (!stepDone(st[i].id, a)) return i;
-    return -1;
-  }
+  function firstIncomplete(a) { return stepDone('servico', a) ? -1 : 0; }
   function isComplete(a) { return firstIncomplete(a) === -1; }
 
-  /* ---------- Valor ---------- */
+  /* ---------- Valores ---------- */
   function money(v) { return 'R$ ' + String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+  function ok(v) { return typeof v === 'number' && isFinite(v) && v > 0; }
 
-  // Calcula o valor SOMENTE da configuração escolhida. Nunca inventa: sem valor validado,
-  // devolve status 'sob_consulta' (proposta personalizada).
+  // Tabela do plano escolhido. Nunca inventa: sem valor validado, a duração não aparece
+  // (ou a célula fica "Sob consulta"); sem nenhuma linha, devolve 'sob_consulta'.
   function calcular(tabela, a) {
     a = a || {};
-    var diaria = porDiaria(a);
-    if (!a.servico || (!diaria && (!a.duracao || !a.frequencia))) return { status: 'incompleto' };
+    var s = servico(a.servico);
+    if (!s) return { status: 'incompleto' };
     if (!tabela) return { status: 'sob_consulta', motivo: 'indisponivel' };
-    if ((tabela.servicos || []).indexOf(a.servico) < 0) return { status: 'sob_consulta', motivo: 'servico' };
-    var ok = function (v) { return typeof v === 'number' && isFinite(v) && v > 0; };
-    var r = { status: 'ok', versao: tabela.versao || '', validadeDias: tabela.validadeDias || 0 };
-    if (diaria) {
-      // tabela de diárias: cada duração do atendimento, de segunda a sexta e em sábados, domingos e feriados
-      var linhas = [];
-      servico(a.servico).diaria.forEach(function (d) {
-        var util = tabela.diaria && tabela.diaria[d], fds = tabela.diariaFds && tabela.diariaFds[d];
-        if (!ok(util)) return; // sem valor validado: a duração não aparece
-        var l = { duracao: d, valor: util };
-        if (ok(fds)) l.valorFds = fds;
-        linhas.push(l);
+    if ((tabela.servicos || []).indexOf(s.v) < 0) return { status: 'sob_consulta', motivo: 'servico' };
+    var linhas = [];
+    DURACOES.forEach(function (d) {
+      var vals = s.cols.map(function (c) {
+        var v = s.modalidade === 'mensal'
+          ? ((tabela.mensal || {})[d.v] || {})[c.k]
+          : ((c.k === 'fds' ? tabela.diariaFds : tabela.diaria) || {})[d.v];
+        return ok(v) ? v : null;
       });
-      if (!linhas.length) return { status: 'sob_consulta', motivo: 'sem_preco' };
-      r.modalidade = 'diaria'; r.linhas = linhas;
-      return r;
-    }
-    if (a.duracao === 'nao_sei') return { status: 'sob_consulta', motivo: 'duracao' };
-    var f = find(FREQUENCIAS, a.frequencia) || {};
-    var linha = tabela.mensal && tabela.mensal[a.duracao];
-    var valor = linha && linha[a.frequencia];
-    if (!ok(valor)) return { status: 'sob_consulta', motivo: 'sem_preco' };
-    r.modalidade = 'mensal'; r.valor = valor;
-    if (f.dias) r.dias = f.dias;
-    var pl = tabela.profissionais && tabela.profissionais[a.duracao];
-    if (pl && pl[a.frequencia]) r.profissionais = pl[a.frequencia];
-    return r;
+      if (vals[0] !== null) linhas.push({ duracao: d.v, valores: vals });
+    });
+    if (!linhas.length) return { status: 'sob_consulta', motivo: 'sem_preco' };
+    return { status: 'ok', modalidade: s.modalidade, linhas: linhas, versao: tabela.versao || '', validadeDias: tabela.validadeDias || 0 };
   }
 
-  // Textos do valor para exibição.
+  // Textos da tabela para exibição.
   function priceText(r, a) {
-    if (!r || r.status !== 'ok') return { valor: '', unidade: '', detalhe: '', linha: 'Proposta personalizada (valor definido com a equipe)' };
-    a = a || {};
-    if (r.modalidade === 'diaria') {
-      var linhas = (r.linhas || []).map(function (l) {
-        var d = find(DURACOES, l.duracao) || {};
-        return { duracao: l.duracao, h: d.h || d.t || '', sub: d.sub || '', periodo: d.p || 'dia', icon: d.icon || (d.p === 'integral' ? '24' : 'sun'),
-          valor: money(l.valor), fds: l.valorFds ? money(l.valorFds) : '' };
-      });
-      return {
-        tabela: true, linhas: linhas, unidade: 'por dia',
-        cab: { duracao: (servico(a.servico) || {}).linhaLabel || 'Duração', util: 'Segunda a sexta', fds: 'Sábados, domingos e feriados' },
-        linha: 'Valores por diária: ' + linhas.map(function (l) { return l.h + (l.sub ? ' ' + l.sub : '') + ' ' + l.valor + (l.fds ? ' / ' + l.fds : ''); }).join('; ')
-      };
-    }
-    var prof = r.profissionais ? ' · ' + r.profissionais + (r.profissionais > 1 ? ' profissionais' : ' profissional') : '';
+    var s = servico((a || {}).servico) || SERVICOS[0];
+    if (!r || r.status !== 'ok') return { tabela: false, linha: 'Proposta personalizada (valor definido com a equipe)' };
+    var linhas = (r.linhas || []).map(function (l) {
+      var d = find(DURACOES, l.duracao) || {};
+      return { duracao: l.duracao, h: d.h || '', sub: d.sub || '', periodo: d.p || 'dia', icon: d.icon || (d.p === 'integral' ? '24' : 'sun'),
+        valores: (l.valores || []).map(function (v) { return v ? money(v) : ''; }) };
+    });
     return {
-      valor: money(r.valor), unidade: 'por mês', fds: null,
-      detalhe: r.dias + ' plantões (' + labelOf('frequencia', a.frequencia).toLowerCase() + ')' + prof,
-      linha: money(r.valor) + ' por mês' + (r.dias ? ' (' + r.dias + ' plantões)' : '')
+      tabela: true, linhas: linhas, unidade: s.unidade, cols: s.cols.map(function (c) { return c.t; }), linhaLabel: s.linhaLabel,
+      linha: s.t + ': ' + linhas.map(function (l) { return l.h + (l.sub ? ' ' + l.sub : '') + ' ' + l.valores.join(' / '); }).join('; ')
     };
   }
 
@@ -160,8 +104,7 @@
     if (cfg.modo !== 'servidor') return Promise.resolve(calcular(window.CUIDARE_PRECOS, a));
     if (!isComplete(a)) return Promise.resolve({ status: 'incompleto' });
     if (location.protocol === 'file:') return Promise.resolve({ status: 'sob_consulta', motivo: 'indisponivel' });
-    var params = porDiaria(a) ? { servico: a.servico } : { servico: a.servico, duracao: a.duracao, frequencia: a.frequencia };
-    var q = new URLSearchParams(params);
+    var q = new URLSearchParams({ servico: a.servico });
     var ctrl = 'AbortController' in window ? new AbortController() : null;
     var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, cfg.timeoutMs || 8000);
     return fetch((cfg.endpoint || '/api/preco') + '?' + q, { signal: ctrl ? ctrl.signal : undefined, headers: { accept: 'application/json' } })
@@ -173,14 +116,9 @@
   /* ---------- Resumo ---------- */
   function summaryRows(a) {
     a = a || {};
-    if (porDiaria(a)) return [
-      { k: 'servico', step: 0, label: 'Atendimento', value: labelOf('servico', a.servico) },
-      { k: 'modalidade', label: 'Valores', value: 'Por diária, conforme a duração', fixed: true }
-    ];
     return [
-      { k: 'servico', step: 0, label: 'Atendimento', value: labelOf('servico', a.servico) },
-      { k: 'duracao', step: 1, label: 'Duração', value: labelOf('duracao', a.duracao) },
-      { k: 'frequencia', step: 2, label: 'Frequência', value: labelOf('frequencia', a.frequencia) }
+      { k: 'servico', step: 0, label: 'Plano', value: labelOf('servico', a.servico) },
+      { k: 'modalidade', label: 'Valores', value: porDiaria(a) ? 'Por dia, conforme a duração e o dia da semana' : isMensal(a) ? 'Por mês, conforme a duração e os dias da semana' : '', fixed: true }
     ];
   }
 
@@ -195,10 +133,11 @@
   function clear() { try { sessionStorage.removeItem(KEY); } catch (e) { /* noop */ } }
 
   window.CuidareConsulta = {
-    KEY: KEY, STEPS: STEPS, stepsFor: stepsFor, journeyLabels: journeyLabels, porDiaria: porDiaria, SERVICOS: SERVICOS, DURACOES: DURACOES, FREQUENCIAS: FREQUENCIAS,
+    KEY: KEY, STEPS: STEPS, stepsFor: stepsFor, journeyLabels: journeyLabels, porDiaria: porDiaria, isMensal: isMensal,
+    SERVICOS: SERVICOS, DURACOES: DURACOES,
     optionsFor: optionsFor, sanitize: sanitize, labelOf: labelOf, servico: servico,
     stepDone: stepDone, firstIncomplete: firstIncomplete, isComplete: isComplete,
-    calcular: calcular, obterPreco: obterPreco, money: money, priceText: priceText, isMensal: isMensal,
+    calcular: calcular, obterPreco: obterPreco, money: money, priceText: priceText,
     summaryRows: summaryRows,
     load: load, save: save, clear: clear
   };

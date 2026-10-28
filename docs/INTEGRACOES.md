@@ -25,28 +25,19 @@ Endereços do site anterior continuam funcionando (`_redirects`): `/experiencia/
 
 ## 2. Regra comercial
 
-- A página inicial **não mostra preços**. Tocar em uma opção já avança; só existe “Voltar”.
-- **Cuidados em residência:** o visitante escolhe duração e frequência, e a página `/valor/` mostra
-  **somente** o valor mensal dessa combinação (sem tabela nem comparação). A página `/detalhes/` repete
-  apenas esse valor.
-- **Atendimento por dia (antes “Consultas e exames”):** tocar no cartão leva direto à **tabela de valores
-  por dia** desse atendimento, sem outras etapas e sem valores mensais. Linhas: as durações, com ícone de
-  dia, noite ou 24 horas. Colunas: segunda a sexta e sábados, domingos e feriados. A página `/detalhes/`
-  repete a mesma tabela.
-  - O acompanhamento hospitalar passou a usar os planos mensais (12h diurnas, 12h noturnas e 24h).
-  - Atendimento por dia (“Duração do atendimento”): 6 horas, 8 horas, 12 horas diurno, 12 horas noturno e 24 horas.
-- O atendimento **pós-operatório foi retirado** (cartão, foto, textos e opções). Uma consulta antiga salva
-  com ele é descartada e o visitante escolhe de novo.
-- Sem valor validado para a combinação, o site **não inventa**: mostra “Proposta personalizada” e leva à
-  solicitação.
-- Testado automaticamente: as 18 combinações da residência (15 com valor, 3 com proposta personalizada)
-  e as tabelas de hospital e consultas.
+- Dois planos na página inicial: **Planos Mensais** e **Planos Diários** (o acompanhamento hospitalar
+  e o pós-operatório foram retirados). Tocar em um plano abre direto a **tabela completa de valores**.
+- Planos Mensais: durações nas linhas; segunda a sexta, segunda a sábado e todos os dias nas colunas.
+- Planos Diários: durações nas linhas; segunda a sexta e sábados, domingos e feriados nas colunas.
+- Na página da tabela, as abas trocam de plano sem voltar. A página `/detalhes/` repete a tabela.
+- Sem valor validado, o site **não inventa**: a duração não aparece ou a célula mostra “Sob consulta”.
+- Consultas antigas salvas no navegador (hospital, pós-operatório, etapas antigas) são descartadas.
 
 ## 3. Tabela de preços (`assets/js/precos.js`)
 
 Valores enviados pela Cuidare em 28/10/2026.
 
-**1. Planos mensais, cuidados em residência ou hospital**
+**1. Planos Mensais**
 
 | Plano | Segunda a sexta | Segunda a sábado | Todos os dias |
 | --- | --- | --- | --- |
@@ -56,7 +47,7 @@ Valores enviados pela Cuidare em 28/10/2026.
 | 12 horas noturnas | R$ 5.897 | R$ 6.897 | R$ 7.897 |
 | 24 horas | R$ 10.897 | R$ 12.897 | R$ 14.797 |
 
-**2. Planos avulsos, atendimento por dia**
+**2. Planos Diários (avulsos)**
 
 | Duração | Segunda a sexta | Sábados, domingos e feriados |
 | --- | --- | --- |
@@ -66,9 +57,7 @@ Valores enviados pela Cuidare em 28/10/2026.
 | 12 horas noturnas | R$ 317 | R$ 337 |
 | 24 horas | R$ 597 | R$ 617 |
 
-- Residência e hospital: duração e frequência, um valor mensal por consulta. O hospital oferece 12h
-  diurnas, 12h noturnas e 24h (e “Ainda não sei”).
-- Atendimento por dia: tocar no cartão abre a tabela de valores por dia.
+- Planos Mensais (chave `residencia`) e Planos Diários (chave `consultas`) mostram as tabelas acima.
 - O site não mostra número de profissionais por plano (a tabela não informa).
 - Orçamento válido por 5 dias (texto mantido da proposta anterior; confirme).
 
@@ -85,7 +74,7 @@ código do navegador:
 4. Apague `assets/js/precos.js` e as linhas `<script src=".../precos.js">` das três páginas.
 
 A função `netlify/functions/preco.mjs` (`/api/preco`) devolve **apenas** o valor da combinação pedida
-(para hospital e consultas, as linhas da tabela por dia; só o atendimento é pedido).
+(`?servico=residencia` ou `?servico=consultas`).
 Se ela falhar, o site mostra proposta personalizada, sem inventar valor.
 
 ## 5. Medição (depende de conta)
@@ -98,16 +87,8 @@ frequência), `consulta_complete`, `price_view` e `details_view`.
 
 ## 6. Fotos
 
-**Página do valor:** usa duas fotos recortadas das imagens de referência enviadas pela Cuidare
-(`assets/photos/cuidado-principal.webp` e `cuidado-apoio.webp`), sem os selos embutidos e sem o logo de
-coração dos uniformes. Atenção: essas imagens parecem geradas por IA e têm resolução baixa (foram
-ampliadas). **Recomendado:** trocar por fotos reais da equipe, com autorização de uso de imagem, em
-`config.js → fotosValor` (retrato ~900×1000 e paisagem ~900×800).
-
-**Cartões de atendimento (página inicial):** usam fotos recortadas da imagem de referência enviada pela
-Cuidare (`assets/photos/residencia.webp`, `hospital.webp`, `consultas.webp`), sem os
-textos, selos e ícones que vinham sobre a imagem. Para trocar por fotos reais, substitua esses arquivos
-(~900×700) ou altere os caminhos em `config.js → photos`; deixe vazio para voltar à composição visual.
+**Cartões e página da tabela:** ilustrações dos planos (`assets/photos/planos-mensais.webp` e
+`planos-diarios.webp`), recortadas das imagens enviadas pela Cuidare. Para trocar, substitua os arquivos.
 
 ## 7. Identidade visual e logo
 
@@ -128,14 +109,14 @@ textos, selos e ícones que vinham sobre a imagem. Para trocar por fotos reais, 
 | 9 depoimentos com nome | Capa | Enviados pela Cuidare e PDF “Proposta Personalizada”. **Confirme a autorização de cada pessoa** |
 | Link “Ver avaliações públicas” | Capa | Busca no Google Maps. **Troque pelo link exato do perfil** em `config.js → reviewsUrl` |
 | Aviso de privacidade | Todas as páginas | Texto-base (o site não registra dados pessoais). **Revise com o jurídico** |
-| Opções da consulta (12h noturno e 24h no hospital e em consultas) | Consulta | Proposta comercial. **Confirme que a operação atende todas** |
+| Durações dos planos (6h, 8h, 12h diurnas, 12h noturnas e 24h) | Tabelas | Valores enviados pela Cuidare. **Confirme que a operação atende todas** |
 
 ## 9. O que mudou em relação à versão anterior
 
 - Três páginas: `/` (capa + consulta), `/valor/` (somente o valor escolhido), `/detalhes/` (resumo e detalhes do atendimento).
 - Volta a exibir preço, **um por consulta**, a partir de uma tabela única.
 - Visual escuro, azul e branco, com corações e esferas 3D em WebGL (versão leve em CSS nos aparelhos mais simples).
-- Títulos em Fredoka, abertura animada com o logo e entrada dos módulos em cascata.
+- Títulos em Baloo 2 e textos em Nunito (fontes arredondadas), abertura animada e entrada dos módulos em cascata.
 - Fotos na página do valor.
 - Sem formulário, telefone ou WhatsApp: a apresentação é enviada a quem já conversa com a equipe.
 - Consulta curta (atendimento e, na residência, duração e frequência), sem bairro, início ou
@@ -149,10 +130,18 @@ textos, selos e ícones que vinham sobre a imagem. Para trocar por fotos reais, 
 
 - [ ] Capa abre bem no celular e no computador; “Consultar valores” leva à seleção.
 - [ ] Consulta completa tocando nas opções (sem “Continuar”); “Voltar”, indicador de etapas e voltar do navegador funcionam.
-- [ ] Hospital e consultas: tocar no cartão abre a tabela por dia; residência: três etapas e valor mensal.
+- [ ] Planos Mensais e Planos Diários: tocar no cartão abre a tabela; as abas trocam de plano.
 - [ ] Voltar do valor com o botão do celular: a consulta continua respondendo ao toque.
 - [ ] Página 2 mostra só o valor escolhido; “Alterar minhas escolhas” funciona.
 - [ ] Página 3: resumo confere, “Editar” leva à etapa certa e volta ao valor; “Voltar ao valor” funciona.
 - [ ] Pendências de preço (seção 3) confirmadas.
 - [ ] Aviso de privacidade revisado; depoimentos autorizados; link de avaliações atualizado.
 - [ ] (Se usar) GTM configurado, aviso de consentimento aparecendo, eventos chegando.
+
+## 11. Versão de 28/10/2026
+
+- Botões da capa: “Planos / Investimentos” e “Quem Somos”; menu “Planos”, “Quem Somos”, “Depoimentos”.
+- Dois planos (Mensais e Diários) com tabela direta, abas na página da tabela e ilustrações novas.
+- Cartões e tabela com inclinação 3D e brilho (mouse, dedo e, no Android, inclinação do aparelho),
+  botões com brilho, ícones animados. 3D liberado em mais celulares.
+- Rolagem mais leve (sem desfoque nas animações) e cartões que não “fogem” do mouse ao rolar.
