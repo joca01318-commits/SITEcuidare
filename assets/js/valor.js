@@ -67,7 +67,7 @@
       '<div class="price__actions">' + actions + '</div>' +
       '<a class="price__change" href="' + plansUrl + '">' + ICON('edit') + 'Voltar aos planos</a></div>' + rest + photo + '</div>';
 
-    C.reveal(box);
+    C.reveal(box); C.deco(box);
     C.tilt(box);
     document.title = (s.t ? s.t + ' — valores' : 'Valores') + ' · Cuidare Vila Mariana';
     C.track('price_view', { status: r.status, servico: a.servico });

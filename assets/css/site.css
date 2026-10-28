@@ -255,7 +255,7 @@ ul, ol { list-style: none; }
 .svc__card { position: relative; display: block; cursor: pointer; perspective: 1200px; -webkit-tap-highlight-color: transparent; }
 .svc__card input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
 .svc__in { --rx: 0deg; --ry: 0deg; --gx: 50%; --gy: 30%; position: relative; display: flex; flex-direction: column; height: 100%; border-radius: var(--r-xl); overflow: hidden; isolation: isolate;
-  background: linear-gradient(180deg, rgba(220, 235, 255, 0.1), rgba(220, 235, 255, 0.03)), rgba(6, 26, 53, 0.6); border: 1px solid rgba(23, 105, 255, 0.45);
+  background: linear-gradient(180deg, rgba(220, 235, 255, 0.1), rgba(220, 235, 255, 0.03)), rgba(6, 26, 53, 0.9); border: 1px solid rgba(23, 105, 255, 0.45);
   box-shadow: 0 30px 70px -36px rgba(6, 26, 53, 0.9), 0 0 0 1px rgba(23, 105, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   transform: rotateX(var(--rx)) rotateY(var(--ry)); transform-style: preserve-3d; transition: transform .6s var(--ease), border-color .35s, box-shadow .5s var(--ease); will-change: transform; }
 .svc__in.is-tilting { transition: transform .12s linear, border-color .35s, box-shadow .5s var(--ease); }
@@ -635,6 +635,7 @@ a.pcard:hover .pcard__more svg { transform: translateX(4px); }
 .ptab--compact .ptab__ic svg { width: 13px; height: 13px; }
 .ptab--compact .ptab__ic b { font-size: .68rem; }
 .ptab--compact .ptab__h { font-size: .9rem; }
+.ptab--compact .ptab__sub { white-space: nowrap; font-size: .64rem; }
 .ptab--compact .ptab__v { font-size: 1.05rem; }
 .ptab--compact.ptab--c3 .ptab__v { font-size: .92rem; }
 .ptab--compact.ptab--c3 .ptab__ic { display: none; }
@@ -728,7 +729,6 @@ html.intro-on .badge { animation-delay: calc(var(--d, 0) * 120ms + 700ms), calc(
 html.intro-on [data-split][data-intro] { --wd: calc(var(--d, 0) * 110ms + 760ms); }
 .motion [data-split]:not(.is-in) .w__i { opacity: 0; }
 .motion [data-split].is-in .w__i { animation: wordIn 1s var(--spring) both; animation-delay: calc(var(--wd, 0ms) + var(--wi, 0) * 65ms); }
-@keyframes wordIn { from { opacity: 0; transform: translateY(.6em) rotate(5deg) scale(.9); } }
 
 /* Módulos em cascata */
 .motion .kpis[data-intro] { animation: none; }
@@ -738,6 +738,134 @@ html.intro-on .kpis li { animation-delay: calc(var(--i, 0) * 90ms + 1200ms); }
 .motion [data-stagger].is-in > * { animation: modIn 1s var(--spring) backwards; animation-delay: calc(var(--si, 0) * 90ms); }
 @keyframes modIn { from { opacity: 0; transform: perspective(900px) translateY(46px) rotateX(16deg) scale(.94); } }
 .q.is-waiting .svc__card, .q.is-waiting .tile { opacity: 0; }
+
+/* =========================================================================
+   Enfeites animados (camada [data-deco] criada em core.js) e acabamento premium
+   Só transform/opacity nas animações contínuas; ciclos de 3 a 30 s, fora de sincronia.
+   ========================================================================= */
+[data-deco] { position: relative; isolation: isolate; }
+.deco { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.deco__glow { position: absolute; left: 10%; top: -30%; width: 80%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(23, 105, 255, 0.16), transparent 62%); }
+.motion .deco__glow { animation: glowDrift 16s ease-in-out infinite alternate; }
+@keyframes glowDrift { from { transform: translate(-12%, 0) scale(1); } to { transform: translate(14%, 12%) scale(1.15); } }
+.dk-ring { position: absolute; width: var(--s); height: var(--s); margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2); border-radius: 50%; border: 1px solid rgba(220, 235, 255, 0.16); box-shadow: inset 0 0 40px rgba(23, 105, 255, 0.06); }
+.dk-ring i { position: absolute; left: 50%; top: -4px; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: var(--ice); box-shadow: 0 0 12px 2px var(--electric); }
+.motion .dk-ring { animation: dkSpin var(--t) linear infinite; }
+.motion .dk-ring--rev { animation-direction: reverse; }
+@keyframes dkSpin { to { transform: rotate(360deg); } }
+.dk-circ { position: absolute; width: var(--s); height: var(--s); margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2); border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(220, 235, 255, 0.14), rgba(23, 105, 255, 0.07) 45%, transparent 70%); border: 1px solid rgba(220, 235, 255, 0.07); }
+.motion .dk-circ { animation: dkDrift var(--t) ease-in-out var(--dl) infinite alternate; }
+@keyframes dkDrift { to { translate: 18px -22px; scale: 1.08; } }
+.dk-dot { position: absolute; width: var(--s); height: var(--s); border-radius: 50%; background: var(--ice); box-shadow: 0 0 14px 3px rgba(23, 105, 255, 0.85); opacity: .7; }
+.motion .dk-dot { animation: dkPulse var(--t) ease-in-out var(--dl) infinite; }
+@keyframes dkPulse { 0%, 100% { opacity: .25; scale: .7; } 50% { opacity: .9; scale: 1.15; } }
+.dk-ico { position: absolute; display: grid; place-items: center; width: var(--s); height: var(--s); border-radius: 30%; color: var(--ice);
+  background: linear-gradient(150deg, rgba(220, 235, 255, 0.16), rgba(23, 105, 255, 0.12)); border: 1px solid rgba(220, 235, 255, 0.2); box-shadow: 0 14px 30px -14px rgba(6, 26, 53, 0.9), 0 0 24px -8px var(--electric), inset 0 1px 0 rgba(255, 255, 255, 0.18); opacity: .85; }
+.dk-ico svg { width: 46%; height: 46%; }
+.motion .dk-ico { animation: dkFloat var(--t) ease-in-out var(--dl) infinite, dkIn 1s var(--spring) backwards; }
+@keyframes dkFloat { 0%, 100% { translate: 0 0; rotate: -4deg; } 50% { translate: 0 -16px; rotate: 5deg; } }
+@keyframes dkIn { from { opacity: 0; scale: .6; } }
+.dk-chip { position: absolute; display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 7px; border-radius: 999px; white-space: nowrap; font-size: .78rem; font-weight: 800; color: var(--white);
+  background: rgba(6, 37, 77, 0.72); border: 1px solid rgba(220, 235, 255, 0.2); box-shadow: 0 16px 34px -16px rgba(6, 26, 53, 0.9), 0 0 20px -8px var(--electric); opacity: .9; }
+.dk-chip b { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--electric); box-shadow: 0 0 12px var(--electric); }
+.dk-chip svg { width: 12px; height: 12px; }
+.motion .dk-chip { animation: dkFloat var(--t) ease-in-out var(--dl) infinite; }
+.dk-wave { position: absolute; left: 0; bottom: -2px; display: flex; width: 200%; height: clamp(50px, 8vw, 110px); }
+.dk-wave svg { flex: none; width: 50%; height: 100%; }
+.dk-wave path { fill: rgba(23, 105, 255, 0.07); }
+.motion .dk-wave { animation: waveX var(--t) linear infinite; }
+@keyframes waveX { to { transform: translateX(-50%); } }
+.dk-line { position: absolute; left: 0; width: 100%; overflow: visible; }
+.dk-line path { fill: none; stroke: rgba(220, 235, 255, 0.09); stroke-width: 1.5px; vector-effect: non-scaling-stroke; }
+.dk-line .dk-line__run { stroke: var(--electric); stroke-width: 2px; stroke-linecap: round; stroke-dasharray: 7 93; stroke-dashoffset: 100; opacity: .8; }
+.dk-line .dk-line__run { stroke-dasharray: 14 30; stroke-dashoffset: 0; }
+.motion .dk-line .dk-line__run { animation: lineGlow 6s ease-in-out infinite; }
+@keyframes lineGlow { 0%, 100% { opacity: .15; } 50% { opacity: .75; } }
+.dk-spark { position: absolute; width: var(--s); height: var(--s); border-radius: 50%; background: var(--ice); box-shadow: 0 0 8px rgba(220, 235, 255, 0.8); opacity: var(--o); }
+.motion .dk-spark { animation: sparkUp var(--t) linear var(--dl) infinite; }
+@keyframes sparkUp { 0% { opacity: 0; transform: translateY(0); } 20% { opacity: var(--o); } 80% { opacity: var(--o); } 100% { opacity: 0; transform: translateY(-60px); } }
+@media (max-width: 759px) { .dk--d { display: none; } .dk-ring { opacity: .7; } }
+.is-off .deco *, .is-off .deco *::before, .is-off .svc__fx *, .is-off .edge::before, .is-off .svc__edge::before, .is-off .svc__in, .is-off .svc__icon { animation-play-state: paused !important; }
+
+/* Títulos: fonte mais gorda, revelação por máscara (de baixo para cima) com assentamento, sublinhado animado */
+.h2, .hero__title, .price__title, .dt__title, .svc__t, .final__card .h2, .xcard h3, .tst__big, .info__card h3 { font-weight: 800; letter-spacing: -.012em; }
+.hero__title { line-height: 1.02; }
+.motion [data-split] .w { overflow: hidden; padding: .16em .05em .18em; margin: -.16em -.05em -.18em; vertical-align: top; }
+@keyframes wordIn { 0% { opacity: 0; transform: translateY(110%); } 70% { opacity: 1; transform: translateY(-5%); } 100% { transform: none; } }
+.h2::after { content: ""; display: block; width: 86px; height: 5px; margin-top: 18px; border-radius: 6px; background: linear-gradient(90deg, var(--electric), var(--ice)); box-shadow: 0 0 18px rgba(23, 105, 255, 0.9); transform-origin: left; }
+.why__head .h2::after, .final__card .h2::after { margin-inline: auto; transform-origin: center; }
+.motion .h2::after { transform: scaleX(0); transition: transform 1s var(--spring) .55s; }
+.motion .h2.is-in::after, .motion .h2[data-intro]::after { transform: scaleX(1); }
+.final__card .h2::after { display: none; }
+
+/* Cartões dos planos: luz que percorre a borda, elevação, reflexo e composição interna */
+.svc__in { transform: translateY(var(--lift, 0px)) rotateX(var(--rx)) rotateY(var(--ry)); }
+.svc__card:hover .svc__in { --lift: -8px; }
+.svc__card:active .svc__in { --lift: -2px; }
+.svc__edge, .edge { position: absolute; inset: 0; z-index: 5; padding: 1.5px; border-radius: inherit; pointer-events: none; overflow: hidden;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); opacity: .75; }
+.svc__edge::before, .edge::before { content: ""; position: absolute; left: 50%; top: 50%; width: 160%; aspect-ratio: 1; margin: -80% 0 0 -80%;
+  background: conic-gradient(transparent 0deg 250deg, rgba(220, 235, 255, 0.9) 300deg, var(--electric) 320deg, transparent 350deg); }
+.motion .svc__edge::before, .motion .edge::before { animation: dkSpin 6s linear infinite; }
+.motion .svc__card:nth-child(2) .svc__edge::before { animation-duration: 7.5s; animation-delay: -3s; }
+.svc__card:hover .svc__edge, .svc__card:has(input:checked) .svc__edge { opacity: 1; }
+.svc__in::after { content: ""; position: absolute; right: -70px; bottom: -70px; z-index: -1; width: 220px; height: 220px; border-radius: 50%; border: 1px solid rgba(220, 235, 255, 0.1); box-shadow: 0 0 0 26px rgba(23, 105, 255, 0.04), 0 0 0 54px rgba(23, 105, 255, 0.03); pointer-events: none; }
+.svc__in::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(70% 50% at 0% 100%, rgba(23, 105, 255, 0.18), transparent 70%); }
+.svc__card:has(input:checked) .svc__in { background-color: rgba(7, 87, 184, 0.35); }
+.svc__fx { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.fx-orbit { position: absolute; left: 50%; top: 52%; width: 78%; aspect-ratio: 1; margin: -39% 0 0 -39%; border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, 0.5); }
+.fx-orbit--dash { border-style: dashed; border-color: rgba(255, 255, 255, 0.55); }
+.fx-orbit i { position: absolute; left: 50%; top: -6px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--white); box-shadow: 0 0 14px 3px var(--electric); }
+.motion .fx-orbit { animation: dkSpin 18s linear infinite; }
+.motion .fx-orbit--dash { animation-duration: 11s; animation-direction: reverse; }
+.fx-chip { position: absolute; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px; border-radius: 999px; font-size: .74rem; font-weight: 800; white-space: nowrap; color: var(--navy);
+  background: rgba(255, 255, 255, 0.88); box-shadow: 0 12px 26px -12px rgba(6, 26, 53, 0.7), 0 0 0 4px rgba(255, 255, 255, 0.18); transition: transform .6s var(--ease); }
+.fx-chip svg { width: 14px; height: 14px; color: var(--electric); }
+.fx-chip--a { left: 6%; top: 8%; }
+.fx-chip--b { right: 6%; top: 38%; }
+.fx-bub { position: absolute; right: 7%; top: 7%; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; color: var(--electric); background: rgba(255, 255, 255, 0.9); box-shadow: 0 12px 26px -12px rgba(6, 26, 53, 0.7), 0 0 0 5px rgba(255, 255, 255, 0.2); transition: transform .6s var(--ease); }
+.fx-bub svg { width: 20px; height: 20px; }
+.motion .fx-chip--a { animation: dkFloat 5.5s ease-in-out infinite; }
+.motion .fx-chip--b { animation: dkFloat 7s ease-in-out -2s infinite; }
+.motion .fx-bub { animation: dkFloat 4.2s ease-in-out -1s infinite; }
+.fx-days { position: absolute; left: 6%; bottom: 8%; display: flex; gap: 4px; padding: 6px; border-radius: 10px; background: rgba(255, 255, 255, 0.85); box-shadow: 0 12px 26px -12px rgba(6, 26, 53, 0.7); }
+.fx-days i { position: relative; width: 10px; height: 10px; border-radius: 3px; background: rgba(23, 105, 255, 0.22); }
+.fx-days i::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--electric); box-shadow: 0 0 8px var(--electric); opacity: .9; }
+.motion .fx-days i::after { animation: dayOn 7s ease-in-out infinite; animation-delay: inherit; }
+.fx-days i:nth-child(2) { animation-delay: .5s; } .fx-days i:nth-child(3) { animation-delay: 1s; } .fx-days i:nth-child(4) { animation-delay: 1.5s; } .fx-days i:nth-child(5) { animation-delay: 2s; } .fx-days i:nth-child(6) { animation-delay: 2.5s; } .fx-days i:nth-child(7) { animation-delay: 3s; }
+@keyframes dayOn { 0%, 8% { opacity: 0; } 14%, 70% { opacity: .95; } 80%, 100% { opacity: 0; } }
+.fx-ticks { position: absolute; left: 6%; bottom: 8%; display: grid; gap: 5px; padding: 8px 10px; border-radius: 12px; background: rgba(255, 255, 255, 0.88); box-shadow: 0 12px 26px -12px rgba(6, 26, 53, 0.7); }
+.fx-ticks i { display: block; width: 58px; height: 8px; border-radius: 6px; background: linear-gradient(90deg, var(--electric) 0 8px, transparent 8px 12px, rgba(23, 105, 255, 0.22) 12px); }
+.motion .fx-ticks i { animation: tickOn 6s ease-in-out infinite; transform-origin: left; }
+.fx-ticks i:nth-child(2) { animation-delay: .6s; width: 46px; } .fx-ticks i:nth-child(3) { animation-delay: 1.2s; width: 52px; }
+@keyframes tickOn { 0%, 10% { opacity: .35; transform: scaleX(.6); } 22%, 80% { opacity: 1; transform: none; } 92%, 100% { opacity: .35; transform: scaleX(.6); } }
+.fx-dot { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--white); box-shadow: 0 0 12px 3px var(--electric); }
+.fx-dot--1 { left: 40%; top: 16%; } .fx-dot--2 { left: 18%; top: 54%; } .fx-dot--3 { right: 26%; bottom: 20%; }
+.motion .fx-dot { animation: dkPulse 3.4s ease-in-out infinite; }
+.motion .fx-dot--2 { animation-duration: 4.6s; animation-delay: -1s; } .motion .fx-dot--3 { animation-duration: 5.8s; animation-delay: -2s; }
+.svc__card:hover .fx-chip--a { transform: translate(-6px, -4px); }
+.svc__card:hover .fx-chip--b { transform: translate(6px, -3px); }
+.svc__card:hover .fx-bub { transform: translate(4px, -6px) scale(1.08); }
+@media (max-width: 400px) { .fx-chip { font-size: .66rem; padding: 5px 9px 5px 6px; } .fx-bub { width: 36px; height: 36px; } }
+
+/* Tabela, ilustração e cartões de informação: luz na borda e órbita */
+.info__card { position: relative; background-color: rgba(6, 26, 53, 0.88); }
+.aside, .xcard { background-color: rgba(6, 26, 53, 0.85); }
+.info__card .edge { opacity: 0; transition: opacity .4s; }
+.info__card:hover .edge { opacity: .85; }
+.motion .info__card .edge::before { animation-play-state: paused; }
+.motion .info__card:hover .edge::before { animation-play-state: running; }
+.motion .pcard--tabela .edge::before { animation-duration: 8s; }
+.motion .final__card .edge::before { animation-duration: 10s; }
+.price__art::before { content: ""; position: absolute; left: 50%; top: 50%; z-index: -1; width: 128%; aspect-ratio: 1; margin: -64% 0 0 -64%; border-radius: 50%; border: 1px dashed rgba(220, 235, 255, 0.28); }
+.price__art::after { content: ""; position: absolute; left: 50%; top: 50%; z-index: -1; width: 150%; aspect-ratio: 1; margin: -75% 0 0 -75%; border-radius: 50%; border: 1px solid rgba(220, 235, 255, 0.1); border-top-color: rgba(23, 105, 255, 0.7); }
+.motion .price__art::before { animation: dkSpin 24s linear infinite; }
+.motion .price__art::after { animation: dkSpin 12s linear infinite reverse; }
+.kpis li { position: relative; overflow: hidden; }
+.kpis li::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(105deg, transparent 40%, rgba(220, 235, 255, 0.14) 50%, transparent 60%); transform: translateX(-120%); }
+.motion .kpis li::after { animation: ptabShine 6s var(--ease) infinite; animation-delay: calc(var(--i, 0) * .7s + 2s); }
+.xcard { transition: border-color .35s, box-shadow .5s var(--ease); }
+.xcard:hover { border-color: rgba(23, 105, 255, 0.6); box-shadow: 0 30px 60px -34px rgba(23, 105, 255, 0.8); }
 
 @view-transition { navigation: auto; }
 ::view-transition-old(root) { animation: vtOut .35s ease-in both; }

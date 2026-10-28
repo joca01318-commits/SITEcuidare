@@ -57,13 +57,25 @@
   function serviceIcon(v) { var s = K.servico(v); return s ? s.icon : 'heart'; }
 
   /* Telas */
+  // Enfeites próprios de cada plano, sobre a ilustração: Mensal (continuidade, calendário, casa e coração)
+  // e Diário (flexibilidade, relógio e confirmações).
+  function planFx(o) {
+    var chip = function (cls, icon, txt) { return '<span class="fx-chip ' + cls + '">' + ICON(icon) + txt + '</span>'; };
+    var bub = function (cls, icon) { return '<span class="fx-bub ' + cls + '">' + ICON(icon) + '</span>'; };
+    var dots = '<span class="fx-dot fx-dot--1"></span><span class="fx-dot fx-dot--2"></span><span class="fx-dot fx-dot--3"></span>';
+    var inner = o.v === 'residencia'
+      ? '<span class="fx-orbit"><i></i></span>' + chip('fx-chip--a', 'check', 'Rotina fixa') + chip('fx-chip--b', 'calendar', 'Seg a sáb') + bub('fx-bub--c', 'heart') + '<span class="fx-days" ><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>'
+      : '<span class="fx-orbit fx-orbit--dash"><i></i></span>' + chip('fx-chip--a', 'clock', '6h a 24h') + chip('fx-chip--b', 'check', 'Por dia') + bub('fx-bub--c', 'check') + '<span class="fx-ticks"><i></i><i></i><i></i></span>';
+    return '<span class="svc__fx svc__fx--' + o.v + '" aria-hidden="true">' + inner + dots + '</span>';
+  }
+
   function svcHTML() {
     return '<div class="svc" role="radiogroup" aria-labelledby="q-title">' + K.optionsFor('servico', a).map(function (o, k) {
       // O cartão (área de toque) fica parado; só o conteúdo interno se inclina em 3D,
       // para o cartão não "fugir" do mouse ao rolar a página.
       return '<label class="svc__card" style="--i:' + k + '"><input type="radio" name="servico" value="' + o.v + '"' + (a.servico === o.v ? ' checked' : '') + '>' +
-        '<span class="svc__in" data-tilt="7"><span class="svc__glare" aria-hidden="true"></span>' +
-        '<span class="svc__visual" data-photo="' + o.v + '" style="--a:' + (190 + k * 25) + 'deg">' +
+        '<span class="svc__in" data-tilt="7"><span class="svc__edge" aria-hidden="true"></span><span class="svc__glare" aria-hidden="true"></span>' +
+        '<span class="svc__visual" data-photo="' + o.v + '" style="--a:' + (190 + k * 25) + 'deg">' + planFx(o) +
         '<span class="svc__tag svc__tag--1">' + o.tags[0] + '</span><span class="svc__tag svc__tag--2">' + o.tags[1] + '</span><span class="svc__tag svc__tag--3">' + o.tags[2] + '</span>' +
         '<span class="svc__icon">' + ICON(o.icon) + '</span></span>' +
         '<span class="svc__body"><span class="svc__k">' + o.s + '</span><span class="svc__t">' + o.t + '</span><span class="svc__d">' + o.d + '</span>' +

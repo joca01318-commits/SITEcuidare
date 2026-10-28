@@ -145,3 +145,14 @@ frequência), `consulta_complete`, `price_view` e `details_view`.
 - Cartões e tabela com inclinação 3D e brilho (mouse, dedo e, no Android, inclinação do aparelho),
   botões com brilho, ícones animados. 3D liberado em mais celulares.
 - Rolagem mais leve (sem desfoque nas animações) e cartões que não “fogem” do mouse ao rolar.
+
+## 12. Enfeites e animações (versão decorada)
+
+- Camada decorativa por seção (`data-deco` + `core.js → DK`): anéis orbitais, partículas, pontos de luz,
+  círculos translúcidos, ondas, linhas curvas luminosas, ícones e selos flutuando. Pausada fora da tela;
+  menos peças no celular; desligada com "reduzir movimento".
+- Cartões dos planos com luz percorrendo a borda, elevação, reflexo e enfeites próprios (Mensal:
+  calendário, rotina e coração; Diário: relógio, checklist e confirmações).
+- Títulos em Baloo 2 ExtraBold, com revelação por máscara e sublinhado animado.
+- **Fonte Moco (Glyphminds Studios):** é comercial. Para usar no site, é preciso comprar a licença de
+  webfont e enviar os arquivos `.woff2`. Até lá, os títulos seguem em Baloo 2.

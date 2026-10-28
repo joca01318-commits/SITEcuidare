@@ -112,7 +112,7 @@
     $('[data-dt-title]').innerHTML = cut > 0 ? esc(title.slice(0, cut)) + ' <em>' + esc(title.slice(cut + 1)) + '.</em>' : '<em>' + esc(title) + '.</em>';
     $('[data-dt-intro]').textContent = s.intro || '';
     var h = $('[data-dt-title]'); h.setAttribute('data-intro', ''); h.setAttribute('data-split', '');
-    C.reveal($('[data-full]'));
+    C.reveal($('[data-full]')); C.deco($('[data-full]'));
     document.title = title + ' — detalhes · Cuidare Vila Mariana';
   }
 

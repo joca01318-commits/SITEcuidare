@@ -268,6 +268,71 @@
     }, { passive: true });
   }
 
+  /* ---------- Enfeites animados por seção ([data-deco]) ---------- */
+  // Camada decorativa (atrás do conteúdo, sem cliques): anéis orbitais, ícones flutuando,
+  // pontos de luz, círculos translúcidos, ondas, linhas curvas luminosas, selos e partículas.
+  // Só transform e opacity nas animações; no celular, menos partículas e menos peças.
+  var DK = {
+    // [tipo, x%, y%, tamanho(px), duração(s), extra]
+    // a capa já tem a cena 3D: enfeites leves
+    hero: [['ring', 8, 70, 220, 26], ['ring', 88, 18, 160, 18, 'rev'], ['dot', 30, 22, 10, 4], ['dot', 70, 78, 8, 5.5], ['dot', 92, 60, 12, 3.6],
+      ['ico', 22, 14, 44, 7, 'calendar'], ['ico', 80, 84, 40, 9, 'check', 'd'], ['spark', 14]],
+    planos: [['circ', 92, 12, 260, 12], ['circ', 4, 78, 180, 10], ['ring', 96, 70, 300, 30, 'rev'], ['ring', 2, 18, 140, 16], ['wave', 0, 100, 0, 14],
+      ['line', 0, 10, 100, 30, 'b'], ['ico', 90, 32, 46, 8, 'home', 'd'], ['ico', 3, 52, 40, 6.5, 'heart', 'd'], ['ico', 94, 88, 38, 9.5, 'clock', 'd'], ['ico', 46, 6, 34, 7.5, 'calendar', 'd'],
+      ['chip', 76, 6, 0, 8, 'Supervisão próxima', 'd'], ['chip', 2, 92, 0, 9, 'Faltas cobertas', 'd'], ['dot', 70, 20, 10, 4.2], ['dot', 12, 60, 8, 5], ['dot', 50, 96, 12, 3.4], ['spark', 30]],
+    why: [['ring', 90, 20, 240, 24], ['circ', 6, 30, 200, 11], ['line', 0, 70, 100, 30, 'a'], ['ico', 10, 14, 40, 7, 'shield'], ['ico', 92, 70, 42, 8.5, 'users', 'd'],
+      ['dot', 80, 10, 10, 4.4], ['dot', 20, 86, 8, 5.2], ['spark', 22]],
+    tst: [['circ', 96, 20, 220, 12], ['ring', 4, 80, 180, 20, 'rev'], ['ico', 6, 20, 40, 7, 'star'], ['ico', 52, 90, 36, 9, 'heart', 'd'], ['chip', 70, 6, 0, 8.5, '4,8 de 5 estrelas', 'd'], ['dot', 40, 12, 10, 4], ['spark', 18]],
+    final: [['ring', 92, 50, 260, 22], ['ring', 6, 30, 160, 16, 'rev'], ['ico', 12, 76, 42, 7.5, 'heart'], ['ico', 86, 18, 38, 6.5, 'check'], ['dot', 60, 14, 10, 4.2], ['dot', 30, 90, 8, 5.4], ['wave', 0, 100, 0, 16], ['spark', 16]],
+    valor: [['circ', 4, 14, 220, 12], ['ring', 2, 60, 200, 26, 'rev'], ['ring', 98, 30, 260, 30], ['line', 0, 30, 100, 60, 'b'], ['wave', 0, 100, 0, 15],
+      ['ico', 44, 10, 40, 7, 'calendar', 'd'], ['ico', 96, 84, 42, 9, 'shield', 'd'], ['ico', 40, 94, 34, 6.5, 'check'], ['chip', 40, 95, 0, 8.5, 'Valores de tabela', 'd'],
+      ['dot', 30, 8, 10, 4.2], ['dot', 88, 12, 8, 5.6], ['dot', 60, 96, 10, 3.8], ['spark', 28]],
+    detalhes: [['circ', 96, 8, 240, 12], ['ring', 98, 50, 280, 30, 'rev'], ['ring', 2, 80, 160, 18], ['line', 0, 20, 100, 50, 'a'], ['ico', 97, 4, 42, 7.5, 'shield', 'd'],
+      ['ico', 1.5, 40, 38, 8.5, 'heart', 'd'], ['ico', 50, 3, 34, 6.5, 'check', 'd'], ['dot', 20, 10, 10, 4.4], ['dot', 70, 92, 8, 5], ['spark', 22]]
+  };
+  var WAVE = 'M0 60 C 150 20 300 100 450 60 S 750 20 900 60 S 1200 100 1350 60 S 1650 20 1800 60 S 2100 100 2400 60 V120 H0Z';
+  var LINES = { a: 'M0 70 C 18 20 38 95 55 50 S 85 10 100 40', b: 'M0 30 C 20 80 40 0 60 45 S 90 85 100 20' };
+  function deco(scope) {
+    var phone = window.innerWidth < 760;
+    $$('[data-deco]', scope).forEach(function (host) {
+      if (host.querySelector(':scope > .deco')) return;
+      var list = DK[host.getAttribute('data-deco')]; if (!list) return;
+      var seed = 7, rnd = function () { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+      var h = list.map(function (d, k) {
+        var t = d[0], pos = 'left:' + d[1] + '%;top:' + d[2] + '%;';
+        var dur = '--t:' + d[4] + 's;--dl:' + (-(k * 1.7) % 9).toFixed(1) + 's;';
+        var cls = (t === 'ico' || t === 'chip') && d[6] === 'd' ? ' dk--d' : '';
+        if (t === 'ring') return '<span class="dk-ring' + (d[5] === 'rev' ? ' dk-ring--rev' : '') + '" style="' + pos + '--s:' + d[3] + 'px;' + dur + '"><i></i></span>';
+        if (t === 'circ') return '<span class="dk-circ" style="' + pos + '--s:' + d[3] + 'px;' + dur + '"></span>';
+        if (t === 'dot') return '<span class="dk-dot" style="' + pos + '--s:' + d[3] + 'px;' + dur + '"></span>';
+        if (t === 'ico') return '<span class="dk-ico' + cls + '" style="' + pos + '--s:' + d[3] + 'px;' + dur + '"><svg><use href="#i-' + d[5] + '"/></svg></span>';
+        if (t === 'chip') return '<span class="dk-chip' + cls + '" style="' + pos + dur + '"><b><svg><use href="#i-check"/></svg></b>' + esc(d[5]) + '</span>';
+        if (t === 'wave') return '<span class="dk-wave" style="' + dur + '"><svg viewBox="0 0 2400 120" preserveAspectRatio="none"><path d="' + WAVE + '"/></svg><svg viewBox="0 0 2400 120" preserveAspectRatio="none"><path d="' + WAVE + '"/></svg></span>';
+        if (t === 'line') return '<svg class="dk-line" style="top:' + d[2] + '%;height:' + d[4] + '%;" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="' + LINES[d[5]] + '" pathLength="100"/><path class="dk-line__run" d="' + LINES[d[5]] + '" pathLength="100"/></svg>';
+        if (t === 'spark') {
+          var n = Math.round(d[1] * (phone ? 0.25 : 0.5)), out = '';
+          for (var i = 0; i < n; i++) out += '<span class="dk-spark" style="left:' + (rnd() * 100).toFixed(1) + '%;top:' + (rnd() * 100).toFixed(1) + '%;--s:' + (2 + rnd() * 3).toFixed(1) + 'px;--t:' + (6 + rnd() * 6).toFixed(1) + 's;--dl:' + (-rnd() * 10).toFixed(1) + 's;--o:' + (0.35 + rnd() * 0.5).toFixed(2) + '"></span>';
+          return out;
+        }
+        return '';
+      }).join('');
+      var layer = document.createElement('div');
+      layer.className = 'deco'; layer.setAttribute('aria-hidden', 'true');
+      layer.innerHTML = '<span class="deco__glow"></span>' + h;
+      host.insertBefore(layer, host.firstChild);
+    });
+    // Enfeites fora da tela ficam pausados (economiza bateria e deixa a rolagem leve).
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (en) { en.forEach(function (e) { e.target.classList.toggle('is-off', !e.isIntersecting); }); }, { rootMargin: '120px 0px' });
+      $$('[data-deco]', scope).forEach(function (h) { io.observe(h); });
+    }
+    // Luz que percorre a borda dos cartões de destaque
+    $$('.pcard--tabela, .info__card, .final__card', scope).forEach(function (el) {
+      if (el.querySelector(':scope > .edge')) return;
+      var e = document.createElement('span'); e.className = 'edge'; e.setAttribute('aria-hidden', 'true'); el.appendChild(e);
+    });
+  }
+
   /* ---------- Cena 3D (WebGL), sob demanda ---------- */
   function cena(canvas, opts) {
     if (!canvas || lowPower || !window.WebGLRenderingContext) return Promise.resolve(null);
@@ -318,6 +383,7 @@
 
   privacyDialog();
   consentBanner();
+  deco();
   reveal();
   photos();
   tilt();
@@ -325,6 +391,6 @@
 
   window.Cuidare = {
     cfg: CFG, $: $, $$: $$, store: store, reduce: reduce, finePointer: finePointer, lowPower: lowPower,
-    pageUrl: pageUrl, asset: function (p) { return /^(data:|https?:)/.test(p) ? p : root + p; }, track: track, journey: journey, reveal: reveal, split: split, intro: doc.classList.contains('intro-on'), cena: cena, esc: esc, photo: photo, tabela: tabela, tilt: tilt
+    pageUrl: pageUrl, asset: function (p) { return /^(data:|https?:)/.test(p) ? p : root + p; }, track: track, journey: journey, reveal: reveal, split: split, intro: doc.classList.contains('intro-on'), cena: cena, esc: esc, photo: photo, tabela: tabela, tilt: tilt, deco: deco
   };
 })();
