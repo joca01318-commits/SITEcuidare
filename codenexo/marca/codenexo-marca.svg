@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="460" viewBox="0 0 760 460">
+  <rect width="760" height="460" fill="#F7F5F0"/>
+
+  <!-- Símbolo: < • > (código + conexão) -->
+  <rect x="40" y="40" width="130" height="130" rx="30" fill="#0F3D3E"/>
+  <polyline points="92,72 62,105 92,138" fill="none" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="118,72 148,105 118,138" fill="none" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="105" cy="105" r="9" fill="#3DDC97"/>
+
+  <!-- Nome -->
+  <text x="200" y="125" font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="72" font-weight="700" letter-spacing="-1">
+    <tspan fill="#0F3D3E">code</tspan><tspan fill="#1FAF7A">nexo</tspan>
+  </text>
+  <text x="203" y="162" font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="19" fill="#4A5B5C">Sites e agendas que trabalham pela sua clínica</text>
+
+  <!-- Versão escura -->
+  <rect x="40" y="200" width="680" height="90" rx="18" fill="#0F3D3E"/>
+  <rect x="62" y="215" width="60" height="60" rx="14" fill="#F7F5F0"/>
+  <polyline points="86,230 72,245 86,260" fill="none" stroke="#0F3D3E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="98,230 112,245 98,260" fill="none" stroke="#0F3D3E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="92" cy="245" r="4.5" fill="#1FAF7A"/>
+  <text x="140" y="260" font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="40" font-weight="700" letter-spacing="-0.5">
+    <tspan fill="#FFFFFF">code</tspan><tspan fill="#3DDC97">nexo</tspan>
+  </text>
+  <rect x="560" y="226" width="140" height="40" rx="20" fill="#FF7A59"/>
+  <text x="630" y="252" text-anchor="middle" font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="16" font-weight="700" fill="#FFFFFF">Agendar</text>
+
+  <!-- Paleta -->
+  <g font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="13" fill="#1E2A2B">
+    <rect x="40"  y="315" width="124" height="70" rx="12" fill="#0F3D3E"/>
+    <text x="40"  y="405" font-weight="700">Verde-profundo</text><text x="40"  y="423" fill="#4A5B5C">#0F3D3E · base</text>
+    <rect x="179" y="315" width="124" height="70" rx="12" fill="#1FAF7A"/>
+    <text x="179" y="405" font-weight="700">Verde-nexo</text><text x="179" y="423" fill="#4A5B5C">#1FAF7A · marca</text>
+    <rect x="318" y="315" width="124" height="70" rx="12" fill="#3DDC97"/>
+    <text x="318" y="405" font-weight="700">Menta</text><text x="318" y="423" fill="#4A5B5C">#3DDC97 · destaque</text>
+    <rect x="457" y="315" width="124" height="70" rx="12" fill="#FF7A59"/>
+    <text x="457" y="405" font-weight="700">Coral</text><text x="457" y="423" fill="#4A5B5C">#FF7A59 · botões</text>
+    <rect x="596" y="315" width="124" height="70" rx="12" fill="#F7F5F0" stroke="#C9CFCB"/>
+    <text x="596" y="405" font-weight="700">Areia</text><text x="596" y="423" fill="#4A5B5C">#F7F5F0 · fundo</text>
+  </g>
+</svg>
